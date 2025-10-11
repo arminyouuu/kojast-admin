@@ -1,0 +1,241 @@
+🧱 MVP SPECIFICATION (V2) — “Kojast”
+🌀 Purpose
+A mobile and web system that helps users discover shops, cafés, restaurants, gyms, and public places across their city.
+
+Admins manage all listings through a dedicated dashboard, while end users explore categorized content smoothly through the Flutter app.
+
+The platform prioritizes simplicity, scalability, and clean layered architecture across both backend and frontend.
+
+1. PRODUCT SCOPE
+🎯 Primary Objective
+Deliver a two‑faced MVP system:
+
+Public app (Flutter): allows users to browse and explore places with images, categories, descriptions, and addresses.
+Admin dashboard (Web): enables authorized admins to create, read, update, and delete both categories and places directly through a friendly interface.
+🔹 Target Users
+City residents & travelers discovering locations.
+Verified admins assigned by the system operator.
+🔹 Technology Foundation
+Frontend Mobile: Flutter
+Frontend Web (dashboard): Web interface tied to same API
+Backend: Node.js REST API
+Database: MySQL (relational)
+2. FUNCTIONAL REQUIREMENTS
+2.1 User Stories
+ID	User Story	Priority
+US‑01	As a user, I can browse categories of places.	Must‑have
+US‑02	As a user, I can filter places by category.	Must‑have
+US‑03	As a user, I can see place name, address, description, and multiple images.	Must‑have
+US‑04	As a user, I can open a place and view all its images in a gallery.	Must‑have
+US‑05	As a user, I can scroll through lists with lazy loading and pagination for performance.	Must‑have
+US‑06	As an admin, I can log into the dashboard (auth optional for MVP) to manage categories and places.	Must‑have
+US‑07	As an admin, I can create, update, or delete a category.	Must‑have
+US‑08	As an admin, I can create, update, or delete a place and attach multiple image links.	Must‑have
+US‑09	As a user, I can refresh data to see newly added content.	Should‑have
+US‑10	As a user, I can access the app securely (protected communication).	Must‑have
+2.2 Non‑Functional Requirements
+Area	Requirement
+Performance	List endpoints support pagination & lazy loading. Each request ≤200 ms.
+Scalability	Supports growth to tens of thousands of entries.
+Security	HTTPS enforced; dashboard requires admin credentials.
+Maintainability	Modular 3‑layered structure front & back.
+Usability	Dashboard CRUD simple and responsive.
+Resilience	Backend error handling with consistent JSON errors.
+3. CORE FEATURES & BEHAVIOR
+🏷️ 3.1 Categories
+Represent top‑level classifications of places (e.g., Food, Fitness, Nature).
+
+Admins create categories; users can filter by them.
+
+Each category stores:
+
+id
+name
+📍 3.2 Places
+Each record describes a single location.
+
+Data Model Fields
+
+Field	Type	Description
+id	Integer	Unique identifier
+name	String	Display name
+description	Text	Short summary
+address	String	Physical address visible to user
+categoryId	Integer	Category relation
+latitude / longitude	Float	Geo coordinates
+images	Array of strings	URLs of all images for gallery
+createdAt / updatedAt	Datetime	Automatic timestamps
+🧠 3.3 API Features
+Endpoint	Method	Description
+/categories	GET	List all categories.
+/places	GET	List or filter places. Accepts categoryId, page, limit.
+/places/:id	GET	Fetch single place including all images.
+/admin/categories	POST/PUT/DELETE	CRUD operations for categories (restricted).
+/admin/places	POST/PUT/DELETE	CRUD operations for places (restricted).
+Pagination Parameters:
+
+page: current page number (default = 1)
+limit: number of items per page (default = 10)
+Returns metadata { total, page, pages }
+Lazy Loading in app:
+
+Flutter triggers next page when the user scrolls near the end of current data.
+
+Responses:
+
+All objects returned in JSON with image arrays; errors follow:
+
+
+content_copy
+json
+
+note_add
+ویرایش با Canvas
+{ "status": 404, "message": "Place not found" }
+4. ADMIN DASHBOARD
+Purpose
+Gives administrators direct CRUD control over content with structured authorization.
+
+Core Sections
+Section	Features
+Login (optional)	Admin credentials (username, password) for access. Auth enabled optionally.
+Dashboard Home	Summary of total categories, total places, recent modifications.
+Categories Manager	Table list + create/edit/delete functionality.
+Places Manager	Table list with pagination + filters by category.
+Place Editor	Form to input name, address, description, coordinates, and attach multiple image URLs.
+Images Selector	Ability to add/remove multiple URLs dynamically.
+Data flow
+CRUD operations → via same backend REST API → persist in MySQL database.
+
+5. BACKEND ARCHITECTURE (Three‑Layer Model)
+Layer	Responsibilities
+Presentation Layer	HTTP routing, request validation, authentication middleware for admin routes, JSON response handling.
+Application Layer	Business logic — pagination, filtering, category logic, data validation.
+Data Layer	Direct database interaction (ORM/queries), entity models for Place, Category, PlaceImage.
+Relations
+
+Category 1→N Place
+Place 1→N PlaceImage
+Entities Overview
+
+Category: id, name
+Place: id, categoryId, name, description, address, latitude, longitude, timestamps
+PlaceImage: id, placeId, imageUrl
+6. FRONTEND (MOBILE APP)
+Architecture
+Layer	Description
+Presentation	Screens: Splash → Categories → Places → Place Details
+Application/Domain	Providers controlling state, pagination, and filters
+Data	Repository communicating with REST API, parsing models
+Screens
+Screen	Elements	Description
+Splash/Launch	Logo + initialization call	Loads initial categories
+Categories List	Scrollable grid/list	Tap triggers categoryId filter
+Places List	Infinite scroll (lazy load) cards	Each card: main image, name, address, category badge
+Place Details	Image gallery (carousel) + details	Shows name, address, description, coordinates
+Pagination & Lazy Load Behavior
+
+Lists fetch in chunks.
+Scroll to end triggers next page load (seamless feed behavior).
+7. ADMIN DASHBOARD FRONTEND ARCHITECTURE
+Layer	Purpose
+Presentation	Dashboard pages with CRUD forms
+Application	Managers and validation logic
+Data	API client for admin routes
+Pages
+
+Login (optional)
+Dashboard (overview cards + metrics)
+Categories (CRUD table view)
+Places (CRUD with filtering + pagination)
+Place Form (multi‑image input handling)
+8. DATABASE SCHEMA SUMMARY
+
+content_copy
+text
+categories
+ ├ id (int PK)
+ ├ name (varchar)
+
+places
+ ├ id (int PK)
+ ├ name (varchar)
+ ├ description (text)
+ ├ address (varchar)
+ ├ category_id (FK)
+ ├ latitude (float)
+ ├ longitude (float)
+ ├ created_at
+ └ updated_at
+
+place_images
+ ├ id (int PK)
+ ├ place_id (FK)
+ └ image_url (text)
+9. DATA FLOW OVERVIEW
+
+content_copy
+text
+[Flutter App / Web Dashboard]
+        ↓ (HTTP JSON)
+[API Routes & Controllers]
+        ↓
+[Application Services]
+        ↓
+[Repositories / ORM]
+        ↓
+[MySQL Database]
+Lazy loading and pagination logic reside in the application layer before repository calls, returning paged results.
+
+10. USER INTERFACE DESIGN OVERVIEW
+Mobile App UI
+Screen	Visual Components
+Categories	Simple card grid, category name, pastel accent backgrounds.
+Places List	Two‑column grid or vertical list with image thumbnails. Scroll‑based pagination indicator at bottom.
+Place Details	Carousel at top for multiple images; below it: name, category tag, address, description.
+Admin Dashboard UI
+Page	Layout
+Dashboard Home	Cards summarizing counts; link buttons to content sections.
+Categories	Table + inline edit, delete confirmation modals.
+Places	Table grid showing place name, address, category, number of images, action buttons; pagination controls.
+Place Editor	Form with text fields, dropdown (category), text area (description), address input, coordinates, and dynamic image URL fields (“Add more” feature).
+11. TEST PLAN (MVP LEVEL)
+Functional Tests
+Case	Steps	Expected Result
+Category fetch	Open app → Categories page	List appears instantly.
+Places by category	Select “Café”	Loads relevant places only.
+Pagination	Scroll to end	Loads next results seamlessly.
+Place details	Tap place → details	All images & info displayed.
+Dashboard add place	Admin → Create place → Fill form	New record visible in app after reload.
+Dashboard edit/delete	Admin edits/deletes	Change reflected in API results.
+Edge Tests
+Missing image URLs → placeholder shown.
+Empty categories → “No places found.”
+Pagination at last page → loading stops gracefully.
+12. LIMITATIONS (FOR MVP)
+No role‑based multi‑user system beyond basic admin.
+Auth optional; may rely on static admin credentials in config.
+No upload mechanism yet; dashboard expects direct image URLs.
+Geolocation features inactive (coordinates stored only).
+Basic paginated search only (no fuzzy search).
+13. SUCCESS CRITERIA
+Metric	Target
+Average app/API latency	≤ 300 ms
+Pagination smoothness	Scroll without UI freezing
+Admin CRUD turnaround	< 1 s visual feedback
+Crash‑free user sessions	≥ 99 %
+Data consistency	100 % integrity between dashboard and app
+14. FUTURE EXTENSIONS (Post‑MVP)
+Full image upload system with file storage service.
+Role‑based authentication with JWT (Admin, Editor).
+Real geolocation filtering (“near me”).
+User contributions and favorites.
+Map integration on detail pages.
+Search bar for place names.
+Analytics dashboard for usage metrics.
+Offline caching on mobile.
+✅ FINAL MVP SUMMARY
+Component	Description
+Mobile App (Flutter)	Explore categories, view paginated place lists, see gallery, address, details.
+Backend (Node.js + MySQL)	REST API, 3‑layer structure, supports pagination, filters, admin CRUD.
+Admin Dashboard	Web dashboard for managing data; multi‑image entries, structured CRUD, optional login.
