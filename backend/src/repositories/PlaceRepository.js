@@ -15,7 +15,7 @@ class PlaceRepository {
 
     if (categoryId) {
       sql += ' WHERE p.category_id = ?';
-      params.push(categoryId);
+      params.push(parseInt(categoryId));
     }
 
     sql += ' ORDER BY p.created_at DESC LIMIT ? OFFSET ?';
@@ -24,14 +24,14 @@ class PlaceRepository {
     const places = await query(sql, params);
 
     let countSql = 'SELECT COUNT(*) as total FROM places';
+    const countParams = [];
     if (categoryId) {
       countSql += ' WHERE category_id = ?';
-      const [countResult] = await query(countSql, [categoryId]);
-      return { places, total: countResult.total };
+      countParams.push(parseInt(categoryId));
     }
 
-    const [countResult] = await query(countSql);
-    return { places, total: countResult.total };
+    const countResult = await query(countSql, countParams);
+    return { places, total: countResult[0].total };
   }
 
   async findById(id) {
