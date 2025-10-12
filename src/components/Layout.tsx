@@ -93,7 +93,7 @@ export default function Layout({ children, currentPath, onNavigate }: LayoutProp
         />
       )}
 
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 lg:ml-64">
         <header className="bg-white border-b border-slate-200 h-16 flex items-center px-4 lg:px-8 sticky top-0 z-30">
           <button
             onClick={() => setIsMobileMenuOpen(true)}
