@@ -7,7 +7,12 @@ class ApiKeyController {
       const apiKeys = await query(
         'SELECT id, name, api_key, permissions, is_active, created_at, last_used_at FROM api_keys ORDER BY created_at DESC'
       );
-      res.json(apiKeys);
+      const formattedKeys = apiKeys.map(k => ({
+        ...k,
+        key: k.api_key,
+        permissions: typeof k.permissions === 'string' ? JSON.parse(k.permissions) : k.permissions
+      }));
+      res.json(formattedKeys);
     } catch (error) {
       next(error);
     }
@@ -33,7 +38,13 @@ class ApiKeyController {
         [result.insertId]
       );
 
-      res.status(201).json(newKey[0]);
+      const formatted = {
+        ...newKey[0],
+        key: newKey[0].api_key,
+        permissions: typeof newKey[0].permissions === 'string' ? JSON.parse(newKey[0].permissions) : newKey[0].permissions
+      };
+
+      res.status(201).json(formatted);
     } catch (error) {
       next(error);
     }
@@ -82,7 +93,13 @@ class ApiKeyController {
         return res.status(404).json({ message: 'API key not found' });
       }
 
-      res.json(updatedKey[0]);
+      const formatted = {
+        ...updatedKey[0],
+        key: updatedKey[0].api_key,
+        permissions: typeof updatedKey[0].permissions === 'string' ? JSON.parse(updatedKey[0].permissions) : updatedKey[0].permissions
+      };
+
+      res.json(formatted);
     } catch (error) {
       next(error);
     }
