@@ -1,6 +1,6 @@
 import type { Category, Place, PaginatedResponse, DashboardStats } from '../types';
 
-const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
 class ApiError extends Error {
   constructor(public status: number, message: string) {
@@ -40,43 +40,43 @@ export const api = {
 
   categories: {
     getAll: () => fetchApi<Category[]>('/categories'),
-    getById: (id: number) => fetchApi<Category>(`/categories/${id}`),
+    getById: (id: string) => fetchApi<Category>(`/categories/${id}`),
     create: (name: string) =>
       fetchApi<Category>('/admin/categories', {
         method: 'POST',
         body: JSON.stringify({ name }),
       }),
-    update: (id: number, name: string) =>
+    update: (id: string, name: string) =>
       fetchApi<Category>(`/admin/categories/${id}`, {
         method: 'PUT',
         body: JSON.stringify({ name }),
       }),
-    delete: (id: number) =>
+    delete: (id: string) =>
       fetchApi<void>(`/admin/categories/${id}`, {
         method: 'DELETE',
       }),
   },
 
   places: {
-    getAll: (params?: { categoryId?: number; page?: number; limit?: number }) => {
+    getAll: (params?: { categoryId?: string; page?: number; limit?: number }) => {
       const query = new URLSearchParams();
       if (params?.categoryId) query.append('categoryId', params.categoryId.toString());
       if (params?.page) query.append('page', params.page.toString());
       if (params?.limit) query.append('limit', params.limit.toString());
       return fetchApi<PaginatedResponse<Place>>(`/places?${query.toString()}`);
     },
-    getById: (id: number) => fetchApi<Place>(`/places/${id}`),
-    create: (data: Omit<Place, 'id' | 'createdAt' | 'updatedAt'> & { images: string[] }) =>
+    getById: (id: string) => fetchApi<Place>(`/places/${id}`),
+    create: (data: Omit<Place, 'id' | 'created_at' | 'updated_at'> & { images: string[] }) =>
       fetchApi<Place>('/admin/places', {
         method: 'POST',
         body: JSON.stringify(data),
       }),
-    update: (id: number, data: Partial<Omit<Place, 'id' | 'createdAt' | 'updatedAt'>> & { images?: string[] }) =>
+    update: (id: string, data: Partial<Omit<Place, 'id' | 'created_at' | 'updated_at'>> & { images?: string[] }) =>
       fetchApi<Place>(`/admin/places/${id}`, {
         method: 'PUT',
         body: JSON.stringify(data),
       }),
-    delete: (id: number) =>
+    delete: (id: string) =>
       fetchApi<void>(`/admin/places/${id}`, {
         method: 'DELETE',
       }),
