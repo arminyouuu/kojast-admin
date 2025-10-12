@@ -8,12 +8,16 @@ export interface Place {
   name: string;
   description: string;
   address: string;
-  categoryId: number;
+  category_id: number;
+  categoryId?: number;
+  category_name?: string;
   latitude: number | null;
   longitude: number | null;
-  createdAt: string;
-  updatedAt: string;
-  images?: PlaceImage[];
+  created_at: string;
+  updated_at: string;
+  createdAt?: string;
+  updatedAt?: string;
+  images?: string[];
   category?: Category;
 }
 

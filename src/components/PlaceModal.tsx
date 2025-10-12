@@ -26,10 +26,13 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
       setName(place.name);
       setDescription(place.description);
       setAddress(place.address);
-      setCategoryId(place.categoryId);
+      setCategoryId(place.category_id || place.categoryId || '');
       setLatitude(place.latitude?.toString() || '');
       setLongitude(place.longitude?.toString() || '');
-      setImages(place.images?.map(img => img.imageUrl) || ['']);
+      const imageUrls = Array.isArray(place.images)
+        ? place.images.filter(img => typeof img === 'string' && img.trim() !== '')
+        : [];
+      setImages(imageUrls.length > 0 ? imageUrls : ['']);
     }
   }, [place]);
 

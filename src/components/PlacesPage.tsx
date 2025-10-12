@@ -78,7 +78,11 @@ export default function PlacesPage() {
     handleCloseModal();
   };
 
-  const getCategoryName = (categoryId: number) => {
+  const getCategoryName = (place: Place) => {
+    if (place.category_name) {
+      return place.category_name;
+    }
+    const categoryId = place.category_id || place.categoryId;
     const category = categories.find((c) => c.id === categoryId);
     return category?.name || 'Unknown';
   };
@@ -171,7 +175,7 @@ export default function PlacesPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-slate-100 text-slate-800">
-                        {getCategoryName(place.categoryId)}
+                        {getCategoryName(place)}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-sm text-slate-500 max-w-xs truncate">
