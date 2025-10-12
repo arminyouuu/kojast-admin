@@ -335,8 +335,7 @@ export default function ApiKeysPage() {
                 {isCreating ? 'Generating...' : 'Generate Key'}
               </button>
             </div>
-          </div>
-          
+            
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
         <h3 className="font-semibold text-blue-900 mb-2 flex items-center space-x-2">
           <AlertCircle className="w-5 h-5" />
@@ -357,6 +356,7 @@ export default function ApiKeysPage() {
           </ul>
         </div>
       </div>
+          </div>
         </div>
       )}
     </div>
