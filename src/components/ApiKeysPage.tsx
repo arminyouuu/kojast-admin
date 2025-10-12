@@ -262,6 +262,27 @@ export default function ApiKeysPage() {
           </div>
         </div>
       )}
+      
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+        <h3 className="font-semibold text-blue-900 mb-2 flex items-center space-x-2">
+          <AlertCircle className="w-5 h-5" />
+          <span>API Usage Guide</span>
+        </h3>
+        <div className="text-sm text-blue-800 space-y-2">
+          <p>Use your API keys to authenticate requests to the Kojast API:</p>
+          <div className="bg-white rounded p-3 font-mono text-xs overflow-x-auto border border-blue-200">
+            <div className="text-slate-600 mb-1">GET /api/places</div>
+            <div className="text-slate-400">Headers:</div>
+            <div className="text-blue-600 ml-2">X-API-Key: your_api_key_here</div>
+          </div>
+          <ul className="list-disc list-inside space-y-1 ml-2">
+            <li><strong>Read</strong> permissions allow fetching places and categories</li>
+            <li><strong>Write</strong> permissions allow creating, updating, and deleting data</li>
+            <li>Keep your API keys secure and never share them publicly</li>
+            <li>You can deactivate keys at any time without deleting them</li>
+          </ul>
+        </div>
+      </div>
 
       {showCreateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -335,27 +356,6 @@ export default function ApiKeysPage() {
                 {isCreating ? 'Generating...' : 'Generate Key'}
               </button>
             </div>
-            
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-        <h3 className="font-semibold text-blue-900 mb-2 flex items-center space-x-2">
-          <AlertCircle className="w-5 h-5" />
-          <span>API Usage Guide</span>
-        </h3>
-        <div className="text-sm text-blue-800 space-y-2">
-          <p>Use your API keys to authenticate requests to the Kojast API:</p>
-          <div className="bg-white rounded p-3 font-mono text-xs overflow-x-auto border border-blue-200">
-            <div className="text-slate-600 mb-1">GET /api/places</div>
-            <div className="text-slate-400">Headers:</div>
-            <div className="text-blue-600 ml-2">X-API-Key: your_api_key_here</div>
-          </div>
-          <ul className="list-disc list-inside space-y-1 ml-2">
-            <li><strong>Read</strong> permissions allow fetching places and categories</li>
-            <li><strong>Write</strong> permissions allow creating, updating, and deleting data</li>
-            <li>Keep your API keys secure and never share them publicly</li>
-            <li>You can deactivate keys at any time without deleting them</li>
-          </ul>
-        </div>
-      </div>
           </div>
         </div>
       )}
