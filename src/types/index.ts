@@ -46,3 +46,19 @@ export interface DashboardStats {
   totalPlaces: number;
   recentPlaces: number;
 }
+
+export interface ApiKey {
+  id: string;
+  key: string;
+  name: string;
+  user_id: string;
+  last_used_at: string | null;
+  expires_at: string | null;
+  is_active: boolean;
+  permissions: {
+    read: boolean;
+    write: boolean;
+  };
+  created_at: string;
+  updated_at: string;
+}

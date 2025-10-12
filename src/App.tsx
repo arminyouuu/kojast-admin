@@ -5,8 +5,9 @@ import Layout from './components/Layout';
 import DashboardPage from './components/DashboardPage';
 import CategoriesPage from './components/CategoriesPage';
 import PlacesPage from './components/PlacesPage';
+import ApiKeysPage from './components/ApiKeysPage';
 
-type Page = 'dashboard' | 'categories' | 'places';
+type Page = 'dashboard' | 'categories' | 'places' | 'api-keys';
 
 function AppContent() {
   const { user, isLoading } = useAuth();
@@ -29,6 +30,7 @@ function AppContent() {
       {currentPage === 'dashboard' && <DashboardPage />}
       {currentPage === 'categories' && <CategoriesPage />}
       {currentPage === 'places' && <PlacesPage />}
+      {currentPage === 'api-keys' && <ApiKeysPage />}
     </Layout>
   );
 }

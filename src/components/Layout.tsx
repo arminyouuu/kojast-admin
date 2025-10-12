@@ -1,11 +1,11 @@
 import { ReactNode } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { LogOut, LayoutDashboard, FolderTree, MapPin } from 'lucide-react';
+import { LogOut, LayoutDashboard, FolderTree, MapPin, Key } from 'lucide-react';
 
 interface LayoutProps {
   children: ReactNode;
-  currentPage: 'dashboard' | 'categories' | 'places';
-  onNavigate: (page: 'dashboard' | 'categories' | 'places') => void;
+  currentPage: 'dashboard' | 'categories' | 'places' | 'api-keys';
+  onNavigate: (page: 'dashboard' | 'categories' | 'places' | 'api-keys') => void;
 }
 
 export default function Layout({ children, currentPage, onNavigate }: LayoutProps) {
@@ -15,6 +15,7 @@ export default function Layout({ children, currentPage, onNavigate }: LayoutProp
     { id: 'dashboard' as const, label: 'Dashboard', icon: LayoutDashboard },
     { id: 'categories' as const, label: 'Categories', icon: FolderTree },
     { id: 'places' as const, label: 'Places', icon: MapPin },
+    { id: 'api-keys' as const, label: 'API Keys', icon: Key },
   ];
 
   return (

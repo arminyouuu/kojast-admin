@@ -1,4 +1,4 @@
-import type { Category, Place, PaginatedResponse, DashboardStats } from '../types';
+import type { Category, Place, PaginatedResponse, DashboardStats, ApiKey } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
@@ -103,5 +103,23 @@ export const api = {
 
   dashboard: {
     getStats: () => fetchApi<DashboardStats>('/admin/dashboard/stats'),
+  },
+
+  apiKeys: {
+    getAll: () => fetchApi<ApiKey[]>('/admin/api-keys'),
+    create: (name: string, permissions: { read: boolean; write: boolean }) =>
+      fetchApi<ApiKey>('/admin/api-keys', {
+        method: 'POST',
+        body: JSON.stringify({ name, permissions }),
+      }),
+    update: (id: string, data: { name?: string; is_active?: boolean; permissions?: { read: boolean; write: boolean } }) =>
+      fetchApi<ApiKey>(`/admin/api-keys/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      }),
+    delete: (id: string) =>
+      fetchApi<void>(`/admin/api-keys/${id}`, {
+        method: 'DELETE',
+      }),
   },
 };
