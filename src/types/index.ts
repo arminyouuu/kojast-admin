@@ -44,5 +44,45 @@ export interface User {
 export interface DashboardStats {
   totalCategories: number;
   totalPlaces: number;
-  recentPlaces: number;
+  recentPlaces: Place[];
+  totalApiKeys?: number;
+  totalActivityLogs?: number;
+  recentActivity?: ActivityLog[];
+}
+
+export interface ApiKey {
+  id: string;
+  key: string;
+  name: string;
+  user_id: string;
+  last_used_at: string | null;
+  expires_at: string | null;
+  is_active: boolean;
+  permissions: {
+    read: boolean;
+    write: boolean;
+  };
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ActivityLog {
+  id: string;
+  user_id: string | null;
+  api_key_id: string | null;
+  action: string;
+  resource_type: string | null;
+  resource_id: string | null;
+  ip_address: string | null;
+  user_agent: string | null;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}
+
+export interface SystemSetting {
+  key: string;
+  value: unknown;
+  description: string | null;
+  updated_at: string;
+  updated_by: string | null;
 }
