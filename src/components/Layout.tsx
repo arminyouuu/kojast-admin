@@ -29,8 +29,8 @@ export default function Layout({ children, currentPath, onNavigate }: LayoutProp
       <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-slate-200 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static ${
         isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
-        <div className="flex flex-col h-full">
-          <div className="flex items-center justify-between h-16 px-6 border-b border-slate-200">
+        <div className="flex flex-col h-screen">
+          <div className="flex items-center justify-between h-16 px-6 border-b border-slate-200 flex-shrink-0">
             <h1 className="text-xl font-bold text-slate-900">Kojast Admin</h1>
             <button
               onClick={() => setIsMobileMenuOpen(false)}
@@ -61,7 +61,7 @@ export default function Layout({ children, currentPath, onNavigate }: LayoutProp
             })}
           </nav>
 
-          <div className="border-t border-slate-200 p-4">
+          <div className="border-t border-slate-200 p-4 flex-shrink-0">
             <div className="flex items-center justify-between mb-3 px-2">
               <div className="flex items-center space-x-2 min-w-0">
                 <div className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center flex-shrink-0">
