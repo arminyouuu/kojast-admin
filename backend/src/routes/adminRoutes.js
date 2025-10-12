@@ -34,4 +34,24 @@ router.post('/places', PlaceController.create);
 router.put('/places/:id', PlaceController.update);
 router.delete('/places/:id', PlaceController.delete);
 
+router.get('/dashboard/stats', async (req, res, next) => {
+  try {
+    const { query } = await import('../database/connection.js');
+
+    const [placesCount] = await query('SELECT COUNT(*) as count FROM places');
+    const [categoriesCount] = await query('SELECT COUNT(*) as count FROM categories');
+    const [recentPlaces] = await query(
+      'SELECT COUNT(*) as count FROM places WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)'
+    );
+
+    res.json({
+      totalPlaces: placesCount.count,
+      totalCategories: categoriesCount.count,
+      recentPlaces: recentPlaces.count
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 export default router;

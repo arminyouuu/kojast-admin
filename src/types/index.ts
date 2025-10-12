@@ -34,10 +34,11 @@ export interface PaginatedResponse<T> {
 export interface User {
   username: string;
   isAuthenticated: boolean;
+  credentials?: string;
 }
 
 export interface DashboardStats {
   totalCategories: number;
   totalPlaces: number;
-  recentPlaces: Place[];
+  recentPlaces: number;
 }

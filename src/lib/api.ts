@@ -9,14 +9,29 @@ class ApiError extends Error {
   }
 }
 
+function getAuthHeaders(): HeadersInit {
+  const credentials = localStorage.getItem('admin_credentials');
+  if (credentials) {
+    return {
+      'Authorization': `Basic ${credentials}`,
+    };
+  }
+  return {};
+}
+
 async function fetchApi<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
+  const authHeaders = endpoint.startsWith('/admin') && !endpoint.includes('/login')
+    ? getAuthHeaders()
+    : {};
+
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
+      ...authHeaders,
       ...options.headers,
     },
   });

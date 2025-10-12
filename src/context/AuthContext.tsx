@@ -26,9 +26,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (username: string, password: string) => {
     const response = await api.auth.login(username, password);
     if (response.success) {
-      const userData = { username, isAuthenticated: true };
+      const credentials = btoa(`${username}:${password}`);
+      const userData = { username, isAuthenticated: true, credentials };
       setUser(userData);
       localStorage.setItem('admin_user', JSON.stringify(userData));
+      localStorage.setItem('admin_credentials', credentials);
     } else {
       throw new Error(response.message || 'Login failed');
     }
@@ -37,6 +39,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = () => {
     setUser(null);
     localStorage.removeItem('admin_user');
+    localStorage.removeItem('admin_credentials');
   };
 
   return (

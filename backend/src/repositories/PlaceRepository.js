@@ -19,7 +19,7 @@ class PlaceRepository {
     }
 
     sql += ' ORDER BY p.created_at DESC LIMIT ? OFFSET ?';
-    params.push(limit, offset);
+    params.push(parseInt(limit), parseInt(offset));
 
     const places = await query(sql, params);
 
