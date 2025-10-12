@@ -135,7 +135,11 @@ export default function ApiKeysPage() {
                   className="flex-shrink-0 p-2 hover:bg-emerald-100 rounded transition-colors"
                   title="Copy to clipboard"
                 >
-                  <Copy className="w-4 h-4 text-emerald-600" />
+                  {copiedKey === newlyCreatedKey ? (
+                    <CheckCircle className="w-4 h-4 text-emerald-600 animate-in zoom-in duration-200" />
+                  ) : (
+                    <Copy className="w-4 h-4 text-emerald-600 transition-transform hover:scale-110" />
+                  )}
                 </button>
               </div>
             </div>
@@ -194,9 +198,9 @@ export default function ApiKeysPage() {
                           title="Copy to clipboard"
                         >
                           {copiedKey === key.key ? (
-                            <CheckCircle className="w-4 h-4 text-emerald-600" />
+                            <CheckCircle className="w-4 h-4 text-emerald-600 animate-in zoom-in duration-200" />
                           ) : (
-                            <Copy className="w-4 h-4 text-slate-400" />
+                            <Copy className="w-4 h-4 text-slate-400 transition-transform hover:scale-110" />
                           )}
                         </button>
                       </div>
