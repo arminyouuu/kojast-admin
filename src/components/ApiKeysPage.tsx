@@ -150,24 +150,114 @@ export default function ApiKeysPage() {
         </div>
       )}
 
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-        <h3 className="font-semibold text-blue-900 mb-2 flex items-center space-x-2">
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+        <h3 className="font-semibold text-blue-900 mb-4 flex items-center space-x-2 text-lg">
           <AlertCircle className="w-5 h-5" />
           <span>API Usage Guide</span>
         </h3>
-        <div className="text-sm text-blue-800 space-y-2">
-          <p>Use your API keys to authenticate requests to the Kojast API:</p>
-          <div className="bg-white rounded p-3 font-mono text-xs overflow-x-auto border border-blue-200">
-            <div className="text-slate-600 mb-1">GET /api/places</div>
-            <div className="text-slate-400">Headers:</div>
-            <div className="text-blue-600 ml-2">X-API-Key: your_api_key_here</div>
+        <div className="text-sm text-blue-800 space-y-4">
+          <p className="font-medium">Use your API keys to authenticate requests to the Kojast API. All requests require the <code className="bg-blue-100 px-1.5 py-0.5 rounded">X-API-Key</code> header.</p>
+
+          <div className="space-y-3">
+            <div>
+              <h4 className="font-semibold text-blue-900 mb-2">Read Operations (Read Permission Required)</h4>
+
+              <div className="bg-white rounded-lg p-3 font-mono text-xs overflow-x-auto border border-blue-200 mb-2">
+                <div className="text-emerald-600 font-semibold mb-1">GET /api/places</div>
+                <div className="text-slate-400">Headers:</div>
+                <div className="text-blue-600 ml-2">X-API-Key: your_api_key_here</div>
+              </div>
+
+              <div className="bg-white rounded-lg p-3 font-mono text-xs overflow-x-auto border border-blue-200 mb-2">
+                <div className="text-emerald-600 font-semibold mb-1">GET /api/places/:id</div>
+                <div className="text-slate-400">Headers:</div>
+                <div className="text-blue-600 ml-2">X-API-Key: your_api_key_here</div>
+              </div>
+
+              <div className="bg-white rounded-lg p-3 font-mono text-xs overflow-x-auto border border-blue-200">
+                <div className="text-emerald-600 font-semibold mb-1">GET /api/categories</div>
+                <div className="text-slate-400">Headers:</div>
+                <div className="text-blue-600 ml-2">X-API-Key: your_api_key_here</div>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="font-semibold text-blue-900 mb-2">Write Operations (Write Permission Required)</h4>
+
+              <div className="bg-white rounded-lg p-3 font-mono text-xs overflow-x-auto border border-blue-200 mb-2">
+                <div className="text-orange-600 font-semibold mb-1">POST /api/places</div>
+                <div className="text-slate-400">Headers:</div>
+                <div className="text-blue-600 ml-2 mb-1">X-API-Key: your_api_key_here</div>
+                <div className="text-blue-600 ml-2">Content-Type: application/json</div>
+                <div className="text-slate-400 mt-2">Body:</div>
+                <div className="text-slate-600 ml-2">{'{'}</div>
+                <div className="text-slate-600 ml-4">"name": "New Place",</div>
+                <div className="text-slate-600 ml-4">"description": "Description",</div>
+                <div className="text-slate-600 ml-4">"category_id": "uuid",</div>
+                <div className="text-slate-600 ml-4">"latitude": 40.7128,</div>
+                <div className="text-slate-600 ml-4">"longitude": -74.0060</div>
+                <div className="text-slate-600 ml-2">{'}'}</div>
+              </div>
+
+              <div className="bg-white rounded-lg p-3 font-mono text-xs overflow-x-auto border border-blue-200 mb-2">
+                <div className="text-amber-600 font-semibold mb-1">PUT /api/places/:id</div>
+                <div className="text-slate-400">Headers:</div>
+                <div className="text-blue-600 ml-2 mb-1">X-API-Key: your_api_key_here</div>
+                <div className="text-blue-600 ml-2">Content-Type: application/json</div>
+                <div className="text-slate-400 mt-2">Body:</div>
+                <div className="text-slate-600 ml-2">{'{'}</div>
+                <div className="text-slate-600 ml-4">"name": "Updated Name",</div>
+                <div className="text-slate-600 ml-4">"description": "Updated description"</div>
+                <div className="text-slate-600 ml-2">{'}'}</div>
+              </div>
+
+              <div className="bg-white rounded-lg p-3 font-mono text-xs overflow-x-auto border border-blue-200">
+                <div className="text-red-600 font-semibold mb-1">DELETE /api/places/:id</div>
+                <div className="text-slate-400">Headers:</div>
+                <div className="text-blue-600 ml-2">X-API-Key: your_api_key_here</div>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="font-semibold text-blue-900 mb-2">Example with JavaScript fetch()</h4>
+              <div className="bg-white rounded-lg p-3 font-mono text-xs overflow-x-auto border border-blue-200">
+                <div className="text-slate-600">
+                  <div className="text-purple-600">const</div> response = <div className="inline text-purple-600">await</div> fetch('https://api.kojast.com/api/places', {'{'}</div>
+                <div className="text-slate-600 ml-2">method: <span className="text-green-600">'GET'</span>,</div>
+                <div className="text-slate-600 ml-2">headers: {'{'}</div>
+                <div className="text-slate-600 ml-4"><span className="text-green-600">'X-API-Key'</span>: <span className="text-green-600">'your_api_key_here'</span></div>
+                <div className="text-slate-600 ml-2">{'}'}</div>
+                <div className="text-slate-600">{'}'});</div>
+                <div className="text-slate-600 mt-1"><div className="inline text-purple-600">const</div> data = <div className="inline text-purple-600">await</div> response.json();</div>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="font-semibold text-blue-900 mb-2">Response Codes</h4>
+              <div className="bg-white rounded-lg p-3 border border-blue-200">
+                <ul className="space-y-1 text-xs">
+                  <li><code className="text-emerald-600 font-semibold">200 OK</code> - Request successful</li>
+                  <li><code className="text-orange-600 font-semibold">201 Created</code> - Resource created successfully</li>
+                  <li><code className="text-red-600 font-semibold">401 Unauthorized</code> - Invalid or missing API key</li>
+                  <li><code className="text-red-600 font-semibold">403 Forbidden</code> - Insufficient permissions</li>
+                  <li><code className="text-red-600 font-semibold">404 Not Found</code> - Resource not found</li>
+                  <li><code className="text-red-600 font-semibold">500 Server Error</code> - Internal server error</li>
+                </ul>
+              </div>
+            </div>
           </div>
-          <ul className="list-disc list-inside space-y-1 ml-2">
-            <li><strong>Read</strong> permissions allow fetching places and categories</li>
-            <li><strong>Write</strong> permissions allow creating, updating, and deleting data</li>
-            <li>Keep your API keys secure and never share them publicly</li>
-            <li>You can deactivate keys at any time without deleting them</li>
-          </ul>
+
+          <div className="bg-blue-100 rounded-lg p-3 border border-blue-300">
+            <p className="font-semibold mb-2">Security Best Practices:</p>
+            <ul className="list-disc list-inside space-y-1 text-xs">
+              <li>Never share your API keys publicly or commit them to version control</li>
+              <li>Use environment variables to store API keys in your applications</li>
+              <li>Generate separate keys for different environments (dev, staging, production)</li>
+              <li>Grant only the minimum permissions needed (Read vs Write)</li>
+              <li>Rotate API keys regularly and immediately deactivate compromised keys</li>
+              <li>Monitor API key usage through the "Last Used" column</li>
+            </ul>
+          </div>
         </div>
       </div>
 
