@@ -125,9 +125,6 @@ export default function ApiKeysPage() {
             <CheckCircle className="w-6 h-6 text-emerald-600 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
               <h3 className="font-semibold text-emerald-900 mb-2">API Key Created Successfully</h3>
-              <p className="text-sm text-emerald-700 mb-3">
-                Make sure to copy your API key now. You won't be able to see it again!
-              </p>
               <div className="flex items-center space-x-2 bg-white rounded-lg p-3 border border-emerald-200">
                 <code className="flex-1 text-sm font-mono text-slate-900 break-all">{newlyCreatedKey}</code>
                 <button
