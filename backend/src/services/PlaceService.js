@@ -22,11 +22,19 @@ class PlaceService {
 
     const placesWithImages = await Promise.all(
       places.map(async (place) => {
-        const images = await PlaceImageRepository.findByPlaceId(place.id);
-        return {
-          ...place,
-          images: images.map(img => img.image_url)
-        };
+        try {
+          const images = await PlaceImageRepository.findByPlaceId(place.id);
+          return {
+            ...place,
+            images: images ? images.map(img => img.image_url) : []
+          };
+        } catch (error) {
+          console.error(`Error fetching images for place ${place.id}:`, error);
+          return {
+            ...place,
+            images: []
+          };
+        }
       })
     );
 
