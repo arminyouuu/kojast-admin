@@ -6,6 +6,9 @@ class PlaceRepository {
     const { page = 1, limit = 10 } = pagination;
     const offset = (page - 1) * limit;
 
+    const limitNum = parseInt(limit);
+    const offsetNum = parseInt(offset);
+
     let sql = `
       SELECT p.*, c.name as category_name
       FROM places p
@@ -18,8 +21,7 @@ class PlaceRepository {
       params.push(parseInt(categoryId));
     }
 
-    sql += ' ORDER BY p.created_at DESC LIMIT ? OFFSET ?';
-    params.push(parseInt(limit), parseInt(offset));
+    sql += ` ORDER BY p.created_at DESC LIMIT ${limitNum} OFFSET ${offsetNum}`;
 
     const places = await query(sql, params);
 
