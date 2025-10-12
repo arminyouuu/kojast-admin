@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { Router } from './components/Router';
 import LoginPage from './components/LoginPage';
 import Layout from './components/Layout';
 import DashboardPage from './components/DashboardPage';
@@ -7,11 +7,8 @@ import CategoriesPage from './components/CategoriesPage';
 import PlacesPage from './components/PlacesPage';
 import ApiKeysPage from './components/ApiKeysPage';
 
-type Page = 'dashboard' | 'categories' | 'places' | 'api-keys';
-
 function AppContent() {
   const { user, isLoading } = useAuth();
-  const [currentPage, setCurrentPage] = useState<Page>('dashboard');
 
   if (isLoading) {
     return (
@@ -26,12 +23,16 @@ function AppContent() {
   }
 
   return (
-    <Layout currentPage={currentPage} onNavigate={setCurrentPage}>
-      {currentPage === 'dashboard' && <DashboardPage />}
-      {currentPage === 'categories' && <CategoriesPage />}
-      {currentPage === 'places' && <PlacesPage />}
-      {currentPage === 'api-keys' && <ApiKeysPage />}
-    </Layout>
+    <Router>
+      {(currentPath, navigate) => (
+        <Layout currentPath={currentPath} onNavigate={navigate}>
+          {currentPath === '/' && <DashboardPage />}
+          {currentPath === '/categories' && <CategoriesPage />}
+          {currentPath === '/places' && <PlacesPage />}
+          {currentPath === '/api-keys' && <ApiKeysPage />}
+        </Layout>
+      )}
+    </Router>
   );
 }
 
