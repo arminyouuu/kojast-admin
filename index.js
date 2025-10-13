@@ -49,5 +49,5 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`CityPlace API server running on port ${PORT}`);
+  console.log(`Kojast API server running on port ${PORT}`);
 });
