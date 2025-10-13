@@ -229,7 +229,7 @@ export default function ApiKeysPage() {
       )}
 
       {newlyCreatedKey && (
-        <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-6 mb-6">
+        <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-6 mt-6 mb-6">
           <div className="flex items-start space-x-3">
             <CheckCircle className="w-6 h-6 text-emerald-600 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
@@ -260,7 +260,7 @@ export default function ApiKeysPage() {
       )}
       <span></span>
 
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mt-6 mb-6">
         <h3 className="font-semibold text-blue-900 mb-4 flex items-center space-x-2 text-lg">
           <AlertCircle className="w-5 h-5" />
           <span>API Usage Guide</span>
