@@ -65,7 +65,8 @@ class PlaceService {
   }
 
   async createPlace(placeData) {
-    const { name, description, address, categoryId, latitude, longitude, images } = placeData;
+    const categoryId = placeData.categoryId || placeData.category_id;
+    const { name, description, address, latitude, longitude, images } = placeData;
 
     if (!name || name.trim().length === 0) {
       throw { status: 400, message: 'Place name is required' };
@@ -102,7 +103,8 @@ class PlaceService {
       throw { status: 404, message: 'Place not found' };
     }
 
-    const { name, description, address, categoryId, latitude, longitude, images } = placeData;
+    const categoryId = placeData.categoryId || placeData.category_id;
+    const { name, description, address, latitude, longitude, images } = placeData;
 
     if (!name || name.trim().length === 0) {
       throw { status: 400, message: 'Place name is required' };
