@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { api } from '../lib/api';
 import type { Place, Category } from '../types';
 import { X, Plus, Trash2 } from 'lucide-react';
-import DatePicker from 'react-multi-date-picker';
+import DatePicker, { DateObject } from 'react-multi-date-picker';
 import persian from 'react-date-object/calendars/persian';
 import persian_fa from 'react-date-object/locales/persian_fa';
 import 'react-multi-date-picker/styles/colors/teal.css';
@@ -21,7 +21,7 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
   const [categoryId, setCategoryId] = useState<number | ''>('');
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
-  const [expirationDate, setExpirationDate] = useState('');
+  const [expirationDate, setExpirationDate] = useState<DateObject | null>(null);
   const [images, setImages] = useState<string[]>(['']);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -34,7 +34,15 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
       setCategoryId(place.category_id || place.categoryId || '');
       setLatitude(place.latitude?.toString() || '');
       setLongitude(place.longitude?.toString() || '');
-      setExpirationDate(place.expiration_date || place.expirationDate || '');
+
+      const dateStr = place.expiration_date || place.expirationDate || '';
+      if (dateStr) {
+        const date = new Date(dateStr);
+        setExpirationDate(new DateObject(date).convert(persian, persian_fa));
+      } else {
+        setExpirationDate(null);
+      }
+
       const imageUrls = Array.isArray(place.images)
         ? place.images.filter(img => typeof img === 'string' && img.trim() !== '')
         : [];
@@ -68,6 +76,12 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
 
       const filteredImages = images.filter(img => img.trim() !== '');
 
+      let gregorianDateStr = null;
+      if (expirationDate) {
+        const gregorianDate = expirationDate.toDate();
+        gregorianDateStr = gregorianDate.toISOString().split('T')[0];
+      }
+
       const placeData = {
         name: name.trim(),
         description: description.trim(),
@@ -75,7 +89,7 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
         categoryId: Number(categoryId),
         latitude: latitude ? parseFloat(latitude) : null,
         longitude: longitude ? parseFloat(longitude) : null,
-        expirationDate: expirationDate || null,
+        expirationDate: gregorianDateStr,
         images: filteredImages,
       };
 
@@ -207,14 +221,8 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
             </label>
             <DatePicker
               value={expirationDate}
-              onChange={(date: any) => {
-                if (date) {
-                  const gregorianDate = date.toDate();
-                  const isoDate = gregorianDate.toISOString().split('T')[0];
-                  setExpirationDate(isoDate);
-                } else {
-                  setExpirationDate('');
-                }
+              onChange={(date) => {
+                setExpirationDate(date as DateObject);
               }}
               calendar={persian}
               locale={persian_fa}
@@ -223,6 +231,7 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
               className="teal"
               inputClass="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
               containerStyle={{ width: '100%' }}
+              placeholder="انتخاب تاریخ"
             />
           </div>
 
