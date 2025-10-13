@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { api } from '../lib/api';
 import type { Category } from '../types';
 import { Plus, Edit2, Trash2, FolderTree } from 'lucide-react';
+import ConfirmModal from './ConfirmModal';
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -11,6 +12,11 @@ export default function CategoriesPage() {
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [categoryName, setCategoryName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState<{ show: boolean; categoryId: number | null; categoryName: string }>({
+    show: false,
+    categoryId: null,
+    categoryName: ''
+  });
 
   useEffect(() => {
     loadCategories();
@@ -48,15 +54,29 @@ export default function CategoriesPage() {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this category?')) return;
+  const handleDeleteClick = (category: Category) => {
+    setDeleteConfirm({
+      show: true,
+      categoryId: category.id,
+      categoryName: category.name,
+    });
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteConfirm.categoryId) return;
 
     try {
-      await api.categories.delete(id);
+      await api.categories.delete(deleteConfirm.categoryId);
       await loadCategories();
+      setDeleteConfirm({ show: false, categoryId: null, categoryName: '' });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete category');
+      setDeleteConfirm({ show: false, categoryId: null, categoryName: '' });
     }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteConfirm({ show: false, categoryId: null, categoryName: '' });
   };
 
   const handleEdit = (category: Category) => {
@@ -138,7 +158,7 @@ export default function CategoriesPage() {
                       <Edit2 className="w-4 h-4 inline" />
                     </button>
                     <button
-                      onClick={() => handleDelete(category.id)}
+                      onClick={() => handleDeleteClick(category)}
                       className="text-red-600 hover:text-red-800"
                     >
                       <Trash2 className="w-4 h-4 inline" />
@@ -189,6 +209,17 @@ export default function CategoriesPage() {
           </div>
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={deleteConfirm.show}
+        title="Delete Category"
+        message={`Are you sure you want to delete "${deleteConfirm.categoryName}"? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+        variant="danger"
+      />
     </div>
   );
 }
