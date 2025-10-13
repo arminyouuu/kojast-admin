@@ -22,6 +22,8 @@ class PlaceController {
 
   async create(req, res, next) {
     try {
+      console.log('Create place request body:', JSON.stringify(req.body, null, 2));
+      console.log('Request headers:', req.headers);
       const place = await PlaceService.createPlace(req.body);
       res.status(201).json(place);
     } catch (error) {
