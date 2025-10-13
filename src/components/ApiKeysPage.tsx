@@ -128,15 +128,15 @@ export default function ApiKeysPage() {
   }
 
   return (
-    <div>
+    <div dir="rtl" className="font-['Vazirmatn']">
       <ToastContainer toasts={toasts} onRemove={removeToast} />
 
       <ConfirmModal
         isOpen={deleteConfirm.isOpen}
-        title="Delete API Key"
-        message={`Are you sure you want to delete "${deleteConfirm.keyName}"? This action cannot be undone and any applications using this key will no longer have access.`}
-        confirmText="Delete"
-        cancelText="Cancel"
+        title="حذف کلید API"
+        message={`آیا مطمئن هستید که می‌خواهید "${deleteConfirm.keyName}" را حذف کنید؟ این عملیات قابل بازگشت نیست و هر برنامه‌ای که از این کلید استفاده می‌کند دیگر دسترسی نخواهد داشت.`}
+        confirmText="حذف"
+        cancelText="لغو"
         onConfirm={handleDeleteKey}
         onCancel={() => setDeleteConfirm({ isOpen: false, keyId: null, keyName: '' })}
         variant="danger"
@@ -144,20 +144,20 @@ export default function ApiKeysPage() {
 
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900">API Keys</h2>
-          <p className="text-slate-600 mt-1">Manage API keys for external application access</p>
+          <h2 className="text-2xl font-bold text-slate-900">کلیدهای API</h2>
+          <p className="text-slate-600 mt-1">مدیریت کلیدهای API برای دسترسی برنامه‌های خارجی</p>
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="flex items-center space-x-2 bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-lg transition-colors"
+          className="flex items-center space-x-2 space-x-reverse bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-lg transition-colors"
         >
           <Plus className="w-4 h-4" />
-          <span>Generate New Key</span>
+          <span>ایجاد کلید جدید</span>
         </button>
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6 flex items-center space-x-2">
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6 flex items-center space-x-2 space-x-reverse">
           <AlertCircle className="w-5 h-5 flex-shrink-0" />
           <span>{error}</span>
         </div>
@@ -165,16 +165,16 @@ export default function ApiKeysPage() {
 
       {newlyCreatedKey && (
         <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-6 mt-6 mb-6">
-          <div className="flex items-start space-x-3">
+          <div className="flex items-start space-x-3 space-x-reverse">
             <CheckCircle className="w-6 h-6 text-emerald-600 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
-              <h3 className="font-semibold text-emerald-900 mb-2">API Key Created Successfully</h3>
-              <div className="flex items-center space-x-2 bg-white rounded-lg p-3 border border-emerald-200">
-                <code className="flex-1 text-sm font-mono text-slate-900 break-all">{newlyCreatedKey}</code>
+              <h3 className="font-semibold text-emerald-900 mb-2">کلید API با موفقیت ایجاد شد</h3>
+              <div className="flex items-center space-x-2 space-x-reverse bg-white rounded-lg p-3 border border-emerald-200">
+                <code className="flex-1 text-sm font-mono text-slate-900 break-all" dir="ltr">{newlyCreatedKey}</code>
                 <button
                   onClick={() => copyToClipboard(newlyCreatedKey)}
                   className="flex-shrink-0 p-2 hover:bg-emerald-100 rounded transition-colors"
-                  title="Copy to clipboard"
+                  title="کپی در کلیپ‌بورد"
                 >
                   {copiedKey === newlyCreatedKey ? (
                     <CheckCircle className="w-4 h-4 text-emerald-600 animate-in zoom-in duration-200" />
@@ -197,13 +197,13 @@ export default function ApiKeysPage() {
       {apiKeys.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-xl shadow-lg">
           <Key className="w-16 h-16 mx-auto mb-4 text-slate-400" />
-          <h3 className="text-lg font-semibold text-slate-900 mb-2">No API Keys Yet</h3>
-          <p className="text-slate-600 mb-6">Generate your first API key to start using the API</p>
+          <h3 className="text-lg font-semibold text-slate-900 mb-2">هنوز کلید API ندارید</h3>
+          <p className="text-slate-600 mb-6">اولین کلید API خود را برای شروع استفاده از API ایجاد کنید</p>
           <button
             onClick={() => setShowCreateModal(true)}
             className="bg-slate-900 hover:bg-slate-800 text-white px-6 py-2 rounded-lg transition-colors"
           >
-            Generate API Key
+            ایجاد کلید API
           </button>
         </div>
       ) : (
@@ -212,31 +212,31 @@ export default function ApiKeysPage() {
             <table className="w-full">
               <thead className="bg-slate-50 border-b border-slate-200">
                 <tr>
-                  <th className="text-left px-6 py-4 text-sm font-semibold text-slate-700">Name</th>
-                  <th className="text-left px-6 py-4 text-sm font-semibold text-slate-700">API Key</th>
-                  <th className="text-left px-6 py-4 text-sm font-semibold text-slate-700">Permissions</th>
-                  <th className="text-left px-6 py-4 text-sm font-semibold text-slate-700">Status</th>
-                  <th className="text-left px-6 py-4 text-sm font-semibold text-slate-700">Last Used</th>
-                  <th className="text-left px-6 py-4 text-sm font-semibold text-slate-700">Created</th>
-                  <th className="text-right px-6 py-4 text-sm font-semibold text-slate-700">Actions</th>
+                  <th className="text-right px-6 py-4 text-sm font-semibold text-slate-700">نام</th>
+                  <th className="text-right px-6 py-4 text-sm font-semibold text-slate-700">کلید API</th>
+                  <th className="text-right px-6 py-4 text-sm font-semibold text-slate-700">دسترسی‌ها</th>
+                  <th className="text-right px-6 py-4 text-sm font-semibold text-slate-700">وضعیت</th>
+                  <th className="text-right px-6 py-4 text-sm font-semibold text-slate-700">آخرین استفاده</th>
+                  <th className="text-right px-6 py-4 text-sm font-semibold text-slate-700">تاریخ ایجاد</th>
+                  <th className="text-left px-6 py-4 text-sm font-semibold text-slate-700">عملیات</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
                 {apiKeys.map((key) => (
                   <tr key={key.id} className="hover:bg-slate-50 transition-colors">
                     <td className="px-6 py-4">
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-2 space-x-reverse">
                         <Key className="w-4 h-4 text-slate-400" />
                         <span className="font-medium text-slate-900">{key.name}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center space-x-2">
-                        <code className="text-sm text-slate-600 font-mono">{maskApiKey(key.key)}</code>
+                      <div className="flex items-center space-x-2 space-x-reverse">
+                        <code className="text-sm text-slate-600 font-mono" dir="ltr">{maskApiKey(key.key)}</code>
                         <button
                           onClick={() => copyToClipboard(key.key)}
                           className="p-1 hover:bg-slate-200 rounded transition-colors"
-                          title="Copy to clipboard"
+                          title="کپی در کلیپ‌بورد"
                         >
                           {copiedKey === key.key ? (
                             <CheckCircle className="w-4 h-4 text-emerald-600 animate-in zoom-in duration-200" />
@@ -247,15 +247,15 @@ export default function ApiKeysPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center space-x-1">
+                      <div className="flex items-center space-x-1 space-x-reverse">
                         {key.permissions.read && (
                           <span className="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-700">
-                            Read
+                            خواندن
                           </span>
                         )}
                         {key.permissions.write && (
                           <span className="px-2 py-1 text-xs font-semibold rounded-full bg-orange-100 text-orange-700">
-                            Write
+                            نوشتن
                           </span>
                         )}
                       </div>
@@ -263,33 +263,33 @@ export default function ApiKeysPage() {
                     <td className="px-6 py-4">
                       <button
                         onClick={() => handleToggleActive(key)}
-                        className="flex items-center space-x-1"
+                        className="flex items-center space-x-1 space-x-reverse"
                       >
                         {key.is_active ? (
                           <>
                             <CheckCircle className="w-4 h-4 text-emerald-600" />
-                            <span className="text-sm text-emerald-600 font-medium">Active</span>
+                            <span className="text-sm text-emerald-600 font-medium">فعال</span>
                           </>
                         ) : (
                           <>
                             <XCircle className="w-4 h-4 text-red-600" />
-                            <span className="text-sm text-red-600 font-medium">Inactive</span>
+                            <span className="text-sm text-red-600 font-medium">غیرفعال</span>
                           </>
                         )}
                       </button>
                     </td>
                     <td className="px-6 py-4 text-sm text-slate-600">
-                      {key.last_used_at ? new Date(key.last_used_at).toLocaleDateString() : 'Never'}
+                      {key.last_used_at ? new Date(key.last_used_at).toLocaleDateString('fa-IR') : 'هرگز'}
                     </td>
                     <td className="px-6 py-4 text-sm text-slate-600">
-                      {new Date(key.created_at).toLocaleDateString()}
+                      {new Date(key.created_at).toLocaleDateString('fa-IR')}
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center justify-end space-x-2">
+                      <div className="flex items-center justify-start space-x-2 space-x-reverse">
                         <button
                           onClick={() => openDeleteConfirm(key)}
                           className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                          title="Delete API key"
+                          title="حذف کلید API"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -304,16 +304,16 @@ export default function ApiKeysPage() {
       )}
 
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mt-6 mb-6">
-        <h3 className="font-semibold text-blue-900 mb-4 flex items-center space-x-2 text-lg">
+        <h3 className="font-semibold text-blue-900 mb-4 flex items-center space-x-2 space-x-reverse text-lg">
           <AlertCircle className="w-5 h-5" />
-          <span>API Usage Guide</span>
+          <span>راهنمای استفاده از API</span>
         </h3>
         <div className="text-sm text-blue-800 space-y-4">
-          <p className="font-medium">Use your API keys to authenticate requests to the Kojast API. All requests require the <code className="bg-blue-100 px-1.5 py-0.5 rounded">X-API-Key</code> header.</p>
+          <p className="font-medium">از کلیدهای API خود برای احراز هویت درخواست‌های Kojast API استفاده کنید. تمام درخواست‌ها نیاز به هدر <code className="bg-blue-100 px-1.5 py-0.5 rounded" dir="ltr">X-API-Key</code> دارند.</p>
 
           <div className="space-y-3">
             <div>
-              <h4 className="font-semibold text-blue-900 mb-2">Read Operations (Read Permission Required)</h4>
+              <h4 className="font-semibold text-blue-900 mb-2">عملیات خواندن (نیاز به دسترسی خواندن)</h4>
 
               <div className="bg-white rounded-lg p-3 font-mono text-xs overflow-x-auto border border-blue-200 mb-2">
                 <div className="text-emerald-600 font-semibold mb-1">GET /api/places</div>
@@ -335,7 +335,7 @@ export default function ApiKeysPage() {
             </div>
 
             <div>
-              <h4 className="font-semibold text-blue-900 mb-2">Write Operations (Write Permission Required)</h4>
+              <h4 className="font-semibold text-blue-900 mb-2">عملیات نوشتن (نیاز به دسترسی نوشتن)</h4>
 
               <div className="bg-white rounded-lg p-3 font-mono text-xs overflow-x-auto border border-blue-200 mb-2">
                 <div className="text-orange-600 font-semibold mb-1">POST /api/places</div>
@@ -372,7 +372,7 @@ export default function ApiKeysPage() {
             </div>
 
             <div>
-              <h4 className="font-semibold text-blue-900 mb-2">Example with JavaScript fetch()</h4>
+              <h4 className="font-semibold text-blue-900 mb-2">مثال با JavaScript fetch()</h4>
               <div className="bg-white rounded-lg p-3 font-mono text-xs overflow-x-auto border border-blue-200">
                 <div className="text-slate-600">
                   <div className="text-purple-600">const</div> response = <div className="inline text-purple-600">await</div> fetch('https://kojast.com/api/places', {'{'}</div>
@@ -386,29 +386,29 @@ export default function ApiKeysPage() {
             </div>
 
             <div>
-              <h4 className="font-semibold text-blue-900 mb-2">Response Codes</h4>
+              <h4 className="font-semibold text-blue-900 mb-2">کدهای پاسخ</h4>
               <div className="bg-white rounded-lg p-3 border border-blue-200">
                 <ul className="space-y-1 text-xs">
-                  <li><code className="text-emerald-600 font-semibold">200 OK</code> - Request successful</li>
-                  <li><code className="text-orange-600 font-semibold">201 Created</code> - Resource created successfully</li>
-                  <li><code className="text-red-600 font-semibold">401 Unauthorized</code> - Invalid or missing API key</li>
-                  <li><code className="text-red-600 font-semibold">403 Forbidden</code> - Insufficient permissions</li>
-                  <li><code className="text-red-600 font-semibold">404 Not Found</code> - Resource not found</li>
-                  <li><code className="text-red-600 font-semibold">500 Server Error</code> - Internal server error</li>
+                  <li><code className="text-emerald-600 font-semibold" dir="ltr">200 OK</code> - درخواست موفق</li>
+                  <li><code className="text-orange-600 font-semibold" dir="ltr">201 Created</code> - منبع با موفقیت ایجاد شد</li>
+                  <li><code className="text-red-600 font-semibold" dir="ltr">401 Unauthorized</code> - کلید API نامعتبر یا موجود نیست</li>
+                  <li><code className="text-red-600 font-semibold" dir="ltr">403 Forbidden</code> - دسترسی کافی نیست</li>
+                  <li><code className="text-red-600 font-semibold" dir="ltr">404 Not Found</code> - منبع یافت نشد</li>
+                  <li><code className="text-red-600 font-semibold" dir="ltr">500 Server Error</code> - خطای داخلی سرور</li>
                 </ul>
               </div>
             </div>
           </div>
 
           <div className="bg-blue-100 rounded-lg p-3 border border-blue-300">
-            <p className="font-semibold mb-2">Security Best Practices:</p>
+            <p className="font-semibold mb-2">بهترین شیوه‌های امنیتی:</p>
             <ul className="list-disc list-inside space-y-1 text-xs">
-              <li>Never share your API keys publicly or commit them to version control</li>
-              <li>Use environment variables to store API keys in your applications</li>
-              <li>Generate separate keys for different environments (dev, staging, production)</li>
-              <li>Grant only the minimum permissions needed (Read vs Write)</li>
-              <li>Rotate API keys regularly and immediately deactivate compromised keys</li>
-              <li>Monitor API key usage through the "Last Used" column</li>
+              <li>هرگز کلیدهای API خود را به صورت عمومی به اشتراک نگذارید یا آن‌ها را در کنترل نسخه ذخیره نکنید</li>
+              <li>از متغیرهای محیطی برای ذخیره کلیدهای API در برنامه‌های خود استفاده کنید</li>
+              <li>کلیدهای جداگانه برای محیط‌های مختلف (توسعه، آزمایشی، تولید) ایجاد کنید</li>
+              <li>فقط حداقل دسترسی‌های مورد نیاز را اعطا کنید (خواندن در مقابل نوشتن)</li>
+              <li>کلیدهای API را به طور منظم تغییر دهید و بلافاصله کلیدهای به خطر افتاده را غیرفعال کنید</li>
+              <li>استفاده از کلید API را از طریق ستون "آخرین استفاده" رصد کنید</li>
             </ul>
           </div>
         </div>
@@ -417,52 +417,52 @@ export default function ApiKeysPage() {
       {showCreateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6">
-            <h3 className="text-xl font-bold text-slate-900 mb-4">Generate New API Key</h3>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">ایجاد کلید API جدید</h3>
 
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Key Name
+                  نام کلید
                 </label>
                 <input
                   type="text"
                   value={newKeyName}
                   onChange={(e) => setNewKeyName(e.target.value)}
-                  placeholder="e.g., Mobile App, Development"
+                  placeholder="مثلاً اپلیکیشن موبایل، توسعه"
                   className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Permissions
+                  دسترسی‌ها
                 </label>
                 <div className="space-y-2">
-                  <label className="flex items-center space-x-3">
+                  <label className="flex items-center space-x-3 space-x-reverse">
                     <input
                       type="checkbox"
                       checked={newKeyPermissions.read}
                       onChange={(e) => setNewKeyPermissions({ ...newKeyPermissions, read: e.target.checked })}
                       className="w-4 h-4 text-slate-900 rounded"
                     />
-                    <span className="text-sm text-slate-700">Read Access (View places and categories)</span>
+                    <span className="text-sm text-slate-700">دسترسی خواندن (مشاهده مکان‌ها و دسته‌بندی‌ها)</span>
                   </label>
-                  <label className="flex items-center space-x-3">
+                  <label className="flex items-center space-x-3 space-x-reverse">
                     <input
                       type="checkbox"
                       checked={newKeyPermissions.write}
                       onChange={(e) => setNewKeyPermissions({ ...newKeyPermissions, write: e.target.checked })}
                       className="w-4 h-4 text-slate-900 rounded"
                     />
-                    <span className="text-sm text-slate-700">Write Access (Create, update, and delete)</span>
+                    <span className="text-sm text-slate-700">دسترسی نوشتن (ایجاد، به‌روزرسانی و حذف)</span>
                   </label>
                 </div>
               </div>
 
-             
+
             </div>
 
-            <div className="flex space-x-3 mt-6">
+            <div className="flex space-x-3 space-x-reverse mt-6">
               <button
                 onClick={() => {
                   setShowCreateModal(false);
@@ -472,14 +472,14 @@ export default function ApiKeysPage() {
                 }}
                 className="flex-1 px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors"
               >
-                Cancel
+                لغو
               </button>
               <button
                 onClick={handleCreateKey}
                 disabled={isCreating || !newKeyName.trim()}
                 className="flex-1 px-4 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isCreating ? 'Generating...' : 'Generate Key'}
+                {isCreating ? 'در حال ایجاد...' : 'ایجاد کلید'}
               </button>
             </div>
           </div>
