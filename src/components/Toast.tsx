@@ -46,7 +46,8 @@ export default function Toast({ message, type, onClose, duration = 3000 }: Toast
 
   return (
     <div
-      className={`${styles.bg} ${styles.border} ${styles.text} border px-4 py-3 rounded-lg shadow-lg flex items-center space-x-3 min-w-[300px] animate-in slide-in-from-top-5 fade-in duration-300`}
+      dir="rtl"
+      className={`${styles.bg} ${styles.border} ${styles.text} border px-4 py-3 rounded-lg shadow-lg flex items-center space-x-3 space-x-reverse min-w-[300px] animate-in slide-in-from-top-5 fade-in duration-300 font-['Vazirmatn']`}
     >
       <Icon className={`w-5 h-5 ${styles.iconColor} flex-shrink-0`} />
       <p className="flex-1 font-medium">{message}</p>

@@ -63,10 +63,10 @@ export default function ApiKeysPage() {
       setNewKeyName('');
       setNewKeyPermissions({ read: true, write: false });
       setShowCreateModal(false);
-      addToast('API key created successfully', 'success');
+      addToast('کلید API با موفقیت ایجاد شد', 'success');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create API key');
-      addToast('Failed to create API key', 'error');
+      addToast('ایجاد کلید API ناموفق بود', 'error');
     } finally {
       setIsCreating(false);
     }
@@ -79,10 +79,10 @@ export default function ApiKeysPage() {
       await api.apiKeys.delete(deleteConfirm.keyId);
       setApiKeys(apiKeys.filter(key => key.id !== deleteConfirm.keyId));
       setError('');
-      addToast('API key deleted successfully', 'success');
+      addToast('کلید API با موفقیت حذف شد', 'success');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete API key');
-      addToast('Failed to delete API key', 'error');
+      addToast('حذف کلید API ناموفق بود', 'error');
     } finally {
       setDeleteConfirm({ isOpen: false, keyId: null, keyName: '' });
     }
@@ -101,10 +101,10 @@ export default function ApiKeysPage() {
       const updated = await api.apiKeys.update(key.id, { is_active: !key.is_active });
       setApiKeys(apiKeys.map(k => k.id === key.id ? updated : k));
       setError('');
-      addToast(`API key ${updated.is_active ? 'activated' : 'deactivated'} successfully`, 'success');
+      addToast(`کلید API با موفقیت ${updated.is_active ? 'فعال' : 'غیرفعال'} شد`, 'success');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update API key');
-      addToast('Failed to update API key', 'error');
+      addToast('به‌روزرسانی کلید API ناموفق بود', 'error');
     }
   };
 
