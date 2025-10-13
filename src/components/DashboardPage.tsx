@@ -42,14 +42,14 @@ export default function DashboardPage() {
   }
 
   return (
-    <div>
-      <h2 className="text-2xl font-bold text-slate-900 mb-6">Dashboard Overview</h2>
+    <div dir="rtl">
+      <h2 className="text-2xl font-bold text-slate-900 mb-6">نمای کلی داشبورد</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <div className="bg-gradient-to-br from-slate-900 to-slate-700 rounded-xl shadow-lg p-6 text-white">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-slate-300 text-sm font-medium mb-1">Total Categories</p>
+              <p className="text-slate-300 text-sm font-medium mb-1">تعداد کل دسته‌بندی‌ها</p>
               <p className="text-4xl font-bold">{stats?.totalCategories || 0}</p>
             </div>
             <div className="bg-white bg-opacity-20 p-4 rounded-xl">
@@ -61,7 +61,7 @@ export default function DashboardPage() {
         <div className="bg-gradient-to-br from-emerald-600 to-emerald-500 rounded-xl shadow-lg p-6 text-white">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-emerald-100 text-sm font-medium mb-1">Total Places</p>
+              <p className="text-emerald-100 text-sm font-medium mb-1">تعداد کل مکان‌ها</p>
               <p className="text-4xl font-bold">{stats?.totalPlaces || 0}</p>
             </div>
             <div className="bg-white bg-opacity-20 p-4 rounded-xl">
@@ -72,9 +72,9 @@ export default function DashboardPage() {
       </div>
 
       <div className="bg-white rounded-xl shadow-lg p-6">
-        <div className="flex items-center space-x-2 mb-6">
+        <div className="flex items-center space-x-2 space-x-reverse mb-6">
           <Clock className="w-5 h-5 text-slate-600" />
-          <h3 className="text-lg font-semibold text-slate-900">Recent Places</h3>
+          <h3 className="text-lg font-semibold text-slate-900">مکان‌های اخیر</h3>
         </div>
 
         {stats?.recentPlaces && stats.recentPlaces.length > 0 ? (
@@ -89,9 +89,9 @@ export default function DashboardPage() {
                   <p className="text-sm text-slate-600 mt-1 line-clamp-1">{place.description}</p>
                   <p className="text-xs text-slate-500 mt-1">{place.address}</p>
                 </div>
-                <div className="ml-4">
+                <div className="mr-4">
                   <span className="px-2 py-1 text-xs font-semibold rounded-full bg-slate-200 text-slate-700">
-                    {place.category?.name || 'Unknown'}
+                    {place.category?.name || 'نامشخص'}
                   </span>
                 </div>
               </div>
@@ -100,7 +100,7 @@ export default function DashboardPage() {
         ) : (
           <div className="text-center py-8 text-slate-500">
             <MapPin className="w-12 h-12 mx-auto mb-3 text-slate-400" />
-            <p>No places yet. Start by creating some!</p>
+            <p>هیچ مکانی وجود ندارد. با ایجاد مکان‌ها شروع کنید!</p>
           </div>
         )}
       </div>
