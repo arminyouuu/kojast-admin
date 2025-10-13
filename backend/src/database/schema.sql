@@ -13,10 +13,12 @@ CREATE TABLE IF NOT EXISTS places (
   category_id INT NOT NULL,
   latitude FLOAT,
   longitude FLOAT,
+  expiration_date DATE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE,
-  INDEX idx_category (category_id)
+  INDEX idx_category (category_id),
+  INDEX idx_expiration (expiration_date)
 );
 
 CREATE TABLE IF NOT EXISTS place_images (
@@ -38,4 +40,13 @@ CREATE TABLE IF NOT EXISTS api_keys (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   last_used_at TIMESTAMP NULL,
   INDEX idx_api_key (api_key)
+);
+
+CREATE TABLE IF NOT EXISTS settings (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  setting_key VARCHAR(255) NOT NULL UNIQUE,
+  setting_value TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX idx_key (setting_key)
 );

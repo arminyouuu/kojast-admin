@@ -6,6 +6,7 @@ import DashboardPage from './components/DashboardPage';
 import CategoriesPage from './components/CategoriesPage';
 import PlacesPage from './components/PlacesPage';
 import ApiKeysPage from './components/ApiKeysPage';
+import SettingsPage from './components/SettingsPage';
 
 function AppContent() {
   const { user, isLoading } = useAuth();
@@ -30,6 +31,7 @@ function AppContent() {
           {currentPath === '/categories' && <CategoriesPage />}
           {currentPath === '/places' && <PlacesPage />}
           {currentPath === '/api-keys' && <ApiKeysPage />}
+          {currentPath === '/settings' && <SettingsPage />}
         </Layout>
       )}
     </Router>

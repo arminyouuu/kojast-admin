@@ -5,6 +5,7 @@ import categoryRoutes from './routes/categoryRoutes.js';
 import placeRoutes from './routes/placeRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
+import ExpirationCheckerService from './services/ExpirationCheckerService.js';
 
 dotenv.config();
 
@@ -37,4 +38,6 @@ app.use(errorHandler);
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+
+  ExpirationCheckerService.start();
 });

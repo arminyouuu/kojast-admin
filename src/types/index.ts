@@ -13,6 +13,8 @@ export interface Place {
   category_name?: string;
   latitude: number | null;
   longitude: number | null;
+  expiration_date: string | null;
+  expirationDate?: string | null;
   created_at: string;
   updated_at: string;
   createdAt?: string;
@@ -59,6 +61,14 @@ export interface ApiKey {
     read: boolean;
     write: boolean;
   };
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Setting {
+  id: number;
+  setting_key: string;
+  setting_value: string;
   created_at: string;
   updated_at: string;
 }

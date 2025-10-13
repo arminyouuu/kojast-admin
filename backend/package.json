@@ -9,13 +9,18 @@
     "dev": "node --watch src/server.js",
     "init-db": "node src/database/init.js"
   },
-  "keywords": ["kojast", "api", "mysql"],
+  "keywords": [
+    "kojast",
+    "api",
+    "mysql"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "mysql2": "^3.6.5",
-    "cors": "^2.8.5",
-    "dotenv": "^16.3.1"
+    "node-telegram-bot-api": "^0.66.0"
   }
 }

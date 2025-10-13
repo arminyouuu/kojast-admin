@@ -48,22 +48,22 @@ class PlaceRepository {
   }
 
   async create(placeData) {
-    const { name, description, address, categoryId, latitude, longitude } = placeData;
+    const { name, description, address, categoryId, latitude, longitude, expirationDate } = placeData;
     const result = await query(
-      `INSERT INTO places (name, description, address, category_id, latitude, longitude)
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [name, description, address, categoryId, latitude, longitude]
+      `INSERT INTO places (name, description, address, category_id, latitude, longitude, expiration_date)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [name, description, address, categoryId, latitude, longitude, expirationDate]
     );
     return result.insertId;
   }
 
   async update(id, placeData) {
-    const { name, description, address, categoryId, latitude, longitude } = placeData;
+    const { name, description, address, categoryId, latitude, longitude, expirationDate } = placeData;
     await query(
       `UPDATE places
-       SET name = ?, description = ?, address = ?, category_id = ?, latitude = ?, longitude = ?
+       SET name = ?, description = ?, address = ?, category_id = ?, latitude = ?, longitude = ?, expiration_date = ?
        WHERE id = ?`,
-      [name, description, address, categoryId, latitude, longitude, id]
+      [name, description, address, categoryId, latitude, longitude, expirationDate, id]
     );
     return await this.findById(id);
   }
@@ -76,6 +76,20 @@ class PlaceRepository {
   async exists(id) {
     const results = await query('SELECT id FROM places WHERE id = ?', [id]);
     return results.length > 0;
+  }
+
+  async findExpiringSoon(days = 7) {
+    const results = await query(
+      `SELECT p.*, c.name as category_name
+       FROM places p
+       LEFT JOIN categories c ON p.category_id = c.id
+       WHERE p.expiration_date IS NOT NULL
+       AND p.expiration_date >= CURDATE()
+       AND p.expiration_date <= DATE_ADD(CURDATE(), INTERVAL ? DAY)
+       ORDER BY p.expiration_date ASC`,
+      [days]
+    );
+    return results;
   }
 }
 

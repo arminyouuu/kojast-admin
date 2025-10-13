@@ -2,6 +2,7 @@ import express from 'express';
 import CategoryController from '../controllers/CategoryController.js';
 import PlaceController from '../controllers/PlaceController.js';
 import ApiKeyController from '../controllers/ApiKeyController.js';
+import settingsRoutes from './settingsRoutes.js';
 import { authenticate } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -78,5 +79,7 @@ router.get('/api-keys', ApiKeyController.getAll);
 router.post('/api-keys', ApiKeyController.create);
 router.put('/api-keys/:id', ApiKeyController.update);
 router.delete('/api-keys/:id', ApiKeyController.delete);
+
+router.use('/settings', settingsRoutes);
 
 export default router;

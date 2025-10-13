@@ -1,4 +1,4 @@
-import type { Category, Place, PaginatedResponse, DashboardStats, ApiKey } from '../types';
+import type { Category, Place, PaginatedResponse, DashboardStats, ApiKey, Setting } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
@@ -119,6 +119,20 @@ export const api = {
       }),
     delete: (id: string) =>
       fetchApi<void>(`/admin/api-keys/${id}`, {
+        method: 'DELETE',
+      }),
+  },
+
+  settings: {
+    getAll: () => fetchApi<Setting[]>('/admin/settings'),
+    get: (key: string) => fetchApi<Setting>(`/admin/settings/${key}`),
+    set: (key: string, value: string) =>
+      fetchApi<Setting>('/admin/settings', {
+        method: 'POST',
+        body: JSON.stringify({ key, value }),
+      }),
+    delete: (key: string) =>
+      fetchApi<void>(`/admin/settings/${key}`, {
         method: 'DELETE',
       }),
   },

@@ -17,6 +17,7 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
   const [categoryId, setCategoryId] = useState<number | ''>('');
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
+  const [expirationDate, setExpirationDate] = useState('');
   const [images, setImages] = useState<string[]>(['']);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -29,6 +30,7 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
       setCategoryId(place.category_id || place.categoryId || '');
       setLatitude(place.latitude?.toString() || '');
       setLongitude(place.longitude?.toString() || '');
+      setExpirationDate(place.expiration_date || place.expirationDate || '');
       const imageUrls = Array.isArray(place.images)
         ? place.images.filter(img => typeof img === 'string' && img.trim() !== '')
         : [];
@@ -69,6 +71,7 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
         categoryId: Number(categoryId),
         latitude: latitude ? parseFloat(latitude) : null,
         longitude: longitude ? parseFloat(longitude) : null,
+        expirationDate: expirationDate || null,
         images: filteredImages,
       };
 
@@ -192,6 +195,18 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
                 placeholder="مثال: 51.3890"
               />
             </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-2">
+              تاریخ انقضا
+            </label>
+            <input
+              type="date"
+              value={expirationDate}
+              onChange={(e) => setExpirationDate(e.target.value)}
+              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
+            />
           </div>
 
           <div>
