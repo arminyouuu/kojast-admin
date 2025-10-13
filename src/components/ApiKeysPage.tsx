@@ -332,7 +332,7 @@ export default function ApiKeysPage() {
               <h4 className="font-semibold text-blue-900 mb-2">Example with JavaScript fetch()</h4>
               <div className="bg-white rounded-lg p-3 font-mono text-xs overflow-x-auto border border-blue-200">
                 <div className="text-slate-600">
-                  <div className="text-purple-600">const</div> response = <div className="inline text-purple-600">await</div> fetch('https://api.kojast.com/api/places', {'{'}</div>
+                  <div className="text-purple-600">const</div> response = <div className="inline text-purple-600">await</div> fetch('https://kojast.com/api/places', {'{'}</div>
                 <div className="text-slate-600 ml-2">method: <span className="text-green-600">'GET'</span>,</div>
                 <div className="text-slate-600 ml-2">headers: {'{'}</div>
                 <div className="text-slate-600 ml-4"><span className="text-green-600">'X-API-Key'</span>: <span className="text-green-600">'your_api_key_here'</span></div>
