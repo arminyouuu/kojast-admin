@@ -16,7 +16,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
   res.json({
-    message: 'CityPlace API',
+    message: 'Kojast API',
     version: '1.0.0',
     endpoints: {
       public: {
