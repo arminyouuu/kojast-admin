@@ -119,6 +119,115 @@ export default function ApiKeysPage() {
         </div>
       )}
 
+      {apiKeys.length === 0 ? (
+        <div className="text-center py-12 bg-white rounded-xl shadow-lg">
+          <Key className="w-16 h-16 mx-auto mb-4 text-slate-400" />
+          <h3 className="text-lg font-semibold text-slate-900 mb-2">No API Keys Yet</h3>
+          <p className="text-slate-600 mb-6">Generate your first API key to start using the API</p>
+          <button
+            onClick={() => setShowCreateModal(true)}
+            className="bg-slate-900 hover:bg-slate-800 text-white px-6 py-2 rounded-lg transition-colors"
+          >
+            Generate API Key
+          </button>
+        </div>
+      ) : (
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-slate-50 border-b border-slate-200">
+                <tr>
+                  <th className="text-left px-6 py-4 text-sm font-semibold text-slate-700">Name</th>
+                  <th className="text-left px-6 py-4 text-sm font-semibold text-slate-700">API Key</th>
+                  <th className="text-left px-6 py-4 text-sm font-semibold text-slate-700">Permissions</th>
+                  <th className="text-left px-6 py-4 text-sm font-semibold text-slate-700">Status</th>
+                  <th className="text-left px-6 py-4 text-sm font-semibold text-slate-700">Last Used</th>
+                  <th className="text-left px-6 py-4 text-sm font-semibold text-slate-700">Created</th>
+                  <th className="text-right px-6 py-4 text-sm font-semibold text-slate-700">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-200">
+                {apiKeys.map((key) => (
+                  <tr key={key.id} className="hover:bg-slate-50 transition-colors">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center space-x-2">
+                        <Key className="w-4 h-4 text-slate-400" />
+                        <span className="font-medium text-slate-900">{key.name}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center space-x-2">
+                        <code className="text-sm text-slate-600 font-mono">{maskApiKey(key.key)}</code>
+                        <button
+                          onClick={() => copyToClipboard(key.key)}
+                          className="p-1 hover:bg-slate-200 rounded transition-colors"
+                          title="Copy to clipboard"
+                        >
+                          {copiedKey === key.key ? (
+                            <CheckCircle className="w-4 h-4 text-emerald-600 animate-in zoom-in duration-200" />
+                          ) : (
+                            <Copy className="w-4 h-4 text-slate-400 transition-transform hover:scale-110" />
+                          )}
+                        </button>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center space-x-1">
+                        {key.permissions.read && (
+                          <span className="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-700">
+                            Read
+                          </span>
+                        )}
+                        {key.permissions.write && (
+                          <span className="px-2 py-1 text-xs font-semibold rounded-full bg-orange-100 text-orange-700">
+                            Write
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <button
+                        onClick={() => handleToggleActive(key)}
+                        className="flex items-center space-x-1"
+                      >
+                        {key.is_active ? (
+                          <>
+                            <CheckCircle className="w-4 h-4 text-emerald-600" />
+                            <span className="text-sm text-emerald-600 font-medium">Active</span>
+                          </>
+                        ) : (
+                          <>
+                            <XCircle className="w-4 h-4 text-red-600" />
+                            <span className="text-sm text-red-600 font-medium">Inactive</span>
+                          </>
+                        )}
+                      </button>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-slate-600">
+                      {key.last_used_at ? new Date(key.last_used_at).toLocaleDateString() : 'Never'}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-slate-600">
+                      {new Date(key.created_at).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center justify-end space-x-2">
+                        <button
+                          onClick={() => handleDeleteKey(key.id)}
+                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          title="Delete API key"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
       {newlyCreatedKey && (
         <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-6 mb-6">
           <div className="flex items-start space-x-3">
@@ -260,115 +369,6 @@ export default function ApiKeysPage() {
           </div>
         </div>
       </div>
-
-      {apiKeys.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-xl shadow-lg">
-          <Key className="w-16 h-16 mx-auto mb-4 text-slate-400" />
-          <h3 className="text-lg font-semibold text-slate-900 mb-2">No API Keys Yet</h3>
-          <p className="text-slate-600 mb-6">Generate your first API key to start using the API</p>
-          <button
-            onClick={() => setShowCreateModal(true)}
-            className="bg-slate-900 hover:bg-slate-800 text-white px-6 py-2 rounded-lg transition-colors"
-          >
-            Generate API Key
-          </button>
-        </div>
-      ) : (
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-slate-50 border-b border-slate-200">
-                <tr>
-                  <th className="text-left px-6 py-4 text-sm font-semibold text-slate-700">Name</th>
-                  <th className="text-left px-6 py-4 text-sm font-semibold text-slate-700">API Key</th>
-                  <th className="text-left px-6 py-4 text-sm font-semibold text-slate-700">Permissions</th>
-                  <th className="text-left px-6 py-4 text-sm font-semibold text-slate-700">Status</th>
-                  <th className="text-left px-6 py-4 text-sm font-semibold text-slate-700">Last Used</th>
-                  <th className="text-left px-6 py-4 text-sm font-semibold text-slate-700">Created</th>
-                  <th className="text-right px-6 py-4 text-sm font-semibold text-slate-700">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-200">
-                {apiKeys.map((key) => (
-                  <tr key={key.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center space-x-2">
-                        <Key className="w-4 h-4 text-slate-400" />
-                        <span className="font-medium text-slate-900">{key.name}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center space-x-2">
-                        <code className="text-sm text-slate-600 font-mono">{maskApiKey(key.key)}</code>
-                        <button
-                          onClick={() => copyToClipboard(key.key)}
-                          className="p-1 hover:bg-slate-200 rounded transition-colors"
-                          title="Copy to clipboard"
-                        >
-                          {copiedKey === key.key ? (
-                            <CheckCircle className="w-4 h-4 text-emerald-600 animate-in zoom-in duration-200" />
-                          ) : (
-                            <Copy className="w-4 h-4 text-slate-400 transition-transform hover:scale-110" />
-                          )}
-                        </button>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center space-x-1">
-                        {key.permissions.read && (
-                          <span className="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-700">
-                            Read
-                          </span>
-                        )}
-                        {key.permissions.write && (
-                          <span className="px-2 py-1 text-xs font-semibold rounded-full bg-orange-100 text-orange-700">
-                            Write
-                          </span>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <button
-                        onClick={() => handleToggleActive(key)}
-                        className="flex items-center space-x-1"
-                      >
-                        {key.is_active ? (
-                          <>
-                            <CheckCircle className="w-4 h-4 text-emerald-600" />
-                            <span className="text-sm text-emerald-600 font-medium">Active</span>
-                          </>
-                        ) : (
-                          <>
-                            <XCircle className="w-4 h-4 text-red-600" />
-                            <span className="text-sm text-red-600 font-medium">Inactive</span>
-                          </>
-                        )}
-                      </button>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-slate-600">
-                      {key.last_used_at ? new Date(key.last_used_at).toLocaleDateString() : 'Never'}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-slate-600">
-                      {new Date(key.created_at).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center justify-end space-x-2">
-                        <button
-                          onClick={() => handleDeleteKey(key.id)}
-                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                          title="Delete API key"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
 
       {showCreateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
