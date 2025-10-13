@@ -27,10 +27,14 @@ router.post('/login', (req, res) => {
 
 router.use(authenticate);
 
+router.get('/categories', CategoryController.getAll);
+router.get('/categories/:id', CategoryController.getById);
 router.post('/categories', CategoryController.create);
 router.put('/categories/:id', CategoryController.update);
 router.delete('/categories/:id', CategoryController.delete);
 
+router.get('/places', PlaceController.getAll);
+router.get('/places/:id', PlaceController.getById);
 router.post('/places', PlaceController.create);
 router.put('/places/:id', PlaceController.update);
 router.delete('/places/:id', PlaceController.delete);

@@ -58,8 +58,8 @@ export const api = {
   },
 
   categories: {
-    getAll: () => fetchApi<Category[]>('/categories'),
-    getById: (id: string) => fetchApi<Category>(`/categories/${id}`),
+    getAll: () => fetchApi<Category[]>('/admin/categories'),
+    getById: (id: string) => fetchApi<Category>(`/admin/categories/${id}`),
     create: (name: string) =>
       fetchApi<Category>('/admin/categories', {
         method: 'POST',
@@ -82,9 +82,9 @@ export const api = {
       if (params?.categoryId) query.append('categoryId', params.categoryId.toString());
       if (params?.page) query.append('page', params.page.toString());
       if (params?.limit) query.append('limit', params.limit.toString());
-      return fetchApi<PaginatedResponse<Place>>(`/places?${query.toString()}`);
+      return fetchApi<PaginatedResponse<Place>>(`/admin/places?${query.toString()}`);
     },
-    getById: (id: string) => fetchApi<Place>(`/places/${id}`),
+    getById: (id: string) => fetchApi<Place>(`/admin/places/${id}`),
     create: (data: Omit<Place, 'id' | 'created_at' | 'updated_at'> & { images: string[] }) =>
       fetchApi<Place>('/admin/places', {
         method: 'POST',
