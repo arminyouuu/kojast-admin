@@ -9,7 +9,7 @@
     "dev": "node --watch src/server.js",
     "init-db": "node src/database/init.js"
   },
-  "keywords": ["cityplace", "api", "mysql"],
+  "keywords": ["kojast", "api", "mysql"],
   "author": "",
   "license": "ISC",
   "dependencies": {
