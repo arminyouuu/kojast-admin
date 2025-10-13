@@ -23,7 +23,6 @@ export default function PlacesPage() {
     placeName: ''
   });
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
-  const [isRTL, setIsRTL] = useState(false);
 
   useEffect(() => {
     loadCategories();
@@ -131,21 +130,15 @@ export default function PlacesPage() {
   }
 
   return (
-    <div dir={isRTL ? 'rtl' : 'ltr'}>
+    <div dir="rtl">
       <ToastContainer toasts={toasts} onRemove={removeToast} />
 
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900">{isRTL ? 'مکان‌ها' : 'Places'}</h2>
-          <p className="text-slate-600 text-sm mt-1">{isRTL ? `مجموع: ${total} مکان` : `Total: ${total} places`}</p>
+          <h2 className="text-2xl font-bold text-slate-900">مکان‌ها</h2>
+          <p className="text-slate-600 text-sm mt-1">مجموع: {total} مکان</p>
         </div>
         <div className="flex flex-wrap gap-3">
-          <button
-            onClick={() => setIsRTL(!isRTL)}
-            className="px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors text-sm font-medium"
-          >
-            {isRTL ? 'English' : 'فارسی'}
-          </button>
           <select
             value={filterCategoryId || ''}
             onChange={(e) => {
@@ -154,7 +147,7 @@ export default function PlacesPage() {
             }}
             className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
           >
-            <option value="">{isRTL ? 'همه دسته‌بندی‌ها' : 'All Categories'}</option>
+            <option value="">همه دسته‌بندی‌ها</option>
             {categories.map((category) => (
               <option key={category.id} value={category.id}>
                 {category.name}
@@ -163,10 +156,10 @@ export default function PlacesPage() {
           </select>
           <button
             onClick={() => setShowModal(true)}
-            className={`flex items-center ${isRTL ? 'space-x-reverse' : ''} space-x-2 bg-slate-900 text-white px-4 py-2 rounded-lg hover:bg-slate-800 transition-colors`}
+            className="flex items-center space-x-reverse space-x-2 bg-slate-900 text-white px-4 py-2 rounded-lg hover:bg-slate-800 transition-colors"
           >
             <Plus className="w-4 h-4" />
-            <span>{isRTL ? 'افزودن مکان' : 'Add Place'}</span>
+            <span>افزودن مکان</span>
           </button>
         </div>
       </div>
@@ -182,20 +175,20 @@ export default function PlacesPage() {
           <table className="min-w-full divide-y divide-slate-200">
             <thead className="bg-slate-50">
               <tr>
-                <th className={`px-6 py-3 ${isRTL ? 'text-right' : 'text-left'} text-xs font-medium text-slate-500 uppercase tracking-wider`}>
-                  {isRTL ? 'مکان' : 'Place'}
+                <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">
+                  مکان
                 </th>
-                <th className={`px-6 py-3 ${isRTL ? 'text-right' : 'text-left'} text-xs font-medium text-slate-500 uppercase tracking-wider`}>
-                  {isRTL ? 'دسته‌بندی' : 'Category'}
+                <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">
+                  دسته‌بندی
                 </th>
-                <th className={`px-6 py-3 ${isRTL ? 'text-right' : 'text-left'} text-xs font-medium text-slate-500 uppercase tracking-wider`}>
-                  {isRTL ? 'آدرس' : 'Address'}
+                <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">
+                  آدرس
                 </th>
-                <th className={`px-6 py-3 ${isRTL ? 'text-right' : 'text-left'} text-xs font-medium text-slate-500 uppercase tracking-wider`}>
-                  {isRTL ? 'تصاویر' : 'Images'}
+                <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">
+                  تصاویر
                 </th>
-                <th className={`px-6 py-3 ${isRTL ? 'text-left' : 'text-right'} text-xs font-medium text-slate-500 uppercase tracking-wider`}>
-                  {isRTL ? 'عملیات' : 'Actions'}
+                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                  عملیات
                 </th>
               </tr>
             </thead>
@@ -204,7 +197,7 @@ export default function PlacesPage() {
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center">
                     <MapPin className="w-12 h-12 text-slate-400 mx-auto mb-3" />
-                    <p className="text-slate-500">{isRTL ? 'هنوز هیچ مکانی وجود ندارد. اولین مورد را ایجاد کنید!' : 'No places yet. Create your first one!'}</p>
+                    <p className="text-slate-500">هنوز هیچ مکانی وجود ندارد. اولین مورد را ایجاد کنید!</p>
                   </td>
                 </tr>
               ) : (
@@ -225,15 +218,15 @@ export default function PlacesPage() {
                       {place.address}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className={`flex items-center text-sm text-slate-500 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <Image className={`w-4 h-4 ${isRTL ? 'ml-1' : 'mr-1'}`} />
+                      <div className="flex items-center text-sm text-slate-500 flex-row-reverse">
+                        <Image className="w-4 h-4 ml-1" />
                         {place.images?.length || 0}
                       </div>
                     </td>
-                    <td className={`px-6 py-4 whitespace-nowrap ${isRTL ? 'text-left' : 'text-right'} text-sm`}>
+                    <td className="px-6 py-4 whitespace-nowrap text-left text-sm">
                       <button
                         onClick={() => handleEdit(place)}
-                        className={`text-slate-600 hover:text-slate-900 ${isRTL ? 'ml-4' : 'mr-4'}`}
+                        className="text-slate-600 hover:text-slate-900 ml-4"
                       >
                         <Edit2 className="w-4 h-4 inline" />
                       </button>
@@ -254,22 +247,22 @@ export default function PlacesPage() {
         {totalPages > 1 && (
           <div className="bg-slate-50 px-6 py-4 flex items-center justify-between border-t border-slate-200">
             <div className="text-sm text-slate-600">
-              {isRTL ? `صفحه ${currentPage} از ${totalPages}` : `Page ${currentPage} of ${totalPages}`}
+              صفحه {currentPage} از {totalPages}
             </div>
-            <div className={`flex ${isRTL ? 'space-x-reverse' : ''} space-x-2`}>
+            <div className="flex space-x-reverse space-x-2">
               <button
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
                 className="px-3 py-2 border border-slate-300 rounded-lg hover:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isRTL ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+                <ChevronRight className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
                 className="px-3 py-2 border border-slate-300 rounded-lg hover:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isRTL ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                <ChevronLeft className="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -287,12 +280,10 @@ export default function PlacesPage() {
 
       <ConfirmModal
         isOpen={deleteConfirm.show}
-        title={isRTL ? 'حذف مکان' : 'Delete Place'}
-        message={isRTL
-          ? `آیا مطمئن هستید که می‌خواهید "${deleteConfirm.placeName}" را حذف کنید؟ این عملیات قابل بازگشت نیست.`
-          : `Are you sure you want to delete "${deleteConfirm.placeName}"? This action cannot be undone.`}
-        confirmText={isRTL ? 'حذف' : 'Delete'}
-        cancelText={isRTL ? 'لغو' : 'Cancel'}
+        title="حذف مکان"
+        message={`آیا مطمئن هستید که می‌خواهید "${deleteConfirm.placeName}" را حذف کنید؟ این عملیات قابل بازگشت نیست.`}
+        confirmText="حذف"
+        cancelText="لغو"
         onConfirm={handleDeleteConfirm}
         onCancel={handleDeleteCancel}
         variant="danger"
