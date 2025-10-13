@@ -53,16 +53,16 @@ export default function CategoriesPage() {
       setIsSubmitting(true);
       if (editingCategory) {
         await api.categories.update(editingCategory.id, categoryName);
-        addToast('Category updated successfully', 'success');
+        addToast('دسته‌بندی با موفقیت به‌روزرسانی شد', 'success');
       } else {
         await api.categories.create(categoryName);
-        addToast('Category created successfully', 'success');
+        addToast('دسته‌بندی با موفقیت ایجاد شد', 'success');
       }
       await loadCategories();
       handleCloseModal();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save category');
-      addToast('Failed to save category', 'error');
+      setError(err instanceof Error ? err.message : 'خطا در ذخیره دسته‌بندی');
+      addToast('خطا در ذخیره دسته‌بندی', 'error');
     } finally {
       setIsSubmitting(false);
     }
@@ -83,11 +83,11 @@ export default function CategoriesPage() {
       await api.categories.delete(deleteConfirm.categoryId);
       await loadCategories();
       setDeleteConfirm({ show: false, categoryId: null, categoryName: '' });
-      addToast('Category deleted successfully', 'success');
+      addToast('دسته‌بندی با موفقیت حذف شد', 'success');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete category');
+      setError(err instanceof Error ? err.message : 'خطا در حذف دسته‌بندی');
       setDeleteConfirm({ show: false, categoryId: null, categoryName: '' });
-      addToast('Failed to delete category', 'error');
+      addToast('خطا در حذف دسته‌بندی', 'error');
     }
   };
 
@@ -116,17 +116,17 @@ export default function CategoriesPage() {
   }
 
   return (
-    <div>
+    <div dir="rtl">
       <ToastContainer toasts={toasts} onRemove={removeToast} />
 
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-slate-900">Categories</h2>
+        <h2 className="text-2xl font-bold text-slate-900">دسته‌بندی‌ها</h2>
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center space-x-2 bg-slate-900 text-white px-4 py-2 rounded-lg hover:bg-slate-800 transition-colors"
+          className="flex items-center space-x-2 space-x-reverse bg-slate-900 text-white px-4 py-2 rounded-lg hover:bg-slate-800 transition-colors"
         >
           <Plus className="w-4 h-4" />
-          <span>Add Category</span>
+          <span>افزودن دسته‌بندی</span>
         </button>
       </div>
 
@@ -140,14 +140,14 @@ export default function CategoriesPage() {
         <table className="min-w-full divide-y divide-slate-200">
           <thead className="bg-slate-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                ID
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                Name
+              <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">
+                شناسه
               </th>
               <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">
-                Actions
+                نام
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                عملیات
               </th>
             </tr>
           </thead>
@@ -156,7 +156,7 @@ export default function CategoriesPage() {
               <tr>
                 <td colSpan={3} className="px-6 py-12 text-center">
                   <FolderTree className="w-12 h-12 text-slate-400 mx-auto mb-3" />
-                  <p className="text-slate-500">No categories yet. Create your first one!</p>
+                  <p className="text-slate-500">هیچ دسته‌بندی وجود ندارد. اولین دسته‌بندی را ایجاد کنید!</p>
                 </td>
               </tr>
             ) : (
@@ -168,10 +168,10 @@ export default function CategoriesPage() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">
                     {category.name}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
+                  <td className="px-6 py-4 whitespace-nowrap text-left text-sm">
                     <button
                       onClick={() => handleEdit(category)}
-                      className="text-slate-600 hover:text-slate-900 mr-4"
+                      className="text-slate-600 hover:text-slate-900 ml-4"
                     >
                       <Edit2 className="w-4 h-4 inline" />
                     </button>
@@ -191,13 +191,13 @@ export default function CategoriesPage() {
 
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6" dir="rtl">
             <h3 className="text-xl font-bold text-slate-900 mb-4">
-              {editingCategory ? 'Edit Category' : 'Add New Category'}
+              {editingCategory ? 'ویرایش دسته‌بندی' : 'افزودن دسته‌بندی جدید'}
             </h3>
             <div className="mb-6">
               <label htmlFor="categoryName" className="block text-sm font-medium text-slate-700 mb-2">
-                Category Name
+                نام دسته‌بندی
               </label>
               <input
                 id="categoryName"
@@ -205,23 +205,23 @@ export default function CategoriesPage() {
                 value={categoryName}
                 onChange={(e) => setCategoryName(e.target.value)}
                 className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
-                placeholder="e.g., Restaurants, Gyms, Cafés"
+                placeholder="مثال: رستوران‌ها، باشگاه‌ها، کافه‌ها"
               />
             </div>
-            <div className="flex justify-end space-x-3">
+            <div className="flex justify-end space-x-3 space-x-reverse">
               <button
                 onClick={handleCloseModal}
                 disabled={isSubmitting}
                 className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
               >
-                Cancel
+                لغو
               </button>
               <button
                 onClick={handleSubmit}
                 disabled={isSubmitting || !categoryName.trim()}
                 className="px-4 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50"
               >
-                {isSubmitting ? 'Saving...' : 'Save'}
+                {isSubmitting ? 'در حال ذخیره...' : 'ذخیره'}
               </button>
             </div>
           </div>
@@ -230,10 +230,10 @@ export default function CategoriesPage() {
 
       <ConfirmModal
         isOpen={deleteConfirm.show}
-        title="Delete Category"
-        message={`Are you sure you want to delete "${deleteConfirm.categoryName}"? This action cannot be undone.`}
-        confirmText="Delete"
-        cancelText="Cancel"
+        title="حذف دسته‌بندی"
+        message={`آیا مطمئن هستید که می‌خواهید "${deleteConfirm.categoryName}" را حذف کنید؟ این عملیات قابل بازگشت نیست.`}
+        confirmText="حذف"
+        cancelText="لغو"
         onConfirm={handleDeleteConfirm}
         onCancel={handleDeleteCancel}
         variant="danger"
