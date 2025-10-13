@@ -31,7 +31,7 @@ export default function Layout({ children, currentPath, onNavigate }: LayoutProp
       }`}>
         <div className="flex flex-col h-screen">
           <div className="flex items-center justify-between h-16 px-6 border-b border-slate-200 flex-shrink-0">
-            <h1 className="text-xl font-bold text-slate-900">پنل مدیریت کجاست</h1>
+            <h1 className="text-xl font-bold text-slate-900">پنل مدیریتِ کجاست</h1>
             <button
               onClick={() => setIsMobileMenuOpen(false)}
               className="lg:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
