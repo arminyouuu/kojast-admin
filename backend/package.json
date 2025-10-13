@@ -1,7 +1,7 @@
 {
-  "name": "cityplace-backend",
+  "name": "kojast-backend",
   "version": "1.0.0",
-  "description": "CityPlace Backend API with MySQL",
+  "description": "Kojast Backend API with MySQL",
   "main": "src/server.js",
   "type": "module",
   "scripts": {
