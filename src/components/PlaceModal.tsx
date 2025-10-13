@@ -52,7 +52,7 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
 
   const handleSubmit = async () => {
     if (!name.trim() || !description.trim() || !address.trim() || !categoryId) {
-      setError('Please fill in all required fields');
+      setError('لطفاً تمام فیلدهای الزامی را پر کنید');
       return;
     }
 
@@ -80,7 +80,7 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
 
       onSuccess();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save place');
+      setError(err instanceof Error ? err.message : 'ذخیره مکان با خطا مواجه شد');
     } finally {
       setIsSubmitting(false);
     }
@@ -88,10 +88,10 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full my-8">
+      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full my-8" dir="rtl">
         <div className="flex justify-between items-center p-6 border-b border-slate-200">
           <h3 className="text-xl font-bold text-slate-900">
-            {place ? 'Edit Place' : 'Add New Place'}
+            {place ? 'ویرایش مکان' : 'افزودن مکان جدید'}
           </h3>
           <button
             onClick={onClose}
@@ -110,27 +110,27 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
 
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">
-              Name <span className="text-red-500">*</span>
+              نام <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
-              placeholder="e.g., Café Central"
+              placeholder="مثال: کافه مرکزی"
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">
-              Category <span className="text-red-500">*</span>
+              دسته‌بندی <span className="text-red-500">*</span>
             </label>
             <select
               value={categoryId}
               onChange={(e) => setCategoryId(Number(e.target.value))}
               className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
             >
-              <option value="">Select a category</option>
+              <option value="">یک دسته‌بندی انتخاب کنید</option>
               {categories.map((category) => (
                 <option key={category.id} value={category.id}>
                   {category.name}
@@ -141,34 +141,34 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
 
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">
-              Description <span className="text-red-500">*</span>
+              توضیحات <span className="text-red-500">*</span>
             </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
               className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none resize-none"
-              placeholder="Describe this place..."
+              placeholder="این مکان را توضیح دهید..."
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">
-              Address <span className="text-red-500">*</span>
+              آدرس <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
-              placeholder="e.g., 123 Main St, City"
+              placeholder="مثال: خیابان آزادی، پلاک ۱۲۳"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">
-                Latitude
+                عرض جغرافیایی
               </label>
               <input
                 type="number"
@@ -176,12 +176,12 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
                 value={latitude}
                 onChange={(e) => setLatitude(e.target.value)}
                 className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
-                placeholder="e.g., 40.7128"
+                placeholder="مثال: 35.6892"
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">
-                Longitude
+                طول جغرافیایی
               </label>
               <input
                 type="number"
@@ -189,7 +189,7 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
                 value={longitude}
                 onChange={(e) => setLongitude(e.target.value)}
                 className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
-                placeholder="e.g., -74.0060"
+                placeholder="مثال: 51.3890"
               />
             </div>
           </div>
@@ -197,20 +197,20 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
           <div>
             <div className="flex justify-between items-center mb-2">
               <label className="block text-sm font-medium text-slate-700">
-                Image URLs
+                لینک تصاویر
               </label>
               <button
                 type="button"
                 onClick={handleAddImage}
-                className="flex items-center space-x-1 text-sm text-slate-600 hover:text-slate-900"
+                className="flex items-center space-x-reverse space-x-1 text-sm text-slate-600 hover:text-slate-900"
               >
                 <Plus className="w-4 h-4" />
-                <span>Add Image</span>
+                <span>افزودن تصویر</span>
               </button>
             </div>
             <div className="space-y-2">
               {images.map((image, index) => (
-                <div key={index} className="flex space-x-2">
+                <div key={index} className="flex space-x-reverse space-x-2">
                   <input
                     type="url"
                     value={image}
@@ -233,20 +233,20 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
           </div>
         </div>
 
-        <div className="flex justify-end space-x-3 p-6 border-t border-slate-200">
+        <div className="flex justify-end space-x-reverse space-x-3 p-6 border-t border-slate-200">
           <button
             onClick={onClose}
             disabled={isSubmitting}
             className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
           >
-            Cancel
+            لغو
           </button>
           <button
             onClick={handleSubmit}
             disabled={isSubmitting}
             className="px-4 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50"
           >
-            {isSubmitting ? 'Saving...' : 'Save Place'}
+            {isSubmitting ? 'در حال ذخیره...' : 'ذخیره مکان'}
           </button>
         </div>
       </div>
