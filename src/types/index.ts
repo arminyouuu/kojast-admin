@@ -44,7 +44,7 @@ export interface User {
 export interface DashboardStats {
   totalCategories: number;
   totalPlaces: number;
-  recentPlaces: number;
+  recentPlaces: Place[];
 }
 
 export interface ApiKey {

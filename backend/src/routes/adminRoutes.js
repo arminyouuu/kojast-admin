@@ -45,14 +45,29 @@ router.get('/dashboard/stats', async (req, res, next) => {
 
     const [placesCount] = await query('SELECT COUNT(*) as count FROM places');
     const [categoriesCount] = await query('SELECT COUNT(*) as count FROM categories');
-    const [recentPlaces] = await query(
-      'SELECT COUNT(*) as count FROM places WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)'
+    const recentPlaces = await query(
+      `SELECT p.*, c.name as category_name
+       FROM places p
+       LEFT JOIN categories c ON p.category_id = c.id
+       ORDER BY p.created_at DESC
+       LIMIT 5`
     );
 
     res.json({
       totalPlaces: placesCount.count,
       totalCategories: categoriesCount.count,
-      recentPlaces: recentPlaces.count
+      recentPlaces: recentPlaces.map(place => ({
+        id: place.id,
+        name: place.name,
+        description: place.description,
+        address: place.address,
+        category_id: place.category_id,
+        latitude: place.latitude,
+        longitude: place.longitude,
+        created_at: place.created_at,
+        updated_at: place.updated_at,
+        category: place.category_name ? { id: place.category_id, name: place.category_name } : null
+      }))
     });
   } catch (error) {
     next(error);
