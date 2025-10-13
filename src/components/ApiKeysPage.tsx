@@ -416,11 +416,7 @@ export default function ApiKeysPage() {
                 </div>
               </div>
 
-              <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-                <p className="text-sm text-amber-800">
-                  <strong>Important:</strong> The API key will only be shown once. Make sure to copy and save it securely.
-                </p>
-              </div>
+             
             </div>
 
             <div className="flex space-x-3 mt-6">
