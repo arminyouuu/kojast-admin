@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { api } from '../lib/api';
 import type { ApiKey } from '../types';
 import { Key, Plus, Trash2, Copy, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import ConfirmModal from './ConfirmModal';
+import ToastContainer, { type ToastMessage } from './ToastContainer';
 
 export default function ApiKeysPage() {
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
@@ -13,10 +15,25 @@ export default function ApiKeysPage() {
   const [isCreating, setIsCreating] = useState(false);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [newlyCreatedKey, setNewlyCreatedKey] = useState<string | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; keyId: string | null; keyName: string }>({
+    isOpen: false,
+    keyId: null,
+    keyName: '',
+  });
+  const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   useEffect(() => {
     loadApiKeys();
   }, []);
+
+  const addToast = (message: string, type: 'success' | 'error' | 'info') => {
+    const id = Date.now().toString();
+    setToasts((prev) => [...prev, { id, message, type }]);
+  };
+
+  const removeToast = (id: string) => {
+    setToasts((prev) => prev.filter((toast) => toast.id !== id));
+  };
 
   const loadApiKeys = async () => {
     try {
@@ -46,25 +63,37 @@ export default function ApiKeysPage() {
       setNewKeyName('');
       setNewKeyPermissions({ read: true, write: false });
       setShowCreateModal(false);
+      addToast('API key created successfully', 'success');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create API key');
+      addToast('Failed to create API key', 'error');
     } finally {
       setIsCreating(false);
     }
   };
 
-  const handleDeleteKey = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this API key? This action cannot be undone.')) {
-      return;
-    }
+  const handleDeleteKey = async () => {
+    if (!deleteConfirm.keyId) return;
 
     try {
-      await api.apiKeys.delete(id);
-      setApiKeys(apiKeys.filter(key => key.id !== id));
+      await api.apiKeys.delete(deleteConfirm.keyId);
+      setApiKeys(apiKeys.filter(key => key.id !== deleteConfirm.keyId));
       setError('');
+      addToast('API key deleted successfully', 'success');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete API key');
+      addToast('Failed to delete API key', 'error');
+    } finally {
+      setDeleteConfirm({ isOpen: false, keyId: null, keyName: '' });
     }
+  };
+
+  const openDeleteConfirm = (key: ApiKey) => {
+    setDeleteConfirm({
+      isOpen: true,
+      keyId: key.id,
+      keyName: key.name,
+    });
   };
 
   const handleToggleActive = async (key: ApiKey) => {
@@ -72,8 +101,10 @@ export default function ApiKeysPage() {
       const updated = await api.apiKeys.update(key.id, { is_active: !key.is_active });
       setApiKeys(apiKeys.map(k => k.id === key.id ? updated : k));
       setError('');
+      addToast(`API key ${updated.is_active ? 'activated' : 'deactivated'} successfully`, 'success');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update API key');
+      addToast('Failed to update API key', 'error');
     }
   };
 
@@ -98,6 +129,19 @@ export default function ApiKeysPage() {
 
   return (
     <div>
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
+
+      <ConfirmModal
+        isOpen={deleteConfirm.isOpen}
+        title="Delete API Key"
+        message={`Are you sure you want to delete "${deleteConfirm.keyName}"? This action cannot be undone and any applications using this key will no longer have access.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={handleDeleteKey}
+        onCancel={() => setDeleteConfirm({ isOpen: false, keyId: null, keyName: '' })}
+        variant="danger"
+      />
+
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="text-2xl font-bold text-slate-900">API Keys</h2>
@@ -243,7 +287,7 @@ export default function ApiKeysPage() {
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-end space-x-2">
                         <button
-                          onClick={() => handleDeleteKey(key.id)}
+                          onClick={() => openDeleteConfirm(key)}
                           className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                           title="Delete API key"
                         >

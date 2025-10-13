@@ -3,6 +3,7 @@ import { api } from '../lib/api';
 import type { Category } from '../types';
 import { Plus, Edit2, Trash2, FolderTree } from 'lucide-react';
 import ConfirmModal from './ConfirmModal';
+import ToastContainer, { type ToastMessage } from './ToastContainer';
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -17,10 +18,20 @@ export default function CategoriesPage() {
     categoryId: null,
     categoryName: ''
   });
+  const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   useEffect(() => {
     loadCategories();
   }, []);
+
+  const addToast = (message: string, type: 'success' | 'error' | 'info') => {
+    const id = Date.now().toString();
+    setToasts((prev) => [...prev, { id, message, type }]);
+  };
+
+  const removeToast = (id: string) => {
+    setToasts((prev) => prev.filter((toast) => toast.id !== id));
+  };
 
   const loadCategories = async () => {
     try {
@@ -42,13 +53,16 @@ export default function CategoriesPage() {
       setIsSubmitting(true);
       if (editingCategory) {
         await api.categories.update(editingCategory.id, categoryName);
+        addToast('Category updated successfully', 'success');
       } else {
         await api.categories.create(categoryName);
+        addToast('Category created successfully', 'success');
       }
       await loadCategories();
       handleCloseModal();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save category');
+      addToast('Failed to save category', 'error');
     } finally {
       setIsSubmitting(false);
     }
@@ -69,9 +83,11 @@ export default function CategoriesPage() {
       await api.categories.delete(deleteConfirm.categoryId);
       await loadCategories();
       setDeleteConfirm({ show: false, categoryId: null, categoryName: '' });
+      addToast('Category deleted successfully', 'success');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete category');
       setDeleteConfirm({ show: false, categoryId: null, categoryName: '' });
+      addToast('Failed to delete category', 'error');
     }
   };
 
@@ -101,6 +117,8 @@ export default function CategoriesPage() {
 
   return (
     <div>
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
+
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-slate-900">Categories</h2>
         <button

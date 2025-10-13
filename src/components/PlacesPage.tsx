@@ -4,6 +4,7 @@ import type { Place, Category } from '../types';
 import { Plus, Edit2, Trash2, MapPin, ChevronLeft, ChevronRight, Image } from 'lucide-react';
 import PlaceModal from './PlaceModal';
 import ConfirmModal from './ConfirmModal';
+import ToastContainer, { type ToastMessage } from './ToastContainer';
 
 export default function PlacesPage() {
   const [places, setPlaces] = useState<Place[]>([]);
@@ -21,6 +22,7 @@ export default function PlacesPage() {
     placeId: null,
     placeName: ''
   });
+  const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   useEffect(() => {
     loadCategories();
@@ -29,6 +31,15 @@ export default function PlacesPage() {
   useEffect(() => {
     loadPlaces();
   }, [filterCategoryId, currentPage]);
+
+  const addToast = (message: string, type: 'success' | 'error' | 'info') => {
+    const id = Date.now().toString();
+    setToasts((prev) => [...prev, { id, message, type }]);
+  };
+
+  const removeToast = (id: string) => {
+    setToasts((prev) => prev.filter((toast) => toast.id !== id));
+  };
 
   const loadCategories = async () => {
     try {
@@ -73,9 +84,11 @@ export default function PlacesPage() {
       await api.places.delete(deleteConfirm.placeId);
       await loadPlaces();
       setDeleteConfirm({ show: false, placeId: null, placeName: '' });
+      addToast('Place deleted successfully', 'success');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete place');
       setDeleteConfirm({ show: false, placeId: null, placeName: '' });
+      addToast('Failed to delete place', 'error');
     }
   };
 
@@ -96,6 +109,7 @@ export default function PlacesPage() {
   const handleSaveSuccess = () => {
     loadPlaces();
     handleCloseModal();
+    addToast(editingPlace ? 'Place updated successfully' : 'Place created successfully', 'success');
   };
 
   const getCategoryName = (place: Place) => {
@@ -117,6 +131,8 @@ export default function PlacesPage() {
 
   return (
     <div>
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
+
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <div>
           <h2 className="text-2xl font-bold text-slate-900">Places</h2>
