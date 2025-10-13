@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
   res.json({
-    message: 'CityPlace API',
+    message: 'Kojast API',
     version: '1.0.0',
     endpoints: {
       categories: '/categories',
