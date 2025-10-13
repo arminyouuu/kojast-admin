@@ -3,6 +3,7 @@ import { api } from '../lib/api';
 import type { Place, Category } from '../types';
 import { Plus, Edit2, Trash2, MapPin, ChevronLeft, ChevronRight, Image } from 'lucide-react';
 import PlaceModal from './PlaceModal';
+import ConfirmModal from './ConfirmModal';
 
 export default function PlacesPage() {
   const [places, setPlaces] = useState<Place[]>([]);
@@ -15,6 +16,11 @@ export default function PlacesPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
+  const [deleteConfirm, setDeleteConfirm] = useState<{ show: boolean; placeId: number | null; placeName: string }>({
+    show: false,
+    placeId: null,
+    placeName: ''
+  });
 
   useEffect(() => {
     loadCategories();
@@ -52,15 +58,29 @@ export default function PlacesPage() {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this place?')) return;
+  const handleDeleteClick = (place: Place) => {
+    setDeleteConfirm({
+      show: true,
+      placeId: place.id,
+      placeName: place.name,
+    });
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteConfirm.placeId) return;
 
     try {
-      await api.places.delete(id);
+      await api.places.delete(deleteConfirm.placeId);
       await loadPlaces();
+      setDeleteConfirm({ show: false, placeId: null, placeName: '' });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete place');
+      setDeleteConfirm({ show: false, placeId: null, placeName: '' });
     }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteConfirm({ show: false, placeId: null, placeName: '' });
   };
 
   const handleEdit = (place: Place) => {
@@ -195,7 +215,7 @@ export default function PlacesPage() {
                         <Edit2 className="w-4 h-4 inline" />
                       </button>
                       <button
-                        onClick={() => handleDelete(place.id)}
+                        onClick={() => handleDeleteClick(place)}
                         className="text-red-600 hover:text-red-800"
                       >
                         <Trash2 className="w-4 h-4 inline" />
@@ -241,6 +261,17 @@ export default function PlacesPage() {
           onSuccess={handleSaveSuccess}
         />
       )}
+
+      <ConfirmModal
+        isOpen={deleteConfirm.show}
+        title="Delete Place"
+        message={`Are you sure you want to delete "${deleteConfirm.placeName}"? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+        variant="danger"
+      />
     </div>
   );
 }
