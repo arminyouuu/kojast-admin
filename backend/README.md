@@ -1,4 +1,4 @@
-# CityPlace Backend API
+# Kojast Backend API
 
 A RESTful API for managing city places with categories, built with Node.js, Express, and MySQL.
 
