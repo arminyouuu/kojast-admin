@@ -2,7 +2,10 @@ import { useState, useEffect } from 'react';
 import { api } from '../lib/api';
 import type { Place, Category } from '../types';
 import { X, Plus, Trash2 } from 'lucide-react';
-import { format as formatJalali, parse as parseJalali } from 'date-fns-jalali';
+import DatePicker from 'react-multi-date-picker';
+import persian from 'react-date-object/calendars/persian';
+import persian_fa from 'react-date-object/locales/persian_fa';
+import 'react-multi-date-picker/styles/colors/teal.css';
 
 interface PlaceModalProps {
   place: Place | null;
@@ -31,18 +34,7 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
       setCategoryId(place.category_id || place.categoryId || '');
       setLatitude(place.latitude?.toString() || '');
       setLongitude(place.longitude?.toString() || '');
-      const gregorianDate = place.expiration_date || place.expirationDate || '';
-      if (gregorianDate) {
-        try {
-          const date = new Date(gregorianDate);
-          const jalaliDate = formatJalali(date, 'yyyy-MM-dd');
-          setExpirationDate(jalaliDate);
-        } catch {
-          setExpirationDate('');
-        }
-      } else {
-        setExpirationDate('');
-      }
+      setExpirationDate(place.expiration_date || place.expirationDate || '');
       const imageUrls = Array.isArray(place.images)
         ? place.images.filter(img => typeof img === 'string' && img.trim() !== '')
         : [];
@@ -76,18 +68,6 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
 
       const filteredImages = images.filter(img => img.trim() !== '');
 
-      let gregorianDate = null;
-      if (expirationDate) {
-        try {
-          const jalaliParts = expirationDate.split('-').map(Number);
-          const date = new Date(jalaliParts[0], jalaliParts[1] - 1, jalaliParts[2]);
-          const parsedDate = parseJalali(expirationDate, 'yyyy-MM-dd', date);
-          gregorianDate = parsedDate.toISOString().split('T')[0];
-        } catch {
-          gregorianDate = null;
-        }
-      }
-
       const placeData = {
         name: name.trim(),
         description: description.trim(),
@@ -95,7 +75,7 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
         categoryId: Number(categoryId),
         latitude: latitude ? parseFloat(latitude) : null,
         longitude: longitude ? parseFloat(longitude) : null,
-        expirationDate: gregorianDate,
+        expirationDate: expirationDate || null,
         images: filteredImages,
       };
 
@@ -223,19 +203,27 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
 
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">
-              تاریخ انقضا (شمسی)
+              تاریخ انقضا
             </label>
-            <input
-              type="text"
+            <DatePicker
               value={expirationDate}
-              onChange={(e) => setExpirationDate(e.target.value)}
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
-              placeholder="مثال: 1403-07-22"
-              dir="ltr"
+              onChange={(date: any) => {
+                if (date) {
+                  const gregorianDate = date.toDate();
+                  const isoDate = gregorianDate.toISOString().split('T')[0];
+                  setExpirationDate(isoDate);
+                } else {
+                  setExpirationDate('');
+                }
+              }}
+              calendar={persian}
+              locale={persian_fa}
+              format="YYYY/MM/DD"
+              calendarPosition="bottom-right"
+              className="teal"
+              inputClass="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
+              containerStyle={{ width: '100%' }}
             />
-            <p className="text-xs text-slate-500 mt-1">
-              فرمت: سال-ماه-روز (۱۴۰۳-۰۷-۲۲)
-            </p>
           </div>
 
           <div>
