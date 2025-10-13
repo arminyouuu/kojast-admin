@@ -119,6 +119,37 @@ export default function ApiKeysPage() {
         </div>
       )}
 
+      {newlyCreatedKey && (
+        <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-6 mt-6 mb-6">
+          <div className="flex items-start space-x-3">
+            <CheckCircle className="w-6 h-6 text-emerald-600 flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <h3 className="font-semibold text-emerald-900 mb-2">API Key Created Successfully</h3>
+              <div className="flex items-center space-x-2 bg-white rounded-lg p-3 border border-emerald-200">
+                <code className="flex-1 text-sm font-mono text-slate-900 break-all">{newlyCreatedKey}</code>
+                <button
+                  onClick={() => copyToClipboard(newlyCreatedKey)}
+                  className="flex-shrink-0 p-2 hover:bg-emerald-100 rounded transition-colors"
+                  title="Copy to clipboard"
+                >
+                  {copiedKey === newlyCreatedKey ? (
+                    <CheckCircle className="w-4 h-4 text-emerald-600 animate-in zoom-in duration-200" />
+                  ) : (
+                    <Copy className="w-4 h-4 text-emerald-600 transition-transform hover:scale-110" />
+                  )}
+                </button>
+              </div>
+            </div>
+            <button
+              onClick={() => setNewlyCreatedKey(null)}
+              className="text-emerald-600 hover:text-emerald-700"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
+
       {apiKeys.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-xl shadow-lg">
           <Key className="w-16 h-16 mx-auto mb-4 text-slate-400" />
@@ -227,38 +258,6 @@ export default function ApiKeysPage() {
           </div>
         </div>
       )}
-
-      {newlyCreatedKey && (
-        <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-6 mt-6 mb-6">
-          <div className="flex items-start space-x-3">
-            <CheckCircle className="w-6 h-6 text-emerald-600 flex-shrink-0 mt-0.5" />
-            <div className="flex-1">
-              <h3 className="font-semibold text-emerald-900 mb-2">API Key Created Successfully</h3>
-              <div className="flex items-center space-x-2 bg-white rounded-lg p-3 border border-emerald-200">
-                <code className="flex-1 text-sm font-mono text-slate-900 break-all">{newlyCreatedKey}</code>
-                <button
-                  onClick={() => copyToClipboard(newlyCreatedKey)}
-                  className="flex-shrink-0 p-2 hover:bg-emerald-100 rounded transition-colors"
-                  title="Copy to clipboard"
-                >
-                  {copiedKey === newlyCreatedKey ? (
-                    <CheckCircle className="w-4 h-4 text-emerald-600 animate-in zoom-in duration-200" />
-                  ) : (
-                    <Copy className="w-4 h-4 text-emerald-600 transition-transform hover:scale-110" />
-                  )}
-                </button>
-              </div>
-            </div>
-            <button
-              onClick={() => setNewlyCreatedKey(null)}
-              className="text-emerald-600 hover:text-emerald-700"
-            >
-              ×
-            </button>
-          </div>
-        </div>
-      )}
-      <span></span>
 
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mt-6 mb-6">
         <h3 className="font-semibold text-blue-900 mb-4 flex items-center space-x-2 text-lg">
