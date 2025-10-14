@@ -24,25 +24,25 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <div className="bg-white rounded-2xl shadow-2xl p-8">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8">
           <div className="flex justify-center mb-6">
-            <div className="bg-slate-900 p-4 rounded-2xl">
+            <div className="bg-slate-900 dark:bg-slate-700 p-4 rounded-2xl">
               <LogIn className="w-10 h-10 text-white" />
             </div>
           </div>
 
-          <h1 className="text-3xl font-bold text-center text-slate-900 mb-2">
+          <h1 className="text-3xl font-bold text-center text-slate-900 dark:text-slate-100 mb-2">
             Kojast Admin
           </h1>
-          <p className="text-center text-slate-600 mb-8">
+          <p className="text-center text-slate-600 dark:text-slate-400 mb-8">
             Sign in to manage your city places
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-slate-700 mb-2">
+              <label htmlFor="username" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                 Username
               </label>
               <input
@@ -50,14 +50,14 @@ export default function LoginPage() {
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all outline-none"
+                className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-100 focus:border-transparent transition-all outline-none bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
                 placeholder="Enter your username"
                 required
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                 Password
               </label>
               <input
@@ -65,14 +65,14 @@ export default function LoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all outline-none"
+                className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-100 focus:border-transparent transition-all outline-none bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
                 placeholder="Enter your password"
                 required
               />
             </div>
 
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg text-sm">
                 {error}
               </div>
             )}
@@ -80,7 +80,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-slate-900 text-white py-3 rounded-lg font-semibold hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-slate-900 dark:bg-slate-700 text-white py-3 rounded-lg font-semibold hover:bg-slate-800 dark:hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? 'Signing in...' : 'Sign In'}
             </button>

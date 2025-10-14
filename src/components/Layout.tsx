@@ -26,16 +26,16 @@ export default function Layout({ children, currentPath, onNavigate }: LayoutProp
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex" dir="rtl">
-      <aside className={`fixed inset-y-0 right-0 z-50 w-64 bg-white border-l border-slate-200 transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex" dir="rtl">
+      <aside className={`fixed inset-y-0 right-0 z-50 w-64 bg-white dark:bg-slate-800 border-l border-slate-200 dark:border-slate-700 transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${
         isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
       }`}>
         <div className="flex flex-col h-screen">
-          <div className="flex items-center justify-between h-16 px-6 border-b border-slate-200 flex-shrink-0">
-            <h1 className="text-xl font-bold text-slate-900">پنل مدیریتِ کجاست</h1>
+          <div className="flex items-center justify-between h-16 px-6 border-b border-slate-200 dark:border-slate-700 flex-shrink-0">
+            <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">پنل مدیریتِ کجاست</h1>
             <button
               onClick={() => setIsMobileMenuOpen(false)}
-              className="lg:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+              className="lg:hidden p-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
@@ -51,8 +51,8 @@ export default function Layout({ children, currentPath, onNavigate }: LayoutProp
                   onClick={() => handleNavigate(item.path)}
                   className={`w-full flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-lg transition-all ${
                     isActive
-                      ? 'bg-slate-900 text-white shadow-sm'
-                      : 'text-slate-600 hover:bg-slate-100'
+                      ? 'bg-slate-900 dark:bg-slate-700 text-white shadow-sm'
+                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'
                   }`}
                 >
                   <Icon className="w-5 h-5 flex-shrink-0" />
@@ -62,23 +62,23 @@ export default function Layout({ children, currentPath, onNavigate }: LayoutProp
             })}
           </nav>
 
-          <div className="border-t border-slate-200 p-4 flex-shrink-0">
+          <div className="border-t border-slate-200 dark:border-slate-700 p-4 flex-shrink-0">
             <div className="flex items-center justify-between mb-3 px-2">
               <div className="flex items-center space-x-2 space-x-reverse min-w-0">
-                <div className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center flex-shrink-0">
+                <div className="w-8 h-8 rounded-full bg-slate-900 dark:bg-slate-700 text-white flex items-center justify-center flex-shrink-0">
                   <span className="text-sm font-semibold">
                     {user?.username?.charAt(0).toUpperCase()}
                   </span>
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-slate-900 truncate">{user?.username}</p>
-                  <p className="text-xs text-slate-500">مدیر</p>
+                  <p className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">{user?.username}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">مدیر</p>
                 </div>
               </div>
             </div>
             <button
               onClick={logout}
-              className="w-full flex items-center justify-center space-x-2 space-x-reverse px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+              className="w-full flex items-center justify-center space-x-2 space-x-reverse px-4 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
             >
               <LogOut className="w-4 h-4" />
               <span className="font-medium">خروج</span>
@@ -95,10 +95,10 @@ export default function Layout({ children, currentPath, onNavigate }: LayoutProp
       )}
 
       <div className="flex-1 flex flex-col min-w-0 lg:mr-64">
-        <header className="bg-white border-b border-slate-200 h-16 flex items-center px-4 lg:px-8 sticky top-0 z-30">
+        <header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 h-16 flex items-center px-4 lg:px-8 sticky top-0 z-30">
           <button
             onClick={() => setIsMobileMenuOpen(true)}
-            className="lg:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors ml-4"
+            className="lg:hidden p-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors ml-4"
           >
             <Menu className="w-5 h-5" />
           </button>
