@@ -85,6 +85,26 @@ export const api = {
       return fetchApi<PaginatedResponse<Place>>(`/admin/places?${query.toString()}`);
     },
     getById: (id: string) => fetchApi<Place>(`/admin/places/${id}`),
+    uploadImages: async (files: File[]): Promise<{ urls: string[] }> => {
+      const formData = new FormData();
+      files.forEach(file => {
+        formData.append('images', file);
+      });
+
+      const authHeaders = getAuthHeaders();
+      const response = await fetch(`${API_BASE_URL}/admin/places/upload`, {
+        method: 'POST',
+        headers: authHeaders,
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({ message: 'Upload failed' }));
+        throw new ApiError(response.status, error.message || 'Upload failed');
+      }
+
+      return response.json();
+    },
     create: (data: Omit<Place, 'id' | 'created_at' | 'updated_at'> & { images: string[] }) =>
       fetchApi<Place>('/admin/places', {
         method: 'POST',

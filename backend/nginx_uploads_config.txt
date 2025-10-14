@@ -1,0 +1,14 @@
+# Add this location block to your nginx configuration
+# to serve uploaded images from the backend
+
+location /api/uploads/ {
+    alias /path/to/kojast/backend/uploads/;
+    expires 1y;
+    add_header Cache-Control "public, immutable";
+
+    # Allow CORS for images
+    add_header Access-Control-Allow-Origin "*";
+}
+
+# Replace /path/to/kojast/backend/uploads/ with the actual path to your uploads directory
+# For example: /var/www/kojast/backend/uploads/

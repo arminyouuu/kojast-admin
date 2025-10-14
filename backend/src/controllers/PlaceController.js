@@ -20,6 +20,21 @@ class PlaceController {
     }
   }
 
+  async uploadImages(req, res, next) {
+    try {
+      if (!req.files || req.files.length === 0) {
+        return res.status(400).json({ error: 'No files uploaded' });
+      }
+
+      const baseUrl = `${req.protocol}://${req.get('host')}`;
+      const imageUrls = req.files.map(file => `${baseUrl}/uploads/${file.filename}`);
+
+      res.json({ urls: imageUrls });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async create(req, res, next) {
     try {
       console.log('Create place request body:', JSON.stringify(req.body, null, 2));

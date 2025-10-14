@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { api } from '../lib/api';
 import type { Place, Category } from '../types';
-import { X, Plus, Trash2 } from 'lucide-react';
+import { X, Plus, Trash2, Upload } from 'lucide-react';
 import DatePicker, { DateObject } from 'react-multi-date-picker';
 import persian from 'react-date-object/calendars/persian';
 import persian_fa from 'react-date-object/locales/persian_fa';
@@ -24,7 +24,9 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
   const [expirationDate, setExpirationDate] = useState<DateObject | null>(null);
   const [images, setImages] = useState<string[]>(['']);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (place) {
@@ -62,6 +64,29 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
     const newImages = [...images];
     newImages[index] = value;
     setImages(newImages);
+  };
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    try {
+      setIsUploading(true);
+      setError('');
+
+      const fileArray = Array.from(files);
+      const result = await api.places.uploadImages(fileArray);
+
+      const nonEmptyImages = images.filter(img => img.trim() !== '');
+      setImages([...nonEmptyImages, ...result.urls]);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'بارگذاری تصویر با خطا مواجه شد');
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
   };
 
   const handleSubmit = async () => {
@@ -238,35 +263,66 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
           <div>
             <div className="flex justify-between items-center mb-2">
               <label className="block text-sm font-medium text-slate-700">
-                لینک تصاویر
+                تصاویر
               </label>
-              <button
-                type="button"
-                onClick={handleAddImage}
-                className="flex items-center space-x-reverse space-x-1 text-sm text-slate-600 hover:text-slate-900"
-              >
-                <Plus className="w-4 h-4" />
-                <span>افزودن تصویر</span>
-              </button>
+              <div className="flex space-x-reverse space-x-2">
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploading}
+                  className="flex items-center space-x-reverse space-x-1 text-sm text-slate-600 hover:text-slate-900 disabled:opacity-50"
+                >
+                  <Upload className="w-4 h-4" />
+                  <span>{isUploading ? 'در حال بارگذاری...' : 'بارگذاری تصویر'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleAddImage}
+                  className="flex items-center space-x-reverse space-x-1 text-sm text-slate-600 hover:text-slate-900"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>افزودن لینک</span>
+                </button>
+              </div>
             </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handleFileSelect}
+              className="hidden"
+            />
             <div className="space-y-2">
               {images.map((image, index) => (
-                <div key={index} className="flex space-x-reverse space-x-2">
-                  <input
-                    type="url"
-                    value={image}
-                    onChange={(e) => handleImageChange(index, e.target.value)}
-                    className="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
-                    placeholder="https://example.com/image.jpg"
-                  />
-                  {images.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveImage(index)}
-                      className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                <div key={index} className="space-y-2">
+                  <div className="flex space-x-reverse space-x-2">
+                    <input
+                      type="url"
+                      value={image}
+                      onChange={(e) => handleImageChange(index, e.target.value)}
+                      className="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
+                      placeholder="https://example.com/image.jpg یا از بارگذاری تصویر استفاده کنید"
+                    />
+                    {images.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveImage(index)}
+                        className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                  {image && (
+                    <img
+                      src={image}
+                      alt={`پیش‌نمایش ${index + 1}`}
+                      className="w-full h-32 object-cover rounded-lg"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                      }}
+                    />
                   )}
                 </div>
               ))}
