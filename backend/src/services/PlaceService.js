@@ -8,7 +8,7 @@ class PlaceService {
     page = parseInt(page) || 1;
     limit = parseInt(limit) || 10;
     limit = Math.min(limit, 100);
-
+ 
     if (categoryId) {
       const categoryExists = await CategoryRepository.exists(categoryId);
       if (!categoryExists) {
