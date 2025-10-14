@@ -1,6 +1,7 @@
 import PlaceRepository from '../repositories/PlaceRepository.js';
 import PlaceImageRepository from '../repositories/PlaceImageRepository.js';
 import CategoryRepository from '../repositories/CategoryRepository.js';
+import ExpirationCheckerService from './ExpirationCheckerService.js';
 
 class PlaceService {
   async getPlaces(categoryId, page = 1, limit = 10) {
@@ -95,6 +96,11 @@ class PlaceService {
       await PlaceImageRepository.bulkCreate(placeId, images);
     }
 
+    const finalExpirationDate = expirationDate || expiration_date;
+    if (finalExpirationDate) {
+      this.checkImmediateExpiration(finalExpirationDate);
+    }
+
     return await this.getPlaceById(placeId);
   }
 
@@ -135,6 +141,11 @@ class PlaceService {
       }
     }
 
+    const finalExpirationDate = expirationDate || expiration_date;
+    if (finalExpirationDate) {
+      this.checkImmediateExpiration(finalExpirationDate);
+    }
+
     return await this.getPlaceById(id);
   }
 
@@ -146,6 +157,22 @@ class PlaceService {
 
     await PlaceImageRepository.deleteByPlaceId(id);
     return await PlaceRepository.delete(id);
+  }
+
+  checkImmediateExpiration(expirationDate) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const expDate = new Date(expirationDate);
+    expDate.setHours(0, 0, 0, 0);
+
+    const daysUntilExpiration = Math.ceil((expDate - today) / (1000 * 60 * 60 * 24));
+
+    if (daysUntilExpiration <= 7) {
+      setTimeout(() => {
+        ExpirationCheckerService.checkExpirations();
+      }, 1000);
+    }
   }
 }
 
