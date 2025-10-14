@@ -120,7 +120,7 @@ export default function SettingsPage() {
                   >
                     <span
                       className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${
-                        theme === 'dark' ? 'translate-x-1' : 'translate-x-7'
+                        theme === 'dark' ? 'translate-x-7' : 'translate-x-1'
                       }`}
                     />
                   </button>

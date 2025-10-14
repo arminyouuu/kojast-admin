@@ -155,14 +155,14 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full my-8" dir="rtl">
-        <div className="flex justify-between items-center p-6 border-b border-slate-200">
-          <h3 className="text-xl font-bold text-slate-900">
+      <div className="bg-white dark:bg-slate-800 rounded-lg shadow-xl max-w-2xl w-full my-8" dir="rtl">
+        <div className="flex justify-between items-center p-6 border-b border-slate-200 dark:border-slate-700">
+          <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">
             {place ? 'ویرایش مکان' : 'افزودن مکان جدید'}
           </h3>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 transition-colors"
+            className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
           >
             <X className="w-6 h-6" />
           </button>
@@ -170,32 +170,32 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
 
         <div className="p-6 space-y-4 max-h-[calc(100vh-200px)] overflow-y-auto">
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg text-sm">
               {error}
             </div>
           )}
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
               نام <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
+              className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-100 focus:border-transparent outline-none bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
               placeholder="مثال: کافه مرکزی"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
               دسته‌بندی <span className="text-red-500">*</span>
             </label>
             <select
               value={categoryId}
               onChange={(e) => setCategoryId(Number(e.target.value))}
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
+              className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-100 focus:border-transparent outline-none bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
             >
               <option value="">یک دسته‌بندی انتخاب کنید</option>
               {categories.map((category) => (
@@ -207,34 +207,34 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
               توضیحات <span className="text-red-500">*</span>
             </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none resize-none"
+              className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-100 focus:border-transparent outline-none resize-none bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
               placeholder="این مکان را توضیح دهید..."
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
               آدرس <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
+              className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-100 focus:border-transparent outline-none bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
               placeholder="مثال: خیابان آزادی، پلاک ۱۲۳"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                 عرض جغرافیایی
               </label>
               <input
@@ -242,12 +242,12 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
                 step="any"
                 value={latitude}
                 onChange={(e) => setLatitude(e.target.value)}
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
+                className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-100 focus:border-transparent outline-none bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
                 placeholder="مثال: 35.6892"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                 طول جغرافیایی
               </label>
               <input
@@ -255,14 +255,14 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
                 step="any"
                 value={longitude}
                 onChange={(e) => setLongitude(e.target.value)}
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
+                className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-100 focus:border-transparent outline-none bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
                 placeholder="مثال: 51.3890"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
               تاریخ انقضا
             </label>
             <DatePicker
@@ -275,14 +275,14 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
               format="YYYY/MM/DD"
               calendarPosition="bottom-right"
               className="teal"
-              inputClass="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
+              inputClass="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-100 focus:border-transparent outline-none bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
               containerStyle={{ width: '100%' }}
               placeholder="انتخاب تاریخ"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-3">
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
               تصاویر
             </label>
 
@@ -295,8 +295,8 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
                 relative border-2 border-dashed rounded-xl p-8 text-center cursor-pointer
                 transition-all duration-200
                 ${isDragging
-                  ? 'border-slate-900 bg-slate-50'
-                  : 'border-slate-300 hover:border-slate-400 hover:bg-slate-50'
+                  ? 'border-slate-900 dark:border-slate-100 bg-slate-50 dark:bg-slate-700'
+                  : 'border-slate-300 dark:border-slate-600 hover:border-slate-400 dark:hover:border-slate-500 hover:bg-slate-50 dark:hover:bg-slate-700'
                 }
                 ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}
               `}
@@ -315,26 +315,26 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
                 {isUploading ? (
                   <>
                     <div className="w-12 h-12 border-4 border-slate-200 border-t-slate-900 rounded-full animate-spin"></div>
-                    <p className="text-sm font-medium text-slate-700">در حال بارگذاری...</p>
+                    <p className="text-sm font-medium text-slate-700 dark:text-slate-300">در حال بارگذاری...</p>
                   </>
                 ) : (
                   <>
-                    <div className="w-14 h-14 bg-slate-100 rounded-full flex items-center justify-center">
+                    <div className="w-14 h-14 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center">
                       {isDragging ? (
-                        <ImagePlus className="w-7 h-7 text-slate-900" />
+                        <ImagePlus className="w-7 h-7 text-slate-900 dark:text-slate-100" />
                       ) : (
-                        <Upload className="w-7 h-7 text-slate-600" />
+                        <Upload className="w-7 h-7 text-slate-600 dark:text-slate-400" />
                       )}
                     </div>
                     <div>
-                      <p className="text-base font-medium text-slate-900 mb-1">
+                      <p className="text-base font-medium text-slate-900 dark:text-slate-100 mb-1">
                         {isDragging ? 'فایل‌ها را اینجا رها کنید' : 'تصاویر را بکشید و اینجا رها کنید'}
                       </p>
-                      <p className="text-sm text-slate-500">
+                      <p className="text-sm text-slate-500 dark:text-slate-400">
                         یا کلیک کنید تا فایل انتخاب کنید
                       </p>
                     </div>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-slate-400 dark:text-slate-500">
                       PNG, JPG, GIF حداکثر 10MB
                     </p>
                   </>
@@ -344,14 +344,14 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
 
             {images.length > 0 && (
               <div className="mt-4">
-                <p className="text-sm font-medium text-slate-700 mb-3">
+                <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
                   تصاویر بارگذاری شده ({images.length})
                 </p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {images.map((image, index) => (
                     <div
                       key={index}
-                      className="relative group aspect-square rounded-lg overflow-hidden bg-slate-100 border border-slate-200"
+                      className="relative group aspect-square rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600"
                     >
                       <img
                         src={image}
@@ -381,18 +381,18 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
           </div>
         </div>
 
-        <div className="flex justify-end space-x-reverse space-x-3 p-6 border-t border-slate-200">
+        <div className="flex justify-end space-x-reverse space-x-3 p-6 border-t border-slate-200 dark:border-slate-700">
           <button
             onClick={onClose}
             disabled={isSubmitting}
-            className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+            className="px-4 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
           >
             لغو
           </button>
           <button
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="px-4 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50"
+            className="px-4 py-2 bg-slate-900 dark:bg-slate-700 text-white rounded-lg hover:bg-slate-800 dark:hover:bg-slate-600 transition-colors disabled:opacity-50"
           >
             {isSubmitting ? 'در حال ذخیره...' : 'ذخیره مکان'}
           </button>
