@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { api } from '../lib/api';
 import type { Place, Category } from '../types';
-import { Plus, Edit2, Trash2, MapPin, ChevronLeft, ChevronRight, Image, X } from 'lucide-react';
+import { Plus, Edit2, Trash2, MapPin, ChevronLeft, ChevronRight, Image, X, Calendar } from 'lucide-react';
 import PlaceModal from './PlaceModal';
 import ConfirmModal from './ConfirmModal';
 import ToastContainer, { type ToastMessage } from './ToastContainer';
+import { format } from 'date-fns-jalali';
 
 export default function PlacesPage() {
   const [places, setPlaces] = useState<Place[]>([]);
@@ -159,6 +160,16 @@ export default function PlacesPage() {
     return category?.name || 'Unknown';
   };
 
+  const formatJalaliDate = (dateString: string | null) => {
+    if (!dateString) return '—';
+    try {
+      const date = new Date(dateString);
+      return format(date, 'yyyy/MM/dd');
+    } catch (error) {
+      return '—';
+    }
+  };
+
   if (isLoading && places.length === 0) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -254,6 +265,9 @@ export default function PlacesPage() {
                 <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">
                   تصاویر
                 </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">
+                  تاریخ انقضا
+                </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                   عملیات
                 </th>
@@ -262,7 +276,7 @@ export default function PlacesPage() {
             <tbody className="bg-white divide-y divide-slate-200">
               {places.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center">
+                  <td colSpan={7} className="px-6 py-12 text-center">
                     <MapPin className="w-12 h-12 text-slate-400 mx-auto mb-3" />
                     <p className="text-slate-500">هنوز هیچ مکانی وجود ندارد. اولین مورد را ایجاد کنید!</p>
                   </td>
@@ -296,6 +310,12 @@ export default function PlacesPage() {
                       <div className="flex items-center text-sm text-slate-500 flex-row-reverse">
                         <Image className="w-4 h-4 ml-1" />
                         {place.images?.length || 0}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center text-sm text-slate-600">
+                        <Calendar className="w-4 h-4 ml-1 text-slate-400" />
+                        {formatJalaliDate(place.expiration_date || place.expirationDate || null)}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-left text-sm">
