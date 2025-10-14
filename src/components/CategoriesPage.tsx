@@ -148,7 +148,7 @@ export default function CategoriesPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-900"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-900 dark:border-slate-100"></div>
       </div>
     );
   }
@@ -158,12 +158,12 @@ export default function CategoriesPage() {
       <ToastContainer toasts={toasts} onRemove={removeToast} />
 
       {selectedCategories.size > 0 && (
-        <div className="mb-4 bg-slate-900 text-white px-4 py-3 rounded-lg flex items-center justify-between">
+        <div className="mb-4 bg-slate-900 dark:bg-slate-700 text-white px-4 py-3 rounded-lg flex items-center justify-between">
           <div className="flex items-center space-x-reverse space-x-3">
             <span className="font-medium">{selectedCategories.size} مورد انتخاب شده</span>
             <button
               onClick={() => setSelectedCategories(new Set())}
-              className="text-slate-300 hover:text-white"
+              className="text-slate-300 dark:text-slate-400 hover:text-white"
             >
               <X className="w-4 h-4" />
             </button>
@@ -179,10 +179,10 @@ export default function CategoriesPage() {
       )}
 
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-slate-900">دسته‌بندی‌ها</h2>
+        <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">دسته‌بندی‌ها</h2>
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center space-x-2 space-x-reverse bg-slate-900 text-white px-4 py-2 rounded-lg hover:bg-slate-800 transition-colors"
+          className="flex items-center space-x-2 space-x-reverse bg-slate-900 dark:bg-slate-700 text-white px-4 py-2 rounded-lg hover:bg-slate-800 dark:hover:bg-slate-600 transition-colors"
         >
           <Plus className="w-4 h-4" />
           <span>افزودن دسته‌بندی</span>
@@ -190,69 +190,69 @@ export default function CategoriesPage() {
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg mb-4">
           {error}
         </div>
       )}
 
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <table className="min-w-full divide-y divide-slate-200">
-          <thead className="bg-slate-50">
+      <div className="bg-white dark:bg-slate-800 rounded-lg shadow overflow-hidden">
+        <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+          <thead className="bg-slate-50 dark:bg-slate-900">
             <tr>
               <th className="px-6 py-3 text-center w-12">
                 <input
                   type="checkbox"
                   checked={categories.length > 0 && selectedCategories.size === categories.length}
                   onChange={toggleSelectAll}
-                  className="w-4 h-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900"
+                  className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-slate-900 dark:text-slate-100 focus:ring-slate-900 dark:focus:ring-slate-100"
                 />
               </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                 شناسه
               </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                 نام
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                 عملیات
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-slate-200">
+          <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
             {categories.length === 0 ? (
               <tr>
                 <td colSpan={4} className="px-6 py-12 text-center">
-                  <FolderTree className="w-12 h-12 text-slate-400 mx-auto mb-3" />
-                  <p className="text-slate-500">هیچ دسته‌بندی وجود ندارد. اولین دسته‌بندی را ایجاد کنید!</p>
+                  <FolderTree className="w-12 h-12 text-slate-400 dark:text-slate-500 mx-auto mb-3" />
+                  <p className="text-slate-500 dark:text-slate-400">هیچ دسته‌بندی وجود ندارد. اولین دسته‌بندی را ایجاد کنید!</p>
                 </td>
               </tr>
             ) : (
               categories.map((category) => (
-                <tr key={category.id} className="hover:bg-slate-50 transition-colors">
+                <tr key={category.id} className="hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
                   <td className="px-6 py-4 text-center">
                     <input
                       type="checkbox"
                       checked={selectedCategories.has(category.id)}
                       onChange={() => toggleCategorySelection(category.id)}
-                      className="w-4 h-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900"
+                      className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-slate-900 dark:text-slate-100 focus:ring-slate-900 dark:focus:ring-slate-100"
                     />
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-slate-100">
                     {category.id}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900 dark:text-slate-100">
                     {category.name}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-left text-sm">
                     <button
                       onClick={() => handleEdit(category)}
-                      className="text-slate-600 hover:text-slate-900 ml-4"
+                      className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 ml-4"
                     >
                       <Edit2 className="w-4 h-4 inline" />
                     </button>
                     <button
                       onClick={() => handleDeleteClick(category)}
-                      className="text-red-600 hover:text-red-800"
+                      className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300"
                     >
                       <Trash2 className="w-4 h-4 inline" />
                     </button>
@@ -266,12 +266,12 @@ export default function CategoriesPage() {
 
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6" dir="rtl">
-            <h3 className="text-xl font-bold text-slate-900 mb-4">
+          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-xl max-w-md w-full p-6" dir="rtl">
+            <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
               {editingCategory ? 'ویرایش دسته‌بندی' : 'افزودن دسته‌بندی جدید'}
             </h3>
             <div className="mb-6">
-              <label htmlFor="categoryName" className="block text-sm font-medium text-slate-700 mb-2">
+              <label htmlFor="categoryName" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                 نام دسته‌بندی
               </label>
               <input
@@ -279,7 +279,7 @@ export default function CategoriesPage() {
                 type="text"
                 value={categoryName}
                 onChange={(e) => setCategoryName(e.target.value)}
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
+                className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-100 focus:border-transparent outline-none bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
                 placeholder="مثال: رستوران‌ها، باشگاه‌ها، کافه‌ها"
               />
             </div>
@@ -287,14 +287,14 @@ export default function CategoriesPage() {
               <button
                 onClick={handleCloseModal}
                 disabled={isSubmitting}
-                className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                className="px-4 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
               >
                 لغو
               </button>
               <button
                 onClick={handleSubmit}
                 disabled={isSubmitting || !categoryName.trim()}
-                className="px-4 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50"
+                className="px-4 py-2 bg-slate-900 dark:bg-slate-700 text-white rounded-lg hover:bg-slate-800 dark:hover:bg-slate-600 transition-colors disabled:opacity-50"
               >
                 {isSubmitting ? 'در حال ذخیره...' : 'ذخیره'}
               </button>

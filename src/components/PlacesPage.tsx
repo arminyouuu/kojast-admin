@@ -173,7 +173,7 @@ export default function PlacesPage() {
   if (isLoading && places.length === 0) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-900"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-900 dark:border-slate-100"></div>
       </div>
     );
   }
@@ -183,12 +183,12 @@ export default function PlacesPage() {
       <ToastContainer toasts={toasts} onRemove={removeToast} />
 
       {selectedPlaces.size > 0 && (
-        <div className="mb-4 bg-slate-900 text-white px-4 py-3 rounded-lg flex items-center justify-between">
+        <div className="mb-4 bg-slate-900 dark:bg-slate-700 text-white px-4 py-3 rounded-lg flex items-center justify-between">
           <div className="flex items-center space-x-reverse space-x-3">
             <span className="font-medium">{selectedPlaces.size} مورد انتخاب شده</span>
             <button
               onClick={() => setSelectedPlaces(new Set())}
-              className="text-slate-300 hover:text-white"
+              className="text-slate-300 dark:text-slate-400 hover:text-white"
             >
               <X className="w-4 h-4" />
             </button>
@@ -205,8 +205,8 @@ export default function PlacesPage() {
 
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900">مکان‌ها</h2>
-          <p className="text-slate-600 text-sm mt-1">مجموع: {total} مکان</p>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">مکان‌ها</h2>
+          <p className="text-slate-600 dark:text-slate-400 text-sm mt-1">مجموع: {total} مکان</p>
         </div>
         <div className="flex flex-wrap gap-3">
           <select
@@ -215,7 +215,7 @@ export default function PlacesPage() {
               setFilterCategoryId(e.target.value ? Number(e.target.value) : undefined);
               setCurrentPage(1);
             }}
-            className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
+            className="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-100 focus:border-transparent outline-none bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
           >
             <option value="">همه دسته‌بندی‌ها</option>
             {categories.map((category) => (
@@ -226,7 +226,7 @@ export default function PlacesPage() {
           </select>
           <button
             onClick={() => setShowModal(true)}
-            className="flex items-center space-x-reverse space-x-2 bg-slate-900 text-white px-4 py-2 rounded-lg hover:bg-slate-800 transition-colors"
+            className="flex items-center space-x-reverse space-x-2 bg-slate-900 dark:bg-slate-700 text-white px-4 py-2 rounded-lg hover:bg-slate-800 dark:hover:bg-slate-600 transition-colors"
           >
             <Plus className="w-4 h-4" />
             <span>افزودن مکان</span>
@@ -235,99 +235,99 @@ export default function PlacesPage() {
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg mb-4">
           {error}
         </div>
       )}
 
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="bg-white dark:bg-slate-800 rounded-lg shadow overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-slate-200">
-            <thead className="bg-slate-50">
+          <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+            <thead className="bg-slate-50 dark:bg-slate-900">
               <tr>
                 <th className="px-6 py-3 text-center w-12">
                   <input
                     type="checkbox"
                     checked={places.length > 0 && selectedPlaces.size === places.length}
                     onChange={toggleSelectAll}
-                    className="w-4 h-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900"
+                    className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-slate-900 dark:text-slate-100 focus:ring-slate-900 dark:focus:ring-slate-100"
                   />
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                   مکان
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                   دسته‌بندی
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                   آدرس
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                   تصاویر
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                   تاریخ انقضا
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                   عملیات
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-slate-200">
+            <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
               {places.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="px-6 py-12 text-center">
-                    <MapPin className="w-12 h-12 text-slate-400 mx-auto mb-3" />
-                    <p className="text-slate-500">هنوز هیچ مکانی وجود ندارد. اولین مورد را ایجاد کنید!</p>
+                    <MapPin className="w-12 h-12 text-slate-400 dark:text-slate-500 mx-auto mb-3" />
+                    <p className="text-slate-500 dark:text-slate-400">هنوز هیچ مکانی وجود ندارد. اولین مورد را ایجاد کنید!</p>
                   </td>
                 </tr>
               ) : (
                 places.map((place) => (
-                  <tr key={place.id} className="hover:bg-slate-50 transition-colors">
+                  <tr key={place.id} className="hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
                     <td className="px-6 py-4 text-center">
                       <input
                         type="checkbox"
                         checked={selectedPlaces.has(place.id)}
                         onChange={() => togglePlaceSelection(place.id)}
-                        className="w-4 h-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900"
+                        className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-slate-900 dark:text-slate-100 focus:ring-slate-900 dark:focus:ring-slate-100"
                       />
                     </td>
                     <td className="px-6 py-4">
                       <div>
-                        <div className="text-sm font-medium text-slate-900">{place.name}</div>
-                        <div className="text-sm text-slate-500 line-clamp-1">{place.description}</div>
+                        <div className="text-sm font-medium text-slate-900 dark:text-slate-100">{place.name}</div>
+                        <div className="text-sm text-slate-500 dark:text-slate-400 line-clamp-1">{place.description}</div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-slate-100 text-slate-800">
+                      <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200">
                         {getCategoryName(place)}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm text-slate-500 max-w-xs truncate">
+                    <td className="px-6 py-4 text-sm text-slate-500 dark:text-slate-400 max-w-xs truncate">
                       {place.address}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center text-sm text-slate-500 flex-row-reverse">
+                      <div className="flex items-center text-sm text-slate-500 dark:text-slate-400 flex-row-reverse">
                         <Image className="w-4 h-4 ml-1" />
                         {place.images?.length || 0}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center text-sm text-slate-600">
-                        <Calendar className="w-4 h-4 ml-1 text-slate-400" />
+                      <div className="flex items-center text-sm text-slate-600 dark:text-slate-400">
+                        <Calendar className="w-4 h-4 ml-1 text-slate-400 dark:text-slate-500" />
                         {formatJalaliDate(place.expiration_date || place.expirationDate || null)}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-left text-sm">
                       <button
                         onClick={() => handleEdit(place)}
-                        className="text-slate-600 hover:text-slate-900 ml-4"
+                        className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 ml-4"
                       >
                         <Edit2 className="w-4 h-4 inline" />
                       </button>
                       <button
                         onClick={() => handleDeleteClick(place)}
-                        className="text-red-600 hover:text-red-800"
+                        className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300"
                       >
                         <Trash2 className="w-4 h-4 inline" />
                       </button>
@@ -340,22 +340,22 @@ export default function PlacesPage() {
         </div>
 
         {totalPages > 1 && (
-          <div className="bg-slate-50 px-6 py-4 flex items-center justify-between border-t border-slate-200">
-            <div className="text-sm text-slate-600">
+          <div className="bg-slate-50 dark:bg-slate-900 px-6 py-4 flex items-center justify-between border-t border-slate-200 dark:border-slate-700">
+            <div className="text-sm text-slate-600 dark:text-slate-400">
               صفحه {currentPage} از {totalPages}
             </div>
             <div className="flex space-x-reverse space-x-2">
               <button
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="px-3 py-2 border border-slate-300 rounded-lg hover:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-white dark:hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
-                className="px-3 py-2 border border-slate-300 rounded-lg hover:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-white dark:hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
