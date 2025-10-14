@@ -8,7 +8,7 @@ class PlaceRepository {
 
     const limitNum = parseInt(limit);
     const offsetNum = parseInt(offset);
-
+ 
     let sql = `
       SELECT p.*, c.name as category_name
       FROM places p
