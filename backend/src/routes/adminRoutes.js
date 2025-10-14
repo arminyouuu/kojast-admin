@@ -4,6 +4,7 @@ import PlaceController from '../controllers/PlaceController.js';
 import ApiKeyController from '../controllers/ApiKeyController.js';
 import settingsRoutes from './settingsRoutes.js';
 import { authenticate } from '../middleware/auth.js';
+import upload from '../middleware/upload.js';
 
 const router = express.Router();
 
@@ -34,6 +35,7 @@ router.post('/categories', CategoryController.create);
 router.put('/categories/:id', CategoryController.update);
 router.delete('/categories/:id', CategoryController.delete);
 
+router.post('/places/upload', upload.array('images', 10), PlaceController.uploadImages);
 router.get('/places', PlaceController.getAll);
 router.get('/places/:id', PlaceController.getById);
 router.post('/places', PlaceController.create);
