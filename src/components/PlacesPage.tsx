@@ -84,11 +84,11 @@ export default function PlacesPage() {
       await api.places.delete(deleteConfirm.placeId);
       await loadPlaces();
       setDeleteConfirm({ show: false, placeId: null, placeName: '' });
-      addToast('Place deleted successfully', 'success');
+      addToast('مکان جدید با موفقیت اضافه شد', 'success');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete place');
       setDeleteConfirm({ show: false, placeId: null, placeName: '' });
-      addToast('Failed to delete place', 'error');
+      addToast('خطا در حذف مکان', 'error');
     }
   };
 
@@ -109,7 +109,7 @@ export default function PlacesPage() {
   const handleSaveSuccess = () => {
     loadPlaces();
     handleCloseModal();
-    addToast(editingPlace ? 'Place updated successfully' : 'Place created successfully', 'success');
+    addToast(editingPlace ? 'مکان جدید با موفقیت اضافه شد' : 'مکان با موفقیت بروزرسانی شد', 'success');
   };
 
   const getCategoryName = (place: Place) => {
