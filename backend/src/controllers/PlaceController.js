@@ -27,7 +27,7 @@ class PlaceController {
       }
 
       const baseUrl = `${req.protocol}://${req.get('host')}`;
-      const imageUrls = req.files.map(file => `${baseUrl}/uploads/${file.filename}`);
+      const imageUrls = req.files.map(file => `${baseUrl}/api/uploads/${file.filename}`);
 
       res.json({ urls: imageUrls });
     } catch (error) {
