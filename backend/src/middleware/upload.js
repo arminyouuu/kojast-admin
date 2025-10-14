@@ -1,4 +1,4 @@
-import multer from 'multer';
+const multer = (await import('multer')).default;
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
