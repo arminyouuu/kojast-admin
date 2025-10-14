@@ -7,6 +7,7 @@ const router = express.Router();
 
 router.post('/upload', validateApiKey, checkPermission('write'), upload.array('images', 10), PlaceController.uploadImages);
 router.post('/', validateApiKey, checkPermission('write'), PlaceController.create);
+router.post('/bulk-delete', validateApiKey, checkPermission('delete'), PlaceController.bulkDelete);
 router.get('/', validateApiKey, checkPermission('read'), PlaceController.getAll);
 router.get('/:id', validateApiKey, checkPermission('read'), PlaceController.getById);
 router.put('/:id', validateApiKey, checkPermission('write'), PlaceController.update);

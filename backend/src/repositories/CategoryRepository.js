@@ -29,6 +29,13 @@ class CategoryRepository {
     const results = await query('SELECT id FROM categories WHERE id = ?', [id]);
     return results.length > 0;
   }
+
+  async bulkDelete(ids) {
+    if (!ids || ids.length === 0) return true;
+    const placeholders = ids.map(() => '?').join(',');
+    await query(`DELETE FROM categories WHERE id IN (${placeholders})`, ids);
+    return true;
+  }
 }
 
 export default new CategoryRepository();

@@ -159,6 +159,18 @@ class PlaceService {
     return await PlaceRepository.delete(id);
   }
 
+  async bulkDeletePlaces(ids) {
+    if (!Array.isArray(ids) || ids.length === 0) {
+      throw { status: 400, message: 'Invalid or empty ids array' };
+    }
+
+    for (const id of ids) {
+      await PlaceImageRepository.deleteByPlaceId(id);
+    }
+
+    return await PlaceRepository.bulkDelete(ids);
+  }
+
   checkImmediateExpiration(expirationDate) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);

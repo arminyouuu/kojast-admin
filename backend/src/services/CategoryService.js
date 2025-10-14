@@ -41,6 +41,14 @@ class CategoryService {
 
     return await CategoryRepository.delete(id);
   }
+
+  async bulkDeleteCategories(ids) {
+    if (!Array.isArray(ids) || ids.length === 0) {
+      throw { status: 400, message: 'Invalid or empty ids array' };
+    }
+
+    return await CategoryRepository.bulkDelete(ids);
+  }
 }
 
 export default new CategoryService();

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { api } from '../lib/api';
 import type { Place, Category } from '../types';
-import { Plus, Edit2, Trash2, MapPin, ChevronLeft, ChevronRight, Image } from 'lucide-react';
+import { Plus, Edit2, Trash2, MapPin, ChevronLeft, ChevronRight, Image, X } from 'lucide-react';
 import PlaceModal from './PlaceModal';
 import ConfirmModal from './ConfirmModal';
 import ToastContainer, { type ToastMessage } from './ToastContainer';
@@ -23,6 +23,8 @@ export default function PlacesPage() {
     placeName: ''
   });
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
+  const [selectedPlaces, setSelectedPlaces] = useState<Set<number>>(new Set());
+  const [bulkDeleteConfirm, setBulkDeleteConfirm] = useState(false);
 
   useEffect(() => {
     loadCategories();
@@ -84,11 +86,47 @@ export default function PlacesPage() {
       await api.places.delete(deleteConfirm.placeId);
       await loadPlaces();
       setDeleteConfirm({ show: false, placeId: null, placeName: '' });
-      addToast('مکان جدید با موفقیت اضافه شد', 'success');
+      addToast('مکان با موفقیت حذف شد', 'success');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete place');
       setDeleteConfirm({ show: false, placeId: null, placeName: '' });
       addToast('خطا در حذف مکان', 'error');
+    }
+  };
+
+  const togglePlaceSelection = (placeId: number) => {
+    setSelectedPlaces(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(placeId)) {
+        newSet.delete(placeId);
+      } else {
+        newSet.add(placeId);
+      }
+      return newSet;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedPlaces.size === places.length) {
+      setSelectedPlaces(new Set());
+    } else {
+      setSelectedPlaces(new Set(places.map(p => p.id)));
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedPlaces.size === 0) return;
+
+    try {
+      await api.places.bulkDelete(Array.from(selectedPlaces));
+      await loadPlaces();
+      setSelectedPlaces(new Set());
+      setBulkDeleteConfirm(false);
+      addToast(`${selectedPlaces.size} مکان با موفقیت حذف شد`, 'success');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete places');
+      addToast('خطا در حذف مکان‌ها', 'error');
+      setBulkDeleteConfirm(false);
     }
   };
 
@@ -133,6 +171,27 @@ export default function PlacesPage() {
     <div dir="rtl">
       <ToastContainer toasts={toasts} onRemove={removeToast} />
 
+      {selectedPlaces.size > 0 && (
+        <div className="mb-4 bg-slate-900 text-white px-4 py-3 rounded-lg flex items-center justify-between">
+          <div className="flex items-center space-x-reverse space-x-3">
+            <span className="font-medium">{selectedPlaces.size} مورد انتخاب شده</span>
+            <button
+              onClick={() => setSelectedPlaces(new Set())}
+              className="text-slate-300 hover:text-white"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+          <button
+            onClick={() => setBulkDeleteConfirm(true)}
+            className="flex items-center space-x-reverse space-x-2 bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition-colors"
+          >
+            <Trash2 className="w-4 h-4" />
+            <span>حذف انتخاب شده‌ها</span>
+          </button>
+        </div>
+      )}
+
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <div>
           <h2 className="text-2xl font-bold text-slate-900">مکان‌ها</h2>
@@ -175,6 +234,14 @@ export default function PlacesPage() {
           <table className="min-w-full divide-y divide-slate-200">
             <thead className="bg-slate-50">
               <tr>
+                <th className="px-6 py-3 text-center w-12">
+                  <input
+                    type="checkbox"
+                    checked={places.length > 0 && selectedPlaces.size === places.length}
+                    onChange={toggleSelectAll}
+                    className="w-4 h-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900"
+                  />
+                </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">
                   مکان
                 </th>
@@ -195,7 +262,7 @@ export default function PlacesPage() {
             <tbody className="bg-white divide-y divide-slate-200">
               {places.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center">
+                  <td colSpan={6} className="px-6 py-12 text-center">
                     <MapPin className="w-12 h-12 text-slate-400 mx-auto mb-3" />
                     <p className="text-slate-500">هنوز هیچ مکانی وجود ندارد. اولین مورد را ایجاد کنید!</p>
                   </td>
@@ -203,6 +270,14 @@ export default function PlacesPage() {
               ) : (
                 places.map((place) => (
                   <tr key={place.id} className="hover:bg-slate-50 transition-colors">
+                    <td className="px-6 py-4 text-center">
+                      <input
+                        type="checkbox"
+                        checked={selectedPlaces.has(place.id)}
+                        onChange={() => togglePlaceSelection(place.id)}
+                        className="w-4 h-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900"
+                      />
+                    </td>
                     <td className="px-6 py-4">
                       <div>
                         <div className="text-sm font-medium text-slate-900">{place.name}</div>
@@ -286,6 +361,17 @@ export default function PlacesPage() {
         cancelText="لغو"
         onConfirm={handleDeleteConfirm}
         onCancel={handleDeleteCancel}
+        variant="danger"
+      />
+
+      <ConfirmModal
+        isOpen={bulkDeleteConfirm}
+        title="حذف گروهی"
+        message={`آیا مطمئن هستید که می‌خواهید ${selectedPlaces.size} مکان انتخاب شده را حذف کنید؟ این عملیات قابل بازگشت نیست.`}
+        confirmText="حذف همه"
+        cancelText="لغو"
+        onConfirm={handleBulkDelete}
+        onCancel={() => setBulkDeleteConfirm(false)}
         variant="danger"
       />
     </div>

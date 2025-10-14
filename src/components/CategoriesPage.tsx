@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { api } from '../lib/api';
 import type { Category } from '../types';
-import { Plus, Edit2, Trash2, FolderTree } from 'lucide-react';
+import { Plus, Edit2, Trash2, FolderTree, X } from 'lucide-react';
 import ConfirmModal from './ConfirmModal';
 import ToastContainer, { type ToastMessage } from './ToastContainer';
 
@@ -19,6 +19,8 @@ export default function CategoriesPage() {
     categoryName: ''
   });
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<Set<number>>(new Set());
+  const [bulkDeleteConfirm, setBulkDeleteConfirm] = useState(false);
 
   useEffect(() => {
     loadCategories();
@@ -95,6 +97,42 @@ export default function CategoriesPage() {
     setDeleteConfirm({ show: false, categoryId: null, categoryName: '' });
   };
 
+  const toggleCategorySelection = (categoryId: number) => {
+    setSelectedCategories(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(categoryId)) {
+        newSet.delete(categoryId);
+      } else {
+        newSet.add(categoryId);
+      }
+      return newSet;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedCategories.size === categories.length) {
+      setSelectedCategories(new Set());
+    } else {
+      setSelectedCategories(new Set(categories.map(c => c.id)));
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedCategories.size === 0) return;
+
+    try {
+      await api.categories.bulkDelete(Array.from(selectedCategories));
+      await loadCategories();
+      setSelectedCategories(new Set());
+      setBulkDeleteConfirm(false);
+      addToast(`${selectedCategories.size} دسته‌بندی با موفقیت حذف شد`, 'success');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete categories');
+      addToast('خطا در حذف دسته‌بندی‌ها', 'error');
+      setBulkDeleteConfirm(false);
+    }
+  };
+
   const handleEdit = (category: Category) => {
     setEditingCategory(category);
     setCategoryName(category.name);
@@ -119,6 +157,27 @@ export default function CategoriesPage() {
     <div dir="rtl">
       <ToastContainer toasts={toasts} onRemove={removeToast} />
 
+      {selectedCategories.size > 0 && (
+        <div className="mb-4 bg-slate-900 text-white px-4 py-3 rounded-lg flex items-center justify-between">
+          <div className="flex items-center space-x-reverse space-x-3">
+            <span className="font-medium">{selectedCategories.size} مورد انتخاب شده</span>
+            <button
+              onClick={() => setSelectedCategories(new Set())}
+              className="text-slate-300 hover:text-white"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+          <button
+            onClick={() => setBulkDeleteConfirm(true)}
+            className="flex items-center space-x-reverse space-x-2 bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition-colors"
+          >
+            <Trash2 className="w-4 h-4" />
+            <span>حذف انتخاب شده‌ها</span>
+          </button>
+        </div>
+      )}
+
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-slate-900">دسته‌بندی‌ها</h2>
         <button
@@ -140,6 +199,14 @@ export default function CategoriesPage() {
         <table className="min-w-full divide-y divide-slate-200">
           <thead className="bg-slate-50">
             <tr>
+              <th className="px-6 py-3 text-center w-12">
+                <input
+                  type="checkbox"
+                  checked={categories.length > 0 && selectedCategories.size === categories.length}
+                  onChange={toggleSelectAll}
+                  className="w-4 h-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900"
+                />
+              </th>
               <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">
                 شناسه
               </th>
@@ -154,7 +221,7 @@ export default function CategoriesPage() {
           <tbody className="bg-white divide-y divide-slate-200">
             {categories.length === 0 ? (
               <tr>
-                <td colSpan={3} className="px-6 py-12 text-center">
+                <td colSpan={4} className="px-6 py-12 text-center">
                   <FolderTree className="w-12 h-12 text-slate-400 mx-auto mb-3" />
                   <p className="text-slate-500">هیچ دسته‌بندی وجود ندارد. اولین دسته‌بندی را ایجاد کنید!</p>
                 </td>
@@ -162,6 +229,14 @@ export default function CategoriesPage() {
             ) : (
               categories.map((category) => (
                 <tr key={category.id} className="hover:bg-slate-50 transition-colors">
+                  <td className="px-6 py-4 text-center">
+                    <input
+                      type="checkbox"
+                      checked={selectedCategories.has(category.id)}
+                      onChange={() => toggleCategorySelection(category.id)}
+                      className="w-4 h-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900"
+                    />
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900">
                     {category.id}
                   </td>
@@ -236,6 +311,17 @@ export default function CategoriesPage() {
         cancelText="لغو"
         onConfirm={handleDeleteConfirm}
         onCancel={handleDeleteCancel}
+        variant="danger"
+      />
+
+      <ConfirmModal
+        isOpen={bulkDeleteConfirm}
+        title="حذف گروهی"
+        message={`آیا مطمئن هستید که می‌خواهید ${selectedCategories.size} دسته‌بندی انتخاب شده را حذف کنید؟ این عملیات قابل بازگشت نیست.`}
+        confirmText="حذف همه"
+        cancelText="لغو"
+        onConfirm={handleBulkDelete}
+        onCancel={() => setBulkDeleteConfirm(false)}
         variant="danger"
       />
     </div>

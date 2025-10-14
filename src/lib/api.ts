@@ -74,6 +74,11 @@ export const api = {
       fetchApi<void>(`/admin/categories/${id}`, {
         method: 'DELETE',
       }),
+    bulkDelete: (ids: number[]) =>
+      fetchApi<void>('/admin/categories/bulk-delete', {
+        method: 'POST',
+        body: JSON.stringify({ ids }),
+      }),
   },
 
   places: {
@@ -118,6 +123,11 @@ export const api = {
     delete: (id: string) =>
       fetchApi<void>(`/admin/places/${id}`, {
         method: 'DELETE',
+      }),
+    bulkDelete: (ids: number[]) =>
+      fetchApi<void>('/admin/places/bulk-delete', {
+        method: 'POST',
+        body: JSON.stringify({ ids }),
       }),
   },
 

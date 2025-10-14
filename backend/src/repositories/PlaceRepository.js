@@ -104,6 +104,13 @@ class PlaceRepository {
     );
     return results;
   }
+
+  async bulkDelete(ids) {
+    if (!ids || ids.length === 0) return true;
+    const placeholders = ids.map(() => '?').join(',');
+    await query(`DELETE FROM places WHERE id IN (${placeholders})`, ids);
+    return true;
+  }
 }
 
 export default new PlaceRepository();

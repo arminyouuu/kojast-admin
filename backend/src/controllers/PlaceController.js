@@ -63,6 +63,19 @@ class PlaceController {
       next(error);
     }
   }
+
+  async bulkDelete(req, res, next) {
+    try {
+      const { ids } = req.body;
+      if (!Array.isArray(ids) || ids.length === 0) {
+        return res.status(400).json({ error: 'Invalid or empty ids array' });
+      }
+      await PlaceService.bulkDeletePlaces(ids);
+      res.status(204).send();
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default new PlaceController();
