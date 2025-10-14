@@ -10,7 +10,7 @@ class PlaceController {
       next(error);
     }
   }
-
+ 
   async getById(req, res, next) {
     try {
       const place = await PlaceService.getPlaceById(req.params.id);
