@@ -1,12 +1,22 @@
 import TelegramBot from 'node-telegram-bot-api';
 import PlaceRepository from '../repositories/PlaceRepository.js';
 import SettingsRepository from '../repositories/SettingsRepository.js';
+import { format } from 'date-fns-jalali';
 
 class ExpirationCheckerService {
   constructor() {
     this.isRunning = false;
     this.intervalId = null;
     this.checkIntervalHours = 24;
+  }
+
+  formatJalaliDate(dateString) {
+    try {
+      const date = new Date(dateString);
+      return format(date, 'yyyy/MM/dd');
+    } catch (error) {
+      return dateString;
+    }
   }
 
   async sendTelegramNotification(message) {
@@ -74,7 +84,7 @@ class ExpirationCheckerService {
           `دسته‌بندی: ${place.category_name || 'نامشخص'}\n` +
           `آدرس: ${place.address || 'نامشخص'}\n` +
           `${urgency}\n` +
-          `تاریخ انقضا: ${place.expiration_date}`
+          `تاریخ انقضا: ${this.formatJalaliDate(place.expiration_date)}`
         );
       }
 
@@ -100,7 +110,7 @@ class ExpirationCheckerService {
           `دسته‌بندی: ${place.category_name || 'نامشخص'}\n` +
           `آدرس: ${place.address || 'نامشخص'}\n` +
           `${urgency}\n` +
-          `تاریخ انقضا: ${place.expiration_date}`
+          `تاریخ انقضا: ${this.formatJalaliDate(place.expiration_date)}`
         );
       }
 
