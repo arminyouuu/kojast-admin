@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { api } from '../lib/api';
 import type { Place, Category } from '../types';
-import { X, Plus, Trash2 } from 'lucide-react';
+import { X, Plus, Trash2, Upload, Image as ImageIcon } from 'lucide-react';
 import DatePicker, { DateObject } from 'react-multi-date-picker';
 import persian from 'react-date-object/calendars/persian';
 import persian_fa from 'react-date-object/locales/persian_fa';
@@ -25,6 +25,7 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
   const [images, setImages] = useState<string[]>(['']);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     if (place) {
@@ -62,6 +63,63 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
     const newImages = [...images];
     newImages[index] = value;
     setImages(newImages);
+  };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setError('لطفاً فقط فایل تصویری انتخاب کنید');
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      setError('حجم فایل نباید بیشتر از 10 مگابایت باشد');
+      return;
+    }
+
+    try {
+      setUploading(true);
+      setError('');
+
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const authHeaders = getAuthHeaders();
+      const response = await fetch(`${import.meta.env.VITE_API_URL || '/api'}/admin/upload-image`, {
+        method: 'POST',
+        headers: authHeaders,
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('آپلود تصویر با خطا مواجه شد');
+      }
+
+      const data = await response.json();
+
+      const emptyIndex = images.findIndex(img => img.trim() === '');
+      if (emptyIndex !== -1) {
+        handleImageChange(emptyIndex, data.url);
+      } else {
+        setImages([...images, data.url]);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'آپلود تصویر با خطا مواجه شد');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const getAuthHeaders = () => {
+    const credentials = localStorage.getItem('admin_credentials');
+    if (credentials) {
+      return {
+        'Authorization': `Basic ${credentials}`,
+      };
+    }
+    return {};
   };
 
   const handleSubmit = async () => {
@@ -238,35 +296,68 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
           <div>
             <div className="flex justify-between items-center mb-2">
               <label className="block text-sm font-medium text-slate-700">
-                لینک تصاویر
+                تصاویر
               </label>
-              <button
-                type="button"
-                onClick={handleAddImage}
-                className="flex items-center space-x-reverse space-x-1 text-sm text-slate-600 hover:text-slate-900"
-              >
-                <Plus className="w-4 h-4" />
-                <span>افزودن تصویر</span>
-              </button>
-            </div>
-            <div className="space-y-2">
-              {images.map((image, index) => (
-                <div key={index} className="flex space-x-reverse space-x-2">
+              <div className="flex space-x-reverse space-x-2">
+                <label className="flex items-center space-x-reverse space-x-1 text-sm text-slate-600 hover:text-slate-900 cursor-pointer">
                   <input
-                    type="url"
-                    value={image}
-                    onChange={(e) => handleImageChange(index, e.target.value)}
-                    className="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
-                    placeholder="https://example.com/image.jpg"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileUpload}
+                    disabled={uploading}
+                    className="hidden"
                   />
-                  {images.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveImage(index)}
-                      className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                  <Upload className="w-4 h-4" />
+                  <span>{uploading ? 'در حال آپلود...' : 'آپلود تصویر'}</span>
+                </label>
+                <button
+                  type="button"
+                  onClick={handleAddImage}
+                  className="flex items-center space-x-reverse space-x-1 text-sm text-slate-600 hover:text-slate-900"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>افزودن لینک</span>
+                </button>
+              </div>
+            </div>
+            <div className="space-y-3">
+              {images.map((image, index) => (
+                <div key={index} className="space-y-2">
+                  <div className="flex space-x-reverse space-x-2">
+                    <input
+                      type="url"
+                      value={image}
+                      onChange={(e) => handleImageChange(index, e.target.value)}
+                      className="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none"
+                      placeholder="https://example.com/image.jpg یا آپلود کنید"
+                    />
+                    {images.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveImage(index)}
+                        className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                  {image && image.trim() !== '' && (
+                    <div className="relative w-full h-32 bg-slate-100 rounded-lg overflow-hidden">
+                      <img
+                        src={image}
+                        alt={`Preview ${index + 1}`}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.src = '';
+                          e.currentTarget.classList.add('hidden');
+                        }}
+                      />
+                      {!image.startsWith('http') && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <ImageIcon className="w-8 h-8 text-slate-400" />
+                        </div>
+                      )}
+                    </div>
                   )}
                 </div>
               ))}
