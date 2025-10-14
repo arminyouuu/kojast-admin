@@ -303,91 +303,91 @@ export default function ApiKeysPage() {
         </div>
       )}
 
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mt-6 mb-6">
-        <h3 className="font-semibold text-blue-900 mb-4 flex items-center space-x-2 space-x-reverse text-lg">
+      <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-6 mt-6 mb-6">
+        <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-4 flex items-center space-x-2 space-x-reverse text-lg">
           <AlertCircle className="w-5 h-5" />
           <span>راهنمای استفاده از API</span>
         </h3>
-        <div className="text-sm text-blue-800 space-y-4">
-          <p className="font-medium">از کلیدهای API خود برای احراز هویت درخواست‌های Kojast API استفاده کنید. تمام درخواست‌ها نیاز به هدر <code className="bg-blue-100 px-1.5 py-0.5 rounded" dir="ltr">X-API-Key</code> دارند.</p>
+        <div className="text-sm text-slate-700 dark:text-slate-300 space-y-4">
+          <p className="font-medium">از کلیدهای API خود برای احراز هویت درخواست‌های Kojast API استفاده کنید. تمام درخواست‌ها نیاز به هدر <code className="bg-slate-200 dark:bg-slate-800 px-1.5 py-0.5 rounded" dir="ltr">X-API-Key</code> دارند.</p>
 
           <div className="space-y-3">
             <div>
-              <h4 className="font-semibold text-blue-900 mb-2">عملیات خواندن (نیاز به دسترسی خواندن)</h4>
+              <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-2">عملیات خواندن (نیاز به دسترسی خواندن)</h4>
 
-              <div className="bg-white rounded-lg p-3 font-mono text-xs overflow-x-auto border border-blue-200 mb-2">
+              <div className="bg-white dark:bg-slate-800 rounded-lg p-3 font-mono text-xs overflow-x-auto border border-slate-200 dark:border-slate-700 mb-2">
                 <div className="text-emerald-600 font-semibold mb-1">GET /api/places</div>
-                <div className="text-slate-400">Headers:</div>
-                <div className="text-blue-600 ml-2">X-API-Key: your_api_key_here</div>
+                <div className="text-slate-500 dark:text-slate-400">Headers:</div>
+                <div className="text-slate-700 dark:text-slate-300 ml-2">X-API-Key: your_api_key_here</div>
               </div>
 
-              <div className="bg-white rounded-lg p-3 font-mono text-xs overflow-x-auto border border-blue-200 mb-2">
+              <div className="bg-white dark:bg-slate-800 rounded-lg p-3 font-mono text-xs overflow-x-auto border border-slate-200 dark:border-slate-700 mb-2">
                 <div className="text-emerald-600 font-semibold mb-1">GET /api/places/:id</div>
-                <div className="text-slate-400">Headers:</div>
-                <div className="text-blue-600 ml-2">X-API-Key: your_api_key_here</div>
+                <div className="text-slate-500 dark:text-slate-400">Headers:</div>
+                <div className="text-slate-700 dark:text-slate-300 ml-2">X-API-Key: your_api_key_here</div>
               </div>
 
-              <div className="bg-white rounded-lg p-3 font-mono text-xs overflow-x-auto border border-blue-200">
+              <div className="bg-white dark:bg-slate-800 rounded-lg p-3 font-mono text-xs overflow-x-auto border border-slate-200 dark:border-slate-700">
                 <div className="text-emerald-600 font-semibold mb-1">GET /api/categories</div>
-                <div className="text-slate-400">Headers:</div>
-                <div className="text-blue-600 ml-2">X-API-Key: your_api_key_here</div>
+                <div className="text-slate-500 dark:text-slate-400">Headers:</div>
+                <div className="text-slate-700 dark:text-slate-300 ml-2">X-API-Key: your_api_key_here</div>
               </div>
             </div>
 
             <div>
-              <h4 className="font-semibold text-blue-900 mb-2">عملیات نوشتن (نیاز به دسترسی نوشتن)</h4>
+              <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-2">عملیات نوشتن (نیاز به دسترسی نوشتن)</h4>
 
-              <div className="bg-white rounded-lg p-3 font-mono text-xs overflow-x-auto border border-blue-200 mb-2">
+              <div className="bg-white dark:bg-slate-800 rounded-lg p-3 font-mono text-xs overflow-x-auto border border-slate-200 dark:border-slate-700 mb-2">
                 <div className="text-orange-600 font-semibold mb-1">POST /api/places</div>
-                <div className="text-slate-400">Headers:</div>
-                <div className="text-blue-600 ml-2 mb-1">X-API-Key: your_api_key_here</div>
-                <div className="text-blue-600 ml-2">Content-Type: application/json</div>
-                <div className="text-slate-400 mt-2">Body:</div>
-                <div className="text-slate-600 ml-2">{'{'}</div>
-                <div className="text-slate-600 ml-4">"name": "New Place",</div>
-                <div className="text-slate-600 ml-4">"description": "Description",</div>
-                <div className="text-slate-600 ml-4">"category_id": "uuid",</div>
-                <div className="text-slate-600 ml-4">"latitude": 40.7128,</div>
-                <div className="text-slate-600 ml-4">"longitude": -74.0060</div>
-                <div className="text-slate-600 ml-2">{'}'}</div>
+                <div className="text-slate-500 dark:text-slate-400">Headers:</div>
+                <div className="text-slate-700 dark:text-slate-300 ml-2 mb-1">X-API-Key: your_api_key_here</div>
+                <div className="text-slate-700 dark:text-slate-300 ml-2">Content-Type: application/json</div>
+                <div className="text-slate-500 dark:text-slate-400 mt-2">Body:</div>
+                <div className="text-slate-600 dark:text-slate-400 ml-2">{'{'}</div>
+                <div className="text-slate-600 dark:text-slate-400 ml-4">"name": "New Place",</div>
+                <div className="text-slate-600 dark:text-slate-400 ml-4">"description": "Description",</div>
+                <div className="text-slate-600 dark:text-slate-400 ml-4">"category_id": "uuid",</div>
+                <div className="text-slate-600 dark:text-slate-400 ml-4">"latitude": 40.7128,</div>
+                <div className="text-slate-600 dark:text-slate-400 ml-4">"longitude": -74.0060</div>
+                <div className="text-slate-600 dark:text-slate-400 ml-2">{'}'}</div>
               </div>
 
-              <div className="bg-white rounded-lg p-3 font-mono text-xs overflow-x-auto border border-blue-200 mb-2">
+              <div className="bg-white dark:bg-slate-800 rounded-lg p-3 font-mono text-xs overflow-x-auto border border-slate-200 dark:border-slate-700 mb-2">
                 <div className="text-amber-600 font-semibold mb-1">PUT /api/places/:id</div>
-                <div className="text-slate-400">Headers:</div>
-                <div className="text-blue-600 ml-2 mb-1">X-API-Key: your_api_key_here</div>
-                <div className="text-blue-600 ml-2">Content-Type: application/json</div>
-                <div className="text-slate-400 mt-2">Body:</div>
-                <div className="text-slate-600 ml-2">{'{'}</div>
-                <div className="text-slate-600 ml-4">"name": "Updated Name",</div>
-                <div className="text-slate-600 ml-4">"description": "Updated description"</div>
-                <div className="text-slate-600 ml-2">{'}'}</div>
+                <div className="text-slate-500 dark:text-slate-400">Headers:</div>
+                <div className="text-slate-700 dark:text-slate-300 ml-2 mb-1">X-API-Key: your_api_key_here</div>
+                <div className="text-slate-700 dark:text-slate-300 ml-2">Content-Type: application/json</div>
+                <div className="text-slate-500 dark:text-slate-400 mt-2">Body:</div>
+                <div className="text-slate-600 dark:text-slate-400 ml-2">{'{'}</div>
+                <div className="text-slate-600 dark:text-slate-400 ml-4">"name": "Updated Name",</div>
+                <div className="text-slate-600 dark:text-slate-400 ml-4">"description": "Updated description"</div>
+                <div className="text-slate-600 dark:text-slate-400 ml-2">{'}'}</div>
               </div>
 
-              <div className="bg-white rounded-lg p-3 font-mono text-xs overflow-x-auto border border-blue-200">
+              <div className="bg-white dark:bg-slate-800 rounded-lg p-3 font-mono text-xs overflow-x-auto border border-slate-200 dark:border-slate-700">
                 <div className="text-red-600 font-semibold mb-1">DELETE /api/places/:id</div>
-                <div className="text-slate-400">Headers:</div>
-                <div className="text-blue-600 ml-2">X-API-Key: your_api_key_here</div>
+                <div className="text-slate-500 dark:text-slate-400">Headers:</div>
+                <div className="text-slate-700 dark:text-slate-300 ml-2">X-API-Key: your_api_key_here</div>
               </div>
             </div>
 
             <div>
-              <h4 className="font-semibold text-blue-900 mb-2">مثال با JavaScript fetch()</h4>
-              <div className="bg-white rounded-lg p-3 font-mono text-xs overflow-x-auto border border-blue-200">
-                <div className="text-slate-600">
-                  <div className="text-purple-600">const</div> response = <div className="inline text-purple-600">await</div> fetch('https://kojast.com/api/places', {'{'}</div>
-                <div className="text-slate-600 ml-2">method: <span className="text-green-600">'GET'</span>,</div>
-                <div className="text-slate-600 ml-2">headers: {'{'}</div>
-                <div className="text-slate-600 ml-4"><span className="text-green-600">'X-API-Key'</span>: <span className="text-green-600">'your_api_key_here'</span></div>
-                <div className="text-slate-600 ml-2">{'}'}</div>
-                <div className="text-slate-600">{'}'});</div>
-                <div className="text-slate-600 mt-1"><div className="inline text-purple-600">const</div> data = <div className="inline text-purple-600">await</div> response.json();</div>
+              <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-2">مثال با JavaScript fetch()</h4>
+              <div className="bg-white dark:bg-slate-800 rounded-lg p-3 font-mono text-xs overflow-x-auto border border-slate-200 dark:border-slate-700">
+                <div className="text-slate-700 dark:text-slate-300">
+                  <div className="text-slate-900 dark:text-slate-100">const</div> response = <div className="inline text-slate-900 dark:text-slate-100">await</div> fetch('https://kojast.com/api/places', {'{'}</div>
+                <div className="text-slate-700 dark:text-slate-300 ml-2">method: <span className="text-emerald-600">'GET'</span>,</div>
+                <div className="text-slate-700 dark:text-slate-300 ml-2">headers: {'{'}</div>
+                <div className="text-slate-700 dark:text-slate-300 ml-4"><span className="text-emerald-600">'X-API-Key'</span>: <span className="text-emerald-600">'your_api_key_here'</span></div>
+                <div className="text-slate-700 dark:text-slate-300 ml-2">{'}'}</div>
+                <div className="text-slate-700 dark:text-slate-300">{'}'});</div>
+                <div className="text-slate-700 dark:text-slate-300 mt-1"><div className="inline text-slate-900 dark:text-slate-100">const</div> data = <div className="inline text-slate-900 dark:text-slate-100">await</div> response.json();</div>
               </div>
             </div>
 
             <div>
-              <h4 className="font-semibold text-blue-900 mb-2">کدهای پاسخ</h4>
-              <div className="bg-white rounded-lg p-3 border border-blue-200">
+              <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-2">کدهای پاسخ</h4>
+              <div className="bg-white dark:bg-slate-800 rounded-lg p-3 border border-slate-200 dark:border-slate-700">
                 <ul className="space-y-1 text-xs">
                   <li><code className="text-emerald-600 font-semibold" dir="ltr">200 OK</code> - درخواست موفق</li>
                   <li><code className="text-orange-600 font-semibold" dir="ltr">201 Created</code> - منبع با موفقیت ایجاد شد</li>
@@ -400,9 +400,9 @@ export default function ApiKeysPage() {
             </div>
           </div>
 
-          <div className="bg-blue-100 rounded-lg p-3 border border-blue-300">
-            <p className="font-semibold mb-2">بهترین شیوه‌های امنیتی:</p>
-            <ul className="list-disc list-inside space-y-1 text-xs">
+          <div className="bg-slate-100 dark:bg-slate-800 rounded-lg p-3 border border-slate-300 dark:border-slate-700">
+            <p className="font-semibold mb-2 text-slate-900 dark:text-slate-100">بهترین شیوه‌های امنیتی:</p>
+            <ul className="list-disc list-inside space-y-1 text-xs text-slate-700 dark:text-slate-300">
               <li>هرگز کلیدهای API خود را به صورت عمومی به اشتراک نگذارید یا آن‌ها را در کنترل نسخه ذخیره نکنید</li>
               <li>از متغیرهای محیطی (env) برای ذخیره کلیدهای API در برنامه‌های خود استفاده کنید</li>
               <li>کلیدهای جداگانه برای محیط‌های مختلف (توسعه، آزمایشی، تولید) ایجاد کنید</li>
