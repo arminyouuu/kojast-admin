@@ -4,7 +4,7 @@ class CategoryService {
   async getAllCategories() {
     return await CategoryRepository.findAll();
   }
-
+ 
   async getCategoryById(id) {
     const category = await CategoryRepository.findById(id);
     if (!category) {
