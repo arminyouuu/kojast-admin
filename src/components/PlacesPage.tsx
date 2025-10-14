@@ -109,7 +109,7 @@ export default function PlacesPage() {
   const handleSaveSuccess = () => {
     loadPlaces();
     handleCloseModal();
-    addToast(editingPlace ? 'مکان با موفقیت بروزرسانی شد' : 'مکان جدید با موفقیت اضافه شد', 'success');
+    addToast(editingPlace ? 'مکان جدید با موفقیت اضافه شد' : 'مکان با موفقیت بروزرسانی شد', 'success');
   };
 
   const getCategoryName = (place: Place) => {

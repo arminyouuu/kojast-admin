@@ -1,13 +1,9 @@
 import express from 'express';
-import multer from 'multer';
 import CategoryController from '../controllers/CategoryController.js';
 import PlaceController from '../controllers/PlaceController.js';
 import ApiKeyController from '../controllers/ApiKeyController.js';
-import ImageUploadController from '../controllers/ImageUploadController.js';
 import settingsRoutes from './settingsRoutes.js';
 import { authenticate } from '../middleware/auth.js';
-
-const upload = multer({ dest: '/tmp/uploads/' });
 
 const router = express.Router();
 
@@ -83,9 +79,6 @@ router.get('/api-keys', ApiKeyController.getAll);
 router.post('/api-keys', ApiKeyController.create);
 router.put('/api-keys/:id', ApiKeyController.update);
 router.delete('/api-keys/:id', ApiKeyController.delete);
-
-router.post('/upload-image', upload.single('image'), ImageUploadController.uploadImage);
-router.delete('/delete-image', ImageUploadController.deleteImage);
 
 router.use('/settings', settingsRoutes);
 
