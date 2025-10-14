@@ -9,7 +9,7 @@ class CategoryRepository {
     const results = await query('SELECT * FROM categories WHERE id = ?', [id]);
     return results[0] || null;
   }
-
+ 
   async create(name) {
     const result = await query('INSERT INTO categories (name) VALUES (?)', [name]);
     return { id: result.insertId, name };
