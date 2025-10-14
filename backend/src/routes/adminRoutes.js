@@ -32,6 +32,7 @@ router.use(authenticate);
 router.get('/categories', CategoryController.getAll);
 router.get('/categories/:id', CategoryController.getById);
 router.post('/categories', CategoryController.create);
+router.post('/categories/bulk-delete', CategoryController.bulkDelete);
 router.put('/categories/:id', CategoryController.update);
 router.delete('/categories/:id', CategoryController.delete);
 
@@ -39,6 +40,7 @@ router.post('/places/upload', upload.array('images', 10), PlaceController.upload
 router.get('/places', PlaceController.getAll);
 router.get('/places/:id', PlaceController.getById);
 router.post('/places', PlaceController.create);
+router.post('/places/bulk-delete', PlaceController.bulkDelete);
 router.put('/places/:id', PlaceController.update);
 router.delete('/places/:id', PlaceController.delete);
 
