@@ -84,10 +84,23 @@ class PlaceRepository {
        FROM places p
        LEFT JOIN categories c ON p.category_id = c.id
        WHERE p.expiration_date IS NOT NULL
-       AND p.expiration_date >= CURDATE()
+       AND p.expiration_date >= DATE_SUB(CURDATE(), INTERVAL 1 DAY)
        AND p.expiration_date <= DATE_ADD(CURDATE(), INTERVAL ? DAY)
        ORDER BY p.expiration_date ASC`,
       [days]
+    );
+    return results;
+  }
+
+  async findExpired() {
+    const results = await query(
+      `SELECT p.*, c.name as category_name
+       FROM places p
+       LEFT JOIN categories c ON p.category_id = c.id
+       WHERE p.expiration_date IS NOT NULL
+       AND p.expiration_date < CURDATE()
+       ORDER BY p.expiration_date DESC`,
+      []
     );
     return results;
   }

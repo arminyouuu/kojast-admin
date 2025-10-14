@@ -37,21 +37,46 @@ class ExpirationCheckerService {
 
   async checkExpirations() {
     try {
-      console.log('Checking for expiring places...');
+      console.log('Checking for expiring and expired places...');
 
       const expiringPlaces = await PlaceRepository.findExpiringSoon(7);
+      const expiredPlaces = await PlaceRepository.findExpired();
 
-      if (expiringPlaces.length === 0) {
-        console.log('No places expiring soon');
+      if (expiringPlaces.length === 0 && expiredPlaces.length === 0) {
+        console.log('No places expiring soon or expired');
         return;
       }
 
-      console.log(`Found ${expiringPlaces.length} place(s) expiring soon`);
+      console.log(`Found ${expiringPlaces.length} place(s) expiring soon and ${expiredPlaces.length} expired place(s)`);
 
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
       const messages = [];
+
+      for (const place of expiredPlaces) {
+        const expirationDate = new Date(place.expiration_date);
+        expirationDate.setHours(0, 0, 0, 0);
+
+        const daysSinceExpiration = Math.floor((today - expirationDate) / (1000 * 60 * 60 * 24));
+
+        let urgency = '';
+        if (daysSinceExpiration === 0) {
+          urgency = '🔴 امروز منقضی شده است!';
+        } else if (daysSinceExpiration === 1) {
+          urgency = '🔴 دیروز منقضی شده است!';
+        } else {
+          urgency = `🔴 ${daysSinceExpiration} روز پیش منقضی شده است!`;
+        }
+
+        messages.push(
+          `<b>${place.name}</b>\n` +
+          `دسته‌بندی: ${place.category_name || 'نامشخص'}\n` +
+          `آدرس: ${place.address || 'نامشخص'}\n` +
+          `${urgency}\n` +
+          `تاریخ انقضا: ${place.expiration_date}`
+        );
+      }
 
       for (const place of expiringPlaces) {
         const expirationDate = new Date(place.expiration_date);
@@ -73,16 +98,27 @@ class ExpirationCheckerService {
         messages.push(
           `<b>${place.name}</b>\n` +
           `دسته‌بندی: ${place.category_name || 'نامشخص'}\n` +
-          `آدرس: ${place.address}\n` +
+          `آدرس: ${place.address || 'نامشخص'}\n` +
           `${urgency}\n` +
           `تاریخ انقضا: ${place.expiration_date}`
         );
       }
 
       if (messages.length > 0) {
+        const totalCount = expiredPlaces.length + expiringPlaces.length;
+        let headerText = '';
+
+        if (expiredPlaces.length > 0 && expiringPlaces.length > 0) {
+          headerText = `${expiredPlaces.length} مکان منقضی شده و ${expiringPlaces.length} مکان در حال نزدیک شدن به تاریخ انقضا هستند:`;
+        } else if (expiredPlaces.length > 0) {
+          headerText = `${expiredPlaces.length} مکان منقضی شده است:`;
+        } else {
+          headerText = `${expiringPlaces.length} مکان در حال نزدیک شدن به تاریخ انقضا هستند:`;
+        }
+
         const fullMessage =
           `⚠️ <b>هشدار انقضای مکان‌ها</b> ⚠️\n\n` +
-          `${expiringPlaces.length} مکان در حال نزدیک شدن به تاریخ انقضا هستند:\n\n` +
+          headerText + `\n\n` +
           messages.join('\n\n---\n\n');
 
         await this.sendTelegramNotification(fullMessage);
