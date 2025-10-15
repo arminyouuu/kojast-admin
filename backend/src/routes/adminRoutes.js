@@ -86,14 +86,31 @@ router.delete('/api-keys/:id', ApiKeyController.delete);
 
 router.get('/users', async (req, res, next) => {
   try {
+    const { query } = await import('../database/connection.js');
+
+    const page = Math.max(parseInt(req.query.page) || 1, 1);
+    const perPage = Math.min(Math.max(parseInt(req.query.limit) || 10, 1), 100);
+    const offset = (page - 1) * perPage;
+
+    const users = await query(
+      `SELECT id, phone_number, email, full_name, created_at, last_login, is_active
+       FROM users
+       ORDER BY created_at DESC
+       LIMIT ? OFFSET ?`,
+      [perPage, offset]
+    );
+
+    const [countResult] = await query('SELECT COUNT(*) as total FROM users');
+    const total = countResult.total;
+
     res.json({
       success: true,
-      data: [],
+      data: users,
       meta: {
-        total: 0,
-        page: 1,
-        limit: 10,
-        pages: 0
+        total,
+        page,
+        limit: perPage,
+        pages: Math.ceil(total / perPage)
       }
     });
   } catch (error) {
