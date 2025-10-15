@@ -31,10 +31,16 @@ export interface PlaceImage {
 
 export interface PaginatedResponse<T> {
   data: T[];
-  total: number;
-  page: number;
-  pages: number;
-  limit: number;
+  total?: number;
+  page?: number;
+  pages?: number;
+  limit?: number;
+  meta?: {
+    total: number;
+    page: number;
+    pages: number;
+    limit: number;
+  };
 }
 
 export interface User {

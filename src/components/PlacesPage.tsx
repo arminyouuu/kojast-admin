@@ -62,8 +62,8 @@ export default function PlacesPage() {
         limit: 10,
       });
       setPlaces(response.data);
-      setTotalPages(response.pages);
-      setTotal(response.total);
+      setTotalPages(response.meta?.pages || response.pages || 1);
+      setTotal(response.meta?.total || response.total || 0);
       setError('');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load places');
