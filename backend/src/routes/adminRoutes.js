@@ -87,8 +87,12 @@ router.delete('/api-keys/:id', ApiKeyController.delete);
 router.get('/users', async (req, res, next) => {
   try {
     const { query } = await import('../database/connection.js');
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    let page = parseInt(req.query.page);
+    let limit = parseInt(req.query.limit);
+    
+    if (isNaN(page) || page < 1) page = 1;
+    if (isNaN(limit) || limit < 1 || limit > 100) limit = 10; // cap max per page
+        
     const offset = (page - 1) * limit;
 
     const users = await query(
