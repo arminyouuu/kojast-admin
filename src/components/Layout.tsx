@@ -1,6 +1,6 @@
 import { ReactNode, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { LogOut, LayoutDashboard, FolderTree, MapPin, Key, Menu, X, Settings } from 'lucide-react';
+import { LogOut, LayoutDashboard, FolderTree, MapPin, Key, Menu, X, Settings, Users } from 'lucide-react';
 
 interface LayoutProps {
   children: ReactNode;
@@ -16,6 +16,7 @@ export default function Layout({ children, currentPath, onNavigate }: LayoutProp
     { path: '/', label: 'داشبورد', icon: LayoutDashboard },
     { path: '/categories', label: 'دسته‌بندی‌ها', icon: FolderTree },
     { path: '/places', label: 'مکان‌ها', icon: MapPin },
+    { path: '/users', label: 'کاربران', icon: Users },
     { path: '/api-keys', label: 'کلیدهای API', icon: Key },
     { path: '/settings', label: 'تنظیمات', icon: Settings },
   ];

@@ -84,6 +84,63 @@ router.post('/api-keys', ApiKeyController.create);
 router.put('/api-keys/:id', ApiKeyController.update);
 router.delete('/api-keys/:id', ApiKeyController.delete);
 
+router.get('/users', async (req, res, next) => {
+  try {
+    const { query } = await import('../database/connection.js');
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
+    const users = await query(
+      `SELECT id, phone_number, email, full_name, created_at, last_login, is_active
+       FROM users
+       ORDER BY created_at DESC
+       LIMIT ? OFFSET ?`,
+      [limit, offset]
+    );
+
+    const [countResult] = await query('SELECT COUNT(*) as total FROM users');
+
+    res.json({
+      success: true,
+      data: users,
+      meta: {
+        total: countResult.total,
+        page,
+        pages: Math.ceil(countResult.total / limit),
+        limit
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.put('/users/:id/toggle-status', async (req, res, next) => {
+  try {
+    const { query } = await import('../database/connection.js');
+    const userId = req.params.id;
+
+    await query(
+      'UPDATE users SET is_active = NOT is_active WHERE id = ?',
+      [userId]
+    );
+
+    const [user] = await query(
+      'SELECT id, phone_number, email, full_name, created_at, last_login, is_active FROM users WHERE id = ?',
+      [userId]
+    );
+
+    res.json({
+      success: true,
+      message: 'User status updated',
+      data: user
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.use('/settings', settingsRoutes);
 
 export default router;

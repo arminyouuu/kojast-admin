@@ -6,6 +6,7 @@ import Layout from './components/Layout';
 import DashboardPage from './components/DashboardPage';
 import CategoriesPage from './components/CategoriesPage';
 import PlacesPage from './components/PlacesPage';
+import UsersPage from './components/UsersPage';
 import ApiKeysPage from './components/ApiKeysPage';
 import SettingsPage from './components/SettingsPage';
 
@@ -31,6 +32,7 @@ function AppContent() {
           {currentPath === '/' && <DashboardPage />}
           {currentPath === '/categories' && <CategoriesPage />}
           {currentPath === '/places' && <PlacesPage />}
+          {currentPath === '/users' && <UsersPage />}
           {currentPath === '/api-keys' && <ApiKeysPage />}
           {currentPath === '/settings' && <SettingsPage />}
         </Layout>
