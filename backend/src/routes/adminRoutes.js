@@ -87,16 +87,17 @@ router.delete('/api-keys/:id', ApiKeyController.delete);
 router.get('/users', async (req, res, next) => {
   try {
     const { query } = await import('../database/connection.js');
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const offset = (page - 1) * limit;
+    
+    // Set a reasonable default limit to prevent performance issues
+    const MAX_LIMIT = 100;
+    const limit = Math.min(parseInt(req.query.limit) || 50, MAX_LIMIT);
 
     const users = await query(
       `SELECT id, phone_number, email, full_name, created_at, last_login, is_active
        FROM users
        ORDER BY created_at DESC
-       LIMIT ? OFFSET ?`,
-      [limit, offset]  // Properly ordered and typed parameters
+       LIMIT ?`,
+      [limit]
     );
 
     const [countResult] = await query('SELECT COUNT(*) as total FROM users');
@@ -105,16 +106,14 @@ router.get('/users', async (req, res, next) => {
       success: true,
       data: users,
       meta: {
-        total: countResult.total,
-        page,
-        pages: Math.ceil(countResult.total / limit),
-        limit
+        total: countResult.total
       }
     });
   } catch (error) {
     next(error);
   }
 });
+
 
 
 router.put('/users/:id/toggle-status', async (req, res, next) => {
