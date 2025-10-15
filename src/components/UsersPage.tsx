@@ -168,7 +168,7 @@ export default function UsersPage() {
         </button>
       </div>
 
-      <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+      <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-visible">
         <div className="p-4 border-b border-slate-200 dark:border-slate-700">
           <div className="relative">
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -193,7 +193,7 @@ export default function UsersPage() {
         ) : (
           <>
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full relative">
                 <thead className="bg-slate-50 dark:bg-slate-700/50">
                   <tr>
                     <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
@@ -217,8 +217,8 @@ export default function UsersPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
-                  {filteredUsers.map((user) => (
-                    <tr key={user.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+                  {filteredUsers.map((user, index) => (
+                    <tr key={user.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors relative">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="flex-shrink-0 h-10 w-10 rounded-full bg-slate-200 dark:bg-slate-600 flex items-center justify-center">
@@ -283,7 +283,7 @@ export default function UsersPage() {
                           </button>
 
                           {openMenuId === user.id && (
-                            <div className="absolute left-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 z-10">
+                            <div className="absolute left-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-slate-200 dark:border-slate-700 z-50">
                               <div className="py-1">
                                 <button
                                   onClick={() => {
