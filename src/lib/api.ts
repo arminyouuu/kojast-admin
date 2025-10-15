@@ -173,4 +173,26 @@ export const api = {
         method: 'DELETE',
       }),
   },
+
+  users: {
+    create: (data: any) =>
+      fetchApi<any>('/admin/users', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }),
+    update: (id: string, data: any) =>
+      fetchApi<any>(`/admin/users/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      }),
+    delete: (id: string) =>
+      fetchApi<void>(`/admin/users/${id}`, {
+        method: 'DELETE',
+      }),
+    resetPassword: (id: string, password: string) =>
+      fetchApi<void>(`/admin/users/${id}/reset-password`, {
+        method: 'POST',
+        body: JSON.stringify({ password }),
+      }),
+  },
 };

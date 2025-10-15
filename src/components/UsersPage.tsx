@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react';
-import { Users, Search, UserCheck, UserX, Phone, Mail, Calendar, Clock } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Users, Search, Phone, Mail, Calendar, Clock, MoreVertical, Edit, Trash2, Key, UserX, UserCheck, UserPlus } from 'lucide-react';
 import { api } from '../lib/api';
 import Toast from './Toast';
 import ConfirmModal from './ConfirmModal';
+import UserModal from './UserModal';
+import ResetPasswordModal from './ResetPasswordModal';
 
 interface User {
   id: number;
@@ -27,7 +29,17 @@ export default function UsersPage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
-  const [confirmModal, setConfirmModal] = useState<{ userId: number; isActive: boolean } | null>(null);
+  const [confirmModal, setConfirmModal] = useState<{
+    type: 'delete' | 'disable';
+    userId: number;
+    userName: string;
+    isActive?: boolean;
+  } | null>(null);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [showUserModal, setShowUserModal] = useState(false);
+  const [resetPasswordUser, setResetPasswordUser] = useState<{ id: number; name: string } | null>(null);
+  const [openMenuId, setOpenMenuId] = useState<number | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const fetchUsers = async (page = 1) => {
     try {
@@ -46,15 +58,82 @@ export default function UsersPage() {
     fetchUsers();
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setOpenMenuId(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const handleToggleStatus = async (userId: number) => {
     try {
       await api.put(`/admin/users/${userId}/toggle-status`);
       setToast({ message: 'وضعیت کاربر با موفقیت تغییر کرد', type: 'success' });
       fetchUsers(meta.page);
       setConfirmModal(null);
+      setOpenMenuId(null);
     } catch (error) {
       setToast({ message: 'خطا در تغییر وضعیت کاربر', type: 'error' });
     }
+  };
+
+  const handleAddUser = () => {
+    setEditingUser(null);
+    setShowUserModal(true);
+  };
+
+  const handleEditUser = (user: User) => {
+    setEditingUser(user);
+    setShowUserModal(true);
+    setOpenMenuId(null);
+  };
+
+  const handleSaveUser = async (userData: Partial<User>) => {
+    try {
+      if (editingUser) {
+        await api.users.update(editingUser.id.toString(), userData);
+        setToast({ message: 'کاربر با موفقیت ویرایش شد', type: 'success' });
+      } else {
+        await api.users.create(userData);
+        setToast({ message: 'کاربر با موفقیت اضافه شد', type: 'success' });
+      }
+      fetchUsers(meta.page);
+      setShowUserModal(false);
+      setEditingUser(null);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const handleDeleteUser = async (userId: number) => {
+    try {
+      await api.users.delete(userId.toString());
+      setToast({ message: 'کاربر با موفقیت حذف شد', type: 'success' });
+      fetchUsers(meta.page);
+      setConfirmModal(null);
+      setOpenMenuId(null);
+    } catch (error) {
+      setToast({ message: 'خطا در حذف کاربر', type: 'error' });
+    }
+  };
+
+  const handleResetPassword = async (userId: number, newPassword: string) => {
+    try {
+      await api.users.resetPassword(userId.toString(), newPassword);
+      setToast({ message: 'رمز عبور با موفقیت تنظیم شد', type: 'success' });
+      setResetPasswordUser(null);
+      setOpenMenuId(null);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const toggleMenu = (userId: number) => {
+    setOpenMenuId(openMenuId === userId ? null : userId);
   };
 
   const formatDate = (dateString: string | null) => {
@@ -80,6 +159,13 @@ export default function UsersPage() {
             <p className="text-sm text-slate-500 dark:text-slate-400">مشاهده و مدیریت کاربران اپلیکیشن</p>
           </div>
         </div>
+        <button
+          onClick={handleAddUser}
+          className="inline-flex items-center px-4 py-2 bg-slate-900 dark:bg-slate-700 text-white rounded-lg hover:bg-slate-800 dark:hover:bg-slate-600 transition-colors"
+        >
+          <UserPlus className="w-5 h-5 ml-2" />
+          افزودن کاربر
+        </button>
       </div>
 
       <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
@@ -188,26 +274,80 @@ export default function UsersPage() {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        <button
-                          onClick={() => setConfirmModal({ userId: user.id, isActive: user.is_active })}
-                          className={`inline-flex items-center px-3 py-1.5 rounded-lg font-medium transition-colors ${
-                            user.is_active
-                              ? 'text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20'
-                              : 'text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20'
-                          }`}
-                        >
-                          {user.is_active ? (
-                            <>
-                              <UserX className="w-4 h-4 ml-1" />
-                              غیرفعال کردن
-                            </>
-                          ) : (
-                            <>
-                              <UserCheck className="w-4 h-4 ml-1" />
-                              فعال کردن
-                            </>
+                        <div className="relative" ref={openMenuId === user.id ? menuRef : null}>
+                          <button
+                            onClick={() => toggleMenu(user.id)}
+                            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
+                          >
+                            <MoreVertical className="w-5 h-5 text-slate-600 dark:text-slate-400" />
+                          </button>
+
+                          {openMenuId === user.id && (
+                            <div className="absolute left-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 z-10">
+                              <div className="py-1">
+                                <button
+                                  onClick={() => {
+                                    setConfirmModal({
+                                      type: 'disable',
+                                      userId: user.id,
+                                      userName: user.full_name || 'این کاربر',
+                                      isActive: user.is_active
+                                    });
+                                  }}
+                                  className={`w-full text-right px-4 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-700/50 flex items-center ${
+                                    user.is_active
+                                      ? 'text-orange-600 dark:text-orange-400'
+                                      : 'text-green-600 dark:text-green-400'
+                                  }`}
+                                >
+                                  {user.is_active ? (
+                                    <>
+                                      <UserX className="w-4 h-4 ml-2" />
+                                      غیرفعال کردن
+                                    </>
+                                  ) : (
+                                    <>
+                                      <UserCheck className="w-4 h-4 ml-2" />
+                                      فعال کردن
+                                    </>
+                                  )}
+                                </button>
+                                <button
+                                  onClick={() => handleEditUser(user)}
+                                  className="w-full text-right px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 flex items-center"
+                                >
+                                  <Edit className="w-4 h-4 ml-2" />
+                                  ویرایش
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    setResetPasswordUser({
+                                      id: user.id,
+                                      name: user.full_name || 'کاربر'
+                                    });
+                                  }}
+                                  className="w-full text-right px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 flex items-center"
+                                >
+                                  <Key className="w-4 h-4 ml-2" />
+                                  تنظیم رمز عبور
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    setConfirmModal({
+                                      type: 'delete',
+                                      userId: user.id,
+                                      userName: user.full_name || 'این کاربر'
+                                    });
+                                  }}
+                                  className="w-full text-right px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center"
+                                >
+                                  <Trash2 className="w-4 h-4 ml-2" />
+                                  حذف
+                                </button>
+                              </div>
+                            </div>
                           )}
-                        </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -255,15 +395,60 @@ export default function UsersPage() {
 
       {confirmModal && (
         <ConfirmModal
-          title={confirmModal.isActive ? 'غیرفعال کردن کاربر' : 'فعال کردن کاربر'}
-          message={confirmModal.isActive
-            ? 'آیا مطمئن هستید که می‌خواهید این کاربر را غیرفعال کنید؟ کاربر نمی‌تواند وارد حساب کاربری خود شود.'
-            : 'آیا مطمئن هستید که می‌خواهید این کاربر را فعال کنید؟'
+          title={
+            confirmModal.type === 'delete'
+              ? 'حذف کاربر'
+              : confirmModal.isActive
+              ? 'غیرفعال کردن کاربر'
+              : 'فعال کردن کاربر'
           }
-          confirmText={confirmModal.isActive ? 'غیرفعال کردن' : 'فعال کردن'}
-          confirmButtonClass={confirmModal.isActive ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'}
-          onConfirm={() => handleToggleStatus(confirmModal.userId)}
+          message={
+            confirmModal.type === 'delete'
+              ? `آیا مطمئن هستید که می‌خواهید ${confirmModal.userName} را حذف کنید؟ این عملیات غیرقابل بازگشت است.`
+              : confirmModal.isActive
+              ? `آیا مطمئن هستید که می‌خواهید ${confirmModal.userName} را غیرفعال کنید؟ کاربر نمی‌تواند وارد حساب کاربری خود شود.`
+              : `آیا مطمئن هستید که می‌خواهید ${confirmModal.userName} را فعال کنید؟`
+          }
+          confirmText={
+            confirmModal.type === 'delete'
+              ? 'حذف'
+              : confirmModal.isActive
+              ? 'غیرفعال کردن'
+              : 'فعال کردن'
+          }
+          confirmButtonClass={
+            confirmModal.type === 'delete' || confirmModal.isActive
+              ? 'bg-red-600 hover:bg-red-700'
+              : 'bg-green-600 hover:bg-green-700'
+          }
+          onConfirm={() => {
+            if (confirmModal.type === 'delete') {
+              handleDeleteUser(confirmModal.userId);
+            } else {
+              handleToggleStatus(confirmModal.userId);
+            }
+          }}
           onCancel={() => setConfirmModal(null)}
+        />
+      )}
+
+      {showUserModal && (
+        <UserModal
+          user={editingUser}
+          onClose={() => {
+            setShowUserModal(false);
+            setEditingUser(null);
+          }}
+          onSave={handleSaveUser}
+        />
+      )}
+
+      {resetPasswordUser && (
+        <ResetPasswordModal
+          userId={resetPasswordUser.id}
+          userName={resetPasswordUser.name}
+          onClose={() => setResetPasswordUser(null)}
+          onReset={handleResetPassword}
         />
       )}
     </div>

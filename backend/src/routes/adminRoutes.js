@@ -119,6 +119,57 @@ router.get('/users', async (req, res, next) => {
 
 
 
+router.post('/users', async (req, res, next) => {
+  try {
+    const { query } = await import('../database/connection.js');
+    const { full_name, email, phone_number, is_active } = req.body;
+
+    const result = await query(
+      'INSERT INTO users (full_name, email, phone_number, is_active) VALUES (?, ?, ?, ?)',
+      [full_name, email || null, phone_number || null, is_active ?? true]
+    );
+
+    const [user] = await query(
+      'SELECT id, phone_number, email, full_name, created_at, last_login, is_active FROM users WHERE id = ?',
+      [result.insertId]
+    );
+
+    res.status(201).json({
+      success: true,
+      message: 'User created successfully',
+      data: user
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.put('/users/:id', async (req, res, next) => {
+  try {
+    const { query } = await import('../database/connection.js');
+    const userId = req.params.id;
+    const { full_name, email, phone_number, is_active } = req.body;
+
+    await query(
+      'UPDATE users SET full_name = ?, email = ?, phone_number = ?, is_active = ? WHERE id = ?',
+      [full_name, email || null, phone_number || null, is_active, userId]
+    );
+
+    const [user] = await query(
+      'SELECT id, phone_number, email, full_name, created_at, last_login, is_active FROM users WHERE id = ?',
+      [userId]
+    );
+
+    res.json({
+      success: true,
+      message: 'User updated successfully',
+      data: user
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.put('/users/:id/toggle-status', async (req, res, next) => {
   try {
     const { query } = await import('../database/connection.js');
@@ -138,6 +189,52 @@ router.put('/users/:id/toggle-status', async (req, res, next) => {
       success: true,
       message: 'User status updated',
       data: user
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.delete('/users/:id', async (req, res, next) => {
+  try {
+    const { query } = await import('../database/connection.js');
+    const userId = req.params.id;
+
+    await query('DELETE FROM users WHERE id = ?', [userId]);
+
+    res.json({
+      success: true,
+      message: 'User deleted successfully'
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post('/users/:id/reset-password', async (req, res, next) => {
+  try {
+    const { query } = await import('../database/connection.js');
+    const userId = req.params.id;
+    const { password } = req.body;
+
+    if (!password || password.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: 'Password must be at least 6 characters'
+      });
+    }
+
+    const bcrypt = await import('bcrypt');
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await query(
+      'UPDATE users SET password_hash = ? WHERE id = ?',
+      [hashedPassword, userId]
+    );
+
+    res.json({
+      success: true,
+      message: 'Password reset successfully'
     });
   } catch (error) {
     next(error);
