@@ -179,7 +179,12 @@ export default function CategoriesPage() {
       )}
 
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">دسته‌بندی‌ها</h2>
+        <div className="flex items-center space-x-3 space-x-reverse">
+          <div className="p-3 bg-slate-900 dark:bg-slate-700 rounded-xl">
+            <FolderTree className="w-6 h-6 text-white" />
+          </div>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">دسته‌بندی‌ها</h2>
+        </div>
         <button
           onClick={() => setShowModal(true)}
           className="flex items-center space-x-2 space-x-reverse bg-slate-900 dark:bg-slate-700 text-white px-4 py-2 rounded-lg hover:bg-slate-800 dark:hover:bg-slate-600 transition-colors"

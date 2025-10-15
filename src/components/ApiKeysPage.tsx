@@ -143,9 +143,14 @@ export default function ApiKeysPage() {
       />
 
       <div className="flex items-center justify-between mb-6">
-        <div>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">کلیدهای API</h2>
-          <p className="text-slate-600 dark:text-slate-400 mt-1">مدیریت کلیدهای API برای دسترسی برنامه‌های خارجی</p>
+        <div className="flex items-center space-x-3 space-x-reverse">
+          <div className="p-3 bg-slate-900 dark:bg-slate-700 rounded-xl">
+            <Key className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">کلیدهای API</h2>
+            <p className="text-slate-600 dark:text-slate-400 mt-1">مدیریت کلیدهای API برای دسترسی برنامه‌های خارجی</p>
+          </div>
         </div>
         <button
           onClick={() => setShowCreateModal(true)}

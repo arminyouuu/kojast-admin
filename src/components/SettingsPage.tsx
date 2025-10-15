@@ -48,7 +48,9 @@ export default function SettingsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3 space-x-reverse">
-          <Settings className="w-8 h-8 text-slate-900 dark:text-slate-100" />
+          <div className="p-3 bg-slate-900 dark:bg-slate-700 rounded-xl">
+            <Settings className="w-6 h-6 text-white" />
+          </div>
           <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">تنظیمات</h2>
         </div>
       </div>

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { api } from '../lib/api';
 import type { DashboardStats } from '../types';
-import { FolderTree, MapPin, Clock } from 'lucide-react';
+import { FolderTree, MapPin, Clock, LayoutDashboard } from 'lucide-react';
 
 export default function DashboardPage() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -43,7 +43,12 @@ export default function DashboardPage() {
 
   return (
     <div dir="rtl">
-      <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-6">نمای کلی داشبورد</h2>
+      <div className="flex items-center space-x-3 space-x-reverse mb-6">
+        <div className="p-3 bg-slate-900 dark:bg-slate-700 rounded-xl">
+          <LayoutDashboard className="w-6 h-6 text-white" />
+        </div>
+        <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">نمای کلی داشبورد</h2>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <div className="bg-gradient-to-br from-slate-900 to-slate-700 rounded-xl shadow-lg p-6 text-white">
