@@ -361,6 +361,7 @@ export default function UsersPage() {
               ? 'غیرفعال کردن'
               : 'فعال کردن'
           }
+          cancelText="لغو"
           confirmButtonClass={
             confirmModal.type === 'delete' || confirmModal.isActive
               ? 'bg-red-600 hover:bg-red-700'
