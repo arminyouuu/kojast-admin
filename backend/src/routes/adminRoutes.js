@@ -87,26 +87,30 @@ router.delete('/api-keys/:id', ApiKeyController.delete);
 router.get('/users', async (req, res, next) => {
   try {
     const { query } = await import('../database/connection.js');
-    
-    // Set a reasonable default limit to prevent performance issues
-    const MAX_LIMIT = 100;
-    const limit = Math.min(parseInt(req.query.limit) || 50, MAX_LIMIT);
+
+    const page = Math.max(parseInt(req.query.page) || 1, 1);
+    const limit = Math.min(Math.max(parseInt(req.query.limit) || 10, 1), 100);
+    const offset = (page - 1) * limit;
 
     const users = await query(
       `SELECT id, phone_number, email, full_name, created_at, last_login, is_active
        FROM users
        ORDER BY created_at DESC
-       LIMIT ?`,
-      [limit]
+       LIMIT ? OFFSET ?`,
+      [limit, offset]
     );
 
-    const [countResult] = await query('SELECT COUNT(*) as total FROM users');
+    const countResults = await query('SELECT COUNT(*) as total FROM users');
+    const total = countResults[0].total;
 
     res.json({
       success: true,
       data: users,
       meta: {
-        total: countResult.total
+        total,
+        page,
+        limit,
+        pages: Math.ceil(total / limit)
       }
     });
   } catch (error) {
