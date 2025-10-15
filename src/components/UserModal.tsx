@@ -111,18 +111,6 @@ export default function UserModal({ user, onClose, onSave }: UserModalProps) {
             />
           </div>
 
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="is_active"
-              checked={formData.is_active}
-              onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-              className="w-4 h-4 text-slate-900 border-slate-300 rounded focus:ring-slate-900"
-            />
-            <label htmlFor="is_active" className="mr-2 text-sm text-slate-700 dark:text-slate-300">
-              کاربر فعال است
-            </label>
-          </div>
 
           <div className="flex justify-end space-x-3 space-x-reverse pt-4">
             <button
