@@ -96,8 +96,8 @@ router.get('/users', async (req, res, next) => {
       `SELECT id, phone_number, email, full_name, created_at, last_login, is_active
        FROM users
        ORDER BY created_at DESC
-       LIMIT ? OFFSET ?`,
-      [limit, offset]
+       LIMIT ?, ?`,
+      [offset, limit]
     );
 
     const countResults = await query('SELECT COUNT(*) as total FROM users');
