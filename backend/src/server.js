@@ -6,6 +6,8 @@ import { fileURLToPath } from 'url';
 import categoryRoutes from './routes/categoryRoutes.js';
 import placeRoutes from './routes/placeRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import authRoutes from './routes/authRoutes.js';
+import favoritesRoutes from './routes/favoritesRoutes.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 import ExpirationCheckerService from './services/ExpirationCheckerService.js';
 
@@ -29,7 +31,9 @@ app.get('/', (req, res) => {
     endpoints: {
       categories: '/categories',
       places: '/places',
-      admin: '/admin'
+      admin: '/admin',
+      auth: '/auth',
+      favorites: '/favorites'
     }
   });
 });
@@ -37,6 +41,8 @@ app.get('/', (req, res) => {
 app.use('/categories', categoryRoutes);
 app.use('/places', placeRoutes);
 app.use('/admin', adminRoutes);
+app.use('/auth', authRoutes);
+app.use('/favorites', favoritesRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
