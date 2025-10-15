@@ -122,11 +122,21 @@ router.get('/users', async (req, res, next) => {
 router.post('/users', async (req, res, next) => {
   try {
     const { query } = await import('../database/connection.js');
-    const { full_name, email, phone_number, is_active } = req.body;
+    const { full_name, email, phone_number, password, is_active } = req.body;
+
+    if (!password || password.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: 'Password must be at least 6 characters'
+      });
+    }
+
+    const bcrypt = await import('bcryptjs');
+    const password_hash = await bcrypt.default.hash(password, 10);
 
     const result = await query(
-      'INSERT INTO users (full_name, email, phone_number, is_active) VALUES (?, ?, ?, ?)',
-      [full_name, email || null, phone_number || null, is_active ?? true]
+      'INSERT INTO users (full_name, email, phone_number, password_hash, is_active) VALUES (?, ?, ?, ?, ?)',
+      [full_name, email || null, phone_number || null, password_hash, is_active ?? true]
     );
 
     const [user] = await query(
@@ -224,8 +234,8 @@ router.post('/users/:id/reset-password', async (req, res, next) => {
       });
     }
 
-    const bcrypt = await import('bcrypt');
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const bcrypt = await import('bcryptjs');
+    const hashedPassword = await bcrypt.default.hash(password, 10);
 
     await query(
       'UPDATE users SET password_hash = ? WHERE id = ?',

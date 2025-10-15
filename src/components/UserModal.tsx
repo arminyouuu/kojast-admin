@@ -12,7 +12,7 @@ interface User {
 interface UserModalProps {
   user?: User | null;
   onClose: () => void;
-  onSave: (userData: Partial<User>) => Promise<void>;
+  onSave: (userData: Partial<User> & { password?: string }) => Promise<void>;
 }
 
 export default function UserModal({ user, onClose, onSave }: UserModalProps) {
@@ -20,6 +20,7 @@ export default function UserModal({ user, onClose, onSave }: UserModalProps) {
     full_name: user?.full_name || '',
     email: user?.email || '',
     phone_number: user?.phone_number || '',
+    password: '',
     is_active: user?.is_active ?? true,
   });
   const [saving, setSaving] = useState(false);
@@ -31,6 +32,7 @@ export default function UserModal({ user, onClose, onSave }: UserModalProps) {
         full_name: user.full_name || '',
         email: user.email || '',
         phone_number: user.phone_number || '',
+        password: '',
         is_active: user.is_active,
       });
     }
@@ -39,10 +41,25 @@ export default function UserModal({ user, onClose, onSave }: UserModalProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    if (!user && !formData.password) {
+      setError('رمز عبور برای کاربر جدید الزامی است');
+      return;
+    }
+
+    if (!user && formData.password.length < 6) {
+      setError('رمز عبور باید حداقل 6 کاراکتر باشد');
+      return;
+    }
+
     setSaving(true);
 
     try {
-      await onSave(formData);
+      const dataToSave: any = { ...formData };
+      if (user || !dataToSave.password) {
+        delete dataToSave.password;
+      }
+      await onSave(dataToSave);
       onClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'خطا در ذخیره کاربر');
@@ -111,6 +128,22 @@ export default function UserModal({ user, onClose, onSave }: UserModalProps) {
             />
           </div>
 
+          {!user && (
+            <div>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                رمز عبور *
+              </label>
+              <input
+                type="password"
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                className="w-full px-3 py-2 border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-500 focus:border-transparent"
+                required
+                minLength={6}
+                placeholder="حداقل 6 کاراکتر"
+              />
+            </div>
+          )}
 
           <div className="flex justify-end space-x-3 space-x-reverse pt-4">
             <button
