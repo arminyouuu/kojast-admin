@@ -304,7 +304,9 @@ export default function PlacesPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-sm text-slate-500 dark:text-slate-400 max-w-xs truncate">
-                      {place.address}
+                      {place.address && place.address.length > 20
+                        ? `${place.address.substring(0, 20)}...`
+                        : place.address}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center text-sm text-slate-500 dark:text-slate-400 flex-row-reverse">
