@@ -49,6 +49,13 @@ async function fetchApi<T>(
 }
 
 export const api = {
+  get: <T>(endpoint: string) => fetchApi<T>(endpoint),
+  put: <T>(endpoint: string, data?: any) =>
+    fetchApi<T>(endpoint, {
+      method: 'PUT',
+      body: data ? JSON.stringify(data) : undefined,
+    }),
+
   auth: {
     login: (username: string, password: string) =>
       fetchApi<{ success: boolean; message: string }>('/admin/login', {
