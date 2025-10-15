@@ -39,6 +39,7 @@ export default function UsersPage() {
   const [showUserModal, setShowUserModal] = useState(false);
   const [resetPasswordUser, setResetPasswordUser] = useState<{ id: number; name: string } | null>(null);
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
+  const [menuPosition, setMenuPosition] = useState<{ top: number; left: number } | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const fetchUsers = async (page = 1) => {
@@ -62,6 +63,7 @@ export default function UsersPage() {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setOpenMenuId(null);
+        setMenuPosition(null);
       }
     };
 
@@ -132,8 +134,19 @@ export default function UsersPage() {
     }
   };
 
-  const toggleMenu = (userId: number) => {
-    setOpenMenuId(openMenuId === userId ? null : userId);
+  const toggleMenu = (userId: number, event: React.MouseEvent<HTMLButtonElement>) => {
+    if (openMenuId === userId) {
+      setOpenMenuId(null);
+      setMenuPosition(null);
+    } else {
+      const button = event.currentTarget;
+      const rect = button.getBoundingClientRect();
+      setMenuPosition({
+        top: rect.bottom + window.scrollY + 8,
+        left: rect.left + window.scrollX
+      });
+      setOpenMenuId(userId);
+    }
   };
 
   const formatDate = (dateString: string | null) => {
@@ -274,80 +287,12 @@ export default function UsersPage() {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        <div className="relative" ref={openMenuId === user.id ? menuRef : null}>
-                          <button
-                            onClick={() => toggleMenu(user.id)}
-                            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
-                          >
-                            <MoreVertical className="w-5 h-5 text-slate-600 dark:text-slate-400" />
-                          </button>
-
-                          {openMenuId === user.id && (
-                            <div className="absolute left-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-slate-200 dark:border-slate-700 z-50">
-                              <div className="py-1">
-                                <button
-                                  onClick={() => {
-                                    setConfirmModal({
-                                      type: 'disable',
-                                      userId: user.id,
-                                      userName: user.full_name || 'این کاربر',
-                                      isActive: user.is_active
-                                    });
-                                  }}
-                                  className={`w-full text-right px-4 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-700/50 flex items-center ${
-                                    user.is_active
-                                      ? 'text-orange-600 dark:text-orange-400'
-                                      : 'text-green-600 dark:text-green-400'
-                                  }`}
-                                >
-                                  {user.is_active ? (
-                                    <>
-                                      <UserX className="w-4 h-4 ml-2" />
-                                      غیرفعال کردن
-                                    </>
-                                  ) : (
-                                    <>
-                                      <UserCheck className="w-4 h-4 ml-2" />
-                                      فعال کردن
-                                    </>
-                                  )}
-                                </button>
-                                <button
-                                  onClick={() => handleEditUser(user)}
-                                  className="w-full text-right px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 flex items-center"
-                                >
-                                  <Edit className="w-4 h-4 ml-2" />
-                                  ویرایش
-                                </button>
-                                <button
-                                  onClick={() => {
-                                    setResetPasswordUser({
-                                      id: user.id,
-                                      name: user.full_name || 'کاربر'
-                                    });
-                                  }}
-                                  className="w-full text-right px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 flex items-center"
-                                >
-                                  <Key className="w-4 h-4 ml-2" />
-                                  تنظیم رمز عبور
-                                </button>
-                                <button
-                                  onClick={() => {
-                                    setConfirmModal({
-                                      type: 'delete',
-                                      userId: user.id,
-                                      userName: user.full_name || 'این کاربر'
-                                    });
-                                  }}
-                                  className="w-full text-right px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center"
-                                >
-                                  <Trash2 className="w-4 h-4 ml-2" />
-                                  حذف
-                                </button>
-                              </div>
-                            </div>
-                          )}
-                        </div>
+                        <button
+                          onClick={(e) => toggleMenu(user.id, e)}
+                          className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
+                        >
+                          <MoreVertical className="w-5 h-5 text-slate-600 dark:text-slate-400" />
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -450,6 +395,87 @@ export default function UsersPage() {
           onClose={() => setResetPasswordUser(null)}
           onReset={handleResetPassword}
         />
+      )}
+
+      {openMenuId !== null && menuPosition && (
+        <div
+          ref={menuRef}
+          className="fixed w-48 bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-slate-200 dark:border-slate-700 z-[9999]"
+          style={{
+            top: `${menuPosition.top}px`,
+            left: `${menuPosition.left}px`
+          }}
+        >
+          <div className="py-1">
+            {(() => {
+              const user = users.find(u => u.id === openMenuId);
+              if (!user) return null;
+              return (
+                <>
+                  <button
+                    onClick={() => {
+                      setConfirmModal({
+                        type: 'disable',
+                        userId: user.id,
+                        userName: user.full_name || 'این کاربر',
+                        isActive: user.is_active
+                      });
+                    }}
+                    className={`w-full text-right px-4 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-700/50 flex items-center ${
+                      user.is_active
+                        ? 'text-orange-600 dark:text-orange-400'
+                        : 'text-green-600 dark:text-green-400'
+                    }`}
+                  >
+                    {user.is_active ? (
+                      <>
+                        <UserX className="w-4 h-4 ml-2" />
+                        غیرفعال کردن
+                      </>
+                    ) : (
+                      <>
+                        <UserCheck className="w-4 h-4 ml-2" />
+                        فعال کردن
+                      </>
+                    )}
+                  </button>
+                  <button
+                    onClick={() => handleEditUser(user)}
+                    className="w-full text-right px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 flex items-center"
+                  >
+                    <Edit className="w-4 h-4 ml-2" />
+                    ویرایش
+                  </button>
+                  <button
+                    onClick={() => {
+                      setResetPasswordUser({
+                        id: user.id,
+                        name: user.full_name || 'کاربر'
+                      });
+                    }}
+                    className="w-full text-right px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 flex items-center"
+                  >
+                    <Key className="w-4 h-4 ml-2" />
+                    تنظیم رمز عبور
+                  </button>
+                  <button
+                    onClick={() => {
+                      setConfirmModal({
+                        type: 'delete',
+                        userId: user.id,
+                        userName: user.full_name || 'این کاربر'
+                      });
+                    }}
+                    className="w-full text-right px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center"
+                  >
+                    <Trash2 className="w-4 h-4 ml-2" />
+                    حذف
+                  </button>
+                </>
+              );
+            })()}
+          </div>
+        </div>
       )}
     </div>
   );
