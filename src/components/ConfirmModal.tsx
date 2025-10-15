@@ -1,16 +1,19 @@
 import { AlertTriangle } from 'lucide-react';
 
 interface ConfirmModalProps {
+  isOpen: boolean;
   title: string;
   message: string;
   confirmText?: string;
   cancelText?: string;
   confirmButtonClass?: string;
+  variant?: 'danger' | 'default';
   onConfirm: () => void;
   onCancel: () => void;
 }
 
 export default function ConfirmModal({
+  isOpen,
   title,
   message,
   confirmText = 'تایید',
@@ -19,6 +22,8 @@ export default function ConfirmModal({
   onConfirm,
   onCancel,
 }: ConfirmModalProps) {
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">

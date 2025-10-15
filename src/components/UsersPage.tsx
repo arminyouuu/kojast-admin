@@ -338,45 +338,44 @@ export default function UsersPage() {
         />
       )}
 
-      {confirmModal && (
-        <ConfirmModal
-          title={
-            confirmModal.type === 'delete'
-              ? 'حذف کاربر'
-              : confirmModal.isActive
-              ? 'غیرفعال کردن کاربر'
-              : 'فعال کردن کاربر'
+      <ConfirmModal
+        isOpen={!!confirmModal}
+        title={
+          confirmModal?.type === 'delete'
+            ? 'حذف کاربر'
+            : confirmModal?.isActive
+            ? 'غیرفعال کردن کاربر'
+            : 'فعال کردن کاربر'
+        }
+        message={
+          confirmModal?.type === 'delete'
+            ? `آیا مطمئن هستید که می‌خواهید ${confirmModal.userName} را حذف کنید؟ این عملیات غیرقابل بازگشت است.`
+            : confirmModal?.isActive
+            ? `آیا مطمئن هستید که می‌خواهید ${confirmModal.userName} را غیرفعال کنید؟ کاربر نمی‌تواند وارد حساب کاربری خود شود.`
+            : `آیا مطمئن هستید که می‌خواهید ${confirmModal?.userName} را فعال کنید؟`
+        }
+        confirmText={
+          confirmModal?.type === 'delete'
+            ? 'حذف'
+            : confirmModal?.isActive
+            ? 'غیرفعال کردن'
+            : 'فعال کردن'
+        }
+        cancelText="لغو"
+        confirmButtonClass={
+          confirmModal?.type === 'delete' || confirmModal?.isActive
+            ? 'bg-red-600 hover:bg-red-700'
+            : 'bg-green-600 hover:bg-green-700'
+        }
+        onConfirm={() => {
+          if (confirmModal?.type === 'delete') {
+            handleDeleteUser(confirmModal.userId);
+          } else if (confirmModal) {
+            handleToggleStatus(confirmModal.userId);
           }
-          message={
-            confirmModal.type === 'delete'
-              ? `آیا مطمئن هستید که می‌خواهید ${confirmModal.userName} را حذف کنید؟ این عملیات غیرقابل بازگشت است.`
-              : confirmModal.isActive
-              ? `آیا مطمئن هستید که می‌خواهید ${confirmModal.userName} را غیرفعال کنید؟ کاربر نمی‌تواند وارد حساب کاربری خود شود.`
-              : `آیا مطمئن هستید که می‌خواهید ${confirmModal.userName} را فعال کنید؟`
-          }
-          confirmText={
-            confirmModal.type === 'delete'
-              ? 'حذف'
-              : confirmModal.isActive
-              ? 'غیرفعال کردن'
-              : 'فعال کردن'
-          }
-          cancelText="لغو"
-          confirmButtonClass={
-            confirmModal.type === 'delete' || confirmModal.isActive
-              ? 'bg-red-600 hover:bg-red-700'
-              : 'bg-green-600 hover:bg-green-700'
-          }
-          onConfirm={() => {
-            if (confirmModal.type === 'delete') {
-              handleDeleteUser(confirmModal.userId);
-            } else {
-              handleToggleStatus(confirmModal.userId);
-            }
-          }}
-          onCancel={() => setConfirmModal(null)}
-        />
-      )}
+        }}
+        onCancel={() => setConfirmModal(null)}
+      />
 
       {showUserModal && (
         <UserModal
