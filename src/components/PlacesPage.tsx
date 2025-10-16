@@ -6,7 +6,7 @@ import PlaceModal from './PlaceModal';
 import ConfirmModal from './ConfirmModal';
 import ToastContainer, { type ToastMessage } from './ToastContainer';
 import { format } from 'date-fns-jalali';
-
+ 
 export default function PlacesPage() {
   const [places, setPlaces] = useState<Place[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -15,6 +15,7 @@ export default function PlacesPage() {
   const [showModal, setShowModal] = useState(false);
   const [editingPlace, setEditingPlace] = useState<Place | null>(null);
   const [filterCategoryId, setFilterCategoryId] = useState<number | undefined>();
+  const [showExpiredOnly, setShowExpiredOnly] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
@@ -33,7 +34,7 @@ export default function PlacesPage() {
 
   useEffect(() => {
     loadPlaces();
-  }, [filterCategoryId, currentPage]);
+  }, [filterCategoryId, showExpiredOnly, currentPage]);
 
   const addToast = (message: string, type: 'success' | 'error' | 'info') => {
     const id = Date.now().toString();
@@ -57,9 +58,10 @@ export default function PlacesPage() {
     try {
       setIsLoading(true);
       const response = await api.places.getAll({
-        categoryId: filterCategoryId,
+        categoryId: filterCategoryId?.toString(),
         page: currentPage,
         limit: 10,
+        expired: showExpiredOnly,
       });
       setPlaces(response.data);
       setTotalPages(response.meta?.pages || response.pages || 1);
@@ -84,7 +86,7 @@ export default function PlacesPage() {
     if (!deleteConfirm.placeId) return;
 
     try {
-      await api.places.delete(deleteConfirm.placeId);
+      await api.places.delete(deleteConfirm.placeId.toString());
       await loadPlaces();
       setDeleteConfirm({ show: false, placeId: null, placeName: '' });
       addToast('مکان با موفقیت حذف شد', 'success');
@@ -170,6 +172,19 @@ export default function PlacesPage() {
     }
   };
 
+  const isExpired = (dateString: string | null) => {
+    if (!dateString) return false;
+    try {
+      const date = new Date(dateString);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      date.setHours(0, 0, 0, 0);
+      return date < today;
+    } catch (error) {
+      return false;
+    }
+  };
+
   if (isLoading && places.length === 0) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -230,6 +245,19 @@ export default function PlacesPage() {
             ))}
           </select>
           <button
+            onClick={() => {
+              setShowExpiredOnly(!showExpiredOnly);
+              setCurrentPage(1);
+            }}
+            className={`px-4 py-2 rounded-lg border transition-colors ${
+              showExpiredOnly
+                ? 'bg-red-600 text-white border-red-600 hover:bg-red-700'
+                : 'bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700'
+            }`}
+          >
+            {showExpiredOnly ? 'نمایش همه' : 'فقط منقضی شده‌ها'}
+          </button>
+          <button
             onClick={() => setShowModal(true)}
             className="flex items-center space-x-reverse space-x-2 bg-slate-900 dark:bg-slate-700 text-white px-4 py-2 rounded-lg hover:bg-slate-800 dark:hover:bg-slate-600 transition-colors"
           >
@@ -287,22 +315,38 @@ export default function PlacesPage() {
                   </td>
                 </tr>
               ) : (
-                places.map((place) => (
-                  <tr key={place.id} className="hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
-                    <td className="px-6 py-4 text-center">
-                      <input
-                        type="checkbox"
-                        checked={selectedPlaces.has(place.id)}
-                        onChange={() => togglePlaceSelection(place.id)}
-                        className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-slate-900 dark:text-slate-100 focus:ring-slate-900 dark:focus:ring-slate-100"
-                      />
-                    </td>
-                    <td className="px-6 py-4">
-                      <div>
-                        <div className="text-sm font-medium text-slate-900 dark:text-slate-100">{place.name}</div>
-                        <div className="text-sm text-slate-500 dark:text-slate-400 line-clamp-1">{place.description}</div>
-                      </div>
-                    </td>
+                places.map((place) => {
+                  const expired = isExpired(place.expiration_date || place.expirationDate || null);
+                  return (
+                    <tr
+                      key={place.id}
+                      className={`transition-colors ${
+                        expired
+                          ? 'bg-red-50 dark:bg-red-900/10 hover:bg-red-100 dark:hover:bg-red-900/20'
+                          : 'hover:bg-slate-50 dark:hover:bg-slate-700'
+                      }`}
+                    >
+                      <td className="px-6 py-4 text-center">
+                        <input
+                          type="checkbox"
+                          checked={selectedPlaces.has(place.id)}
+                          onChange={() => togglePlaceSelection(place.id)}
+                          className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-slate-900 dark:text-slate-100 focus:ring-slate-900 dark:focus:ring-slate-100"
+                        />
+                      </td>
+                      <td className="px-6 py-4">
+                        <div>
+                          <div className="text-sm font-medium text-slate-900 dark:text-slate-100 flex items-center">
+                            {place.name}
+                            {expired && (
+                              <span className="mr-2 px-2 py-0.5 text-xs font-semibold rounded-full bg-red-600 text-white">
+                                منقضی شده
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-sm text-slate-500 dark:text-slate-400 line-clamp-1">{place.description}</div>
+                        </div>
+                      </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200">
                         {getCategoryName(place)}
@@ -325,22 +369,23 @@ export default function PlacesPage() {
                         {formatJalaliDate(place.expiration_date || place.expirationDate || null)}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-left text-sm">
-                      <button
-                        onClick={() => handleEdit(place)}
-                        className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 ml-4"
-                      >
-                        <Edit2 className="w-4 h-4 inline" />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteClick(place)}
-                        className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300"
-                      >
-                        <Trash2 className="w-4 h-4 inline" />
-                      </button>
-                    </td>
-                  </tr>
-                ))
+                      <td className="px-6 py-4 whitespace-nowrap text-left text-sm">
+                        <button
+                          onClick={() => handleEdit(place)}
+                          className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 ml-4"
+                        >
+                          <Edit2 className="w-4 h-4 inline" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteClick(place)}
+                          className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300"
+                        >
+                          <Trash2 className="w-4 h-4 inline" />
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>
