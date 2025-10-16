@@ -4,11 +4,13 @@ import CategoryRepository from '../repositories/CategoryRepository.js';
 import ExpirationCheckerService from './ExpirationCheckerService.js';
 
 class PlaceService {
-  async getPlaces(categoryId, page = 1, limit = 10) {
+  async getPlaces(categoryId, page = 1, limit = 10, expired) {
     page = parseInt(page) || 1;
     limit = parseInt(limit) || 10;
     limit = Math.min(limit, 100);
- 
+
+    const showExpiredOnly = expired === 'true' || expired === true;
+
     if (categoryId) {
       const categoryExists = await CategoryRepository.exists(categoryId);
       if (!categoryExists) {
@@ -17,7 +19,7 @@ class PlaceService {
     }
 
     const { places, total } = await PlaceRepository.findAll(
-      { categoryId },
+      { categoryId, expired: showExpiredOnly },
       { page, limit }
     );
 
