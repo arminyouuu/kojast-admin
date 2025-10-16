@@ -53,6 +53,13 @@ export interface DashboardStats {
   totalCategories: number;
   totalPlaces: number;
   recentPlaces: Place[];
+  placesExpiringSoon: Place[];
+  categoriesWithPlaceCounts: Array<{
+    id: number;
+    name: string;
+    count: number;
+  }>;
+  placesCreatedThisMonth: number;
 }
 
 export interface ApiKey {

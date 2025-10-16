@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { api } from '../lib/api';
 import type { DashboardStats } from '../types';
-import { FolderTree, MapPin, Clock, LayoutDashboard } from 'lucide-react';
+import { FolderTree, MapPin, Clock, LayoutDashboard, AlertCircle, TrendingUp, Calendar } from 'lucide-react';
 
 export default function DashboardPage() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -50,7 +50,7 @@ export default function DashboardPage() {
         <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">نمای کلی داشبورد</h2>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div className="bg-gradient-to-br from-slate-900 to-slate-700 rounded-xl shadow-lg p-6 text-white">
           <div className="flex items-center justify-between">
             <div>
@@ -73,6 +73,98 @@ export default function DashboardPage() {
               <MapPin className="w-8 h-8" />
             </div>
           </div>
+        </div>
+
+        <div className="bg-gradient-to-br from-amber-600 to-amber-500 rounded-xl shadow-lg p-6 text-white">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-amber-100 text-sm font-medium mb-1">در حال انقضا</p>
+              <p className="text-4xl font-bold">{stats?.placesExpiringSoon?.length || 0}</p>
+            </div>
+            <div className="bg-white bg-opacity-20 p-4 rounded-xl">
+              <AlertCircle className="w-8 h-8" />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-br from-blue-600 to-blue-500 rounded-xl shadow-lg p-6 text-white">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-blue-100 text-sm font-medium mb-1">مکان‌های این ماه</p>
+              <p className="text-4xl font-bold">{stats?.placesCreatedThisMonth || 0}</p>
+            </div>
+            <div className="bg-white bg-opacity-20 p-4 rounded-xl">
+              <TrendingUp className="w-8 h-8" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
+          <div className="flex items-center space-x-2 space-x-reverse mb-6">
+            <FolderTree className="w-5 h-5 text-slate-600 dark:text-slate-400" />
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">توزیع دسته‌بندی‌ها</h3>
+          </div>
+
+          {stats?.categoriesWithPlaceCounts && stats.categoriesWithPlaceCounts.length > 0 ? (
+            <div className="space-y-3">
+              {stats.categoriesWithPlaceCounts.map((category) => (
+                <div
+                  key={category.id}
+                  className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-700 rounded-lg"
+                >
+                  <div className="flex items-center space-x-3 space-x-reverse flex-1">
+                    <div className="w-2 h-2 rounded-full bg-slate-900 dark:bg-slate-400"></div>
+                    <span className="font-medium text-slate-900 dark:text-slate-100">{category.name}</span>
+                  </div>
+                  <div className="flex items-center space-x-2 space-x-reverse">
+                    <span className="text-2xl font-bold text-slate-900 dark:text-slate-100">{category.count}</span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400">مکان</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-slate-500 dark:text-slate-400">
+              <FolderTree className="w-12 h-12 mx-auto mb-3 text-slate-400 dark:text-slate-500" />
+              <p>هیچ دسته‌بندی‌ای وجود ندارد</p>
+            </div>
+          )}
+        </div>
+
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
+          <div className="flex items-center space-x-2 space-x-reverse mb-6">
+            <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">مکان‌های در حال انقضا</h3>
+          </div>
+
+          {stats?.placesExpiringSoon && stats.placesExpiringSoon.length > 0 ? (
+            <div className="space-y-3">
+              {stats.placesExpiringSoon.map((place) => (
+                <div
+                  key={place.id}
+                  className="flex items-start justify-between p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg"
+                >
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-slate-900 dark:text-slate-100">{place.name}</h4>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 flex items-center space-x-1 space-x-reverse">
+                      <Calendar className="w-3 h-3" />
+                      <span>انقضا: {place.expiration_date ? new Date(place.expiration_date).toLocaleDateString('fa-IR') : 'نامشخص'}</span>
+                    </p>
+                  </div>
+                  <span className="px-2 py-1 text-xs font-semibold rounded-full bg-amber-200 dark:bg-amber-800 text-amber-800 dark:text-amber-200">
+                    {place.category?.name || 'نامشخص'}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-slate-500 dark:text-slate-400">
+              <AlertCircle className="w-12 h-12 mx-auto mb-3 text-slate-400 dark:text-slate-500" />
+              <p>هیچ مکانی در حال انقضا نیست</p>
+            </div>
+          )}
         </div>
       </div>
 

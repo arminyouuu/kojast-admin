@@ -50,6 +50,7 @@ router.get('/dashboard/stats', async (req, res, next) => {
 
     const [placesCount] = await query('SELECT COUNT(*) as count FROM places');
     const [categoriesCount] = await query('SELECT COUNT(*) as count FROM categories');
+
     const recentPlaces = await query(
       `SELECT p.*, c.name as category_name
        FROM places p
@@ -58,21 +59,51 @@ router.get('/dashboard/stats', async (req, res, next) => {
        LIMIT 5`
     );
 
+    const placesExpiringSoon = await query(
+      `SELECT p.*, c.name as category_name
+       FROM places p
+       LEFT JOIN categories c ON p.category_id = c.id
+       WHERE p.expiration_date IS NOT NULL
+       AND p.expiration_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY)
+       ORDER BY p.expiration_date ASC
+       LIMIT 5`
+    );
+
+    const categoriesWithPlaceCounts = await query(
+      `SELECT c.id, c.name, COUNT(p.id) as count
+       FROM categories c
+       LEFT JOIN places p ON c.id = p.category_id
+       GROUP BY c.id, c.name
+       ORDER BY count DESC`
+    );
+
+    const [placesThisMonth] = await query(
+      `SELECT COUNT(*) as count FROM places
+       WHERE MONTH(created_at) = MONTH(CURRENT_DATE())
+       AND YEAR(created_at) = YEAR(CURRENT_DATE())`
+    );
+
+    const mapPlace = (place) => ({
+      id: place.id,
+      name: place.name,
+      description: place.description,
+      address: place.address,
+      category_id: place.category_id,
+      latitude: place.latitude,
+      longitude: place.longitude,
+      expiration_date: place.expiration_date,
+      created_at: place.created_at,
+      updated_at: place.updated_at,
+      category: place.category_name ? { id: place.category_id, name: place.category_name } : null
+    });
+
     res.json({
       totalPlaces: placesCount.count,
       totalCategories: categoriesCount.count,
-      recentPlaces: recentPlaces.map(place => ({
-        id: place.id,
-        name: place.name,
-        description: place.description,
-        address: place.address,
-        category_id: place.category_id,
-        latitude: place.latitude,
-        longitude: place.longitude,
-        created_at: place.created_at,
-        updated_at: place.updated_at,
-        category: place.category_name ? { id: place.category_id, name: place.category_name } : null
-      }))
+      recentPlaces: recentPlaces.map(mapPlace),
+      placesExpiringSoon: placesExpiringSoon.map(mapPlace),
+      categoriesWithPlaceCounts: categoriesWithPlaceCounts,
+      placesCreatedThisMonth: placesThisMonth.count
     });
   } catch (error) {
     next(error);
