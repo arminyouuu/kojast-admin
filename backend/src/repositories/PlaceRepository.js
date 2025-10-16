@@ -2,34 +2,45 @@ import { query } from '../database/connection.js';
 
 class PlaceRepository {
   async findAll(filters = {}, pagination = {}) {
-    const { categoryId } = filters;
+    const { categoryId, expired } = filters;
     const { page = 1, limit = 10 } = pagination;
     const offset = (page - 1) * limit;
 
     const limitNum = parseInt(limit);
     const offsetNum = parseInt(offset);
- 
+
     let sql = `
       SELECT p.*, c.name as category_name
       FROM places p
       LEFT JOIN categories c ON p.category_id = c.id
     `;
     const params = [];
+    const conditions = [];
 
     if (categoryId) {
-      sql += ' WHERE p.category_id = ?';
+      conditions.push('p.category_id = ?');
       params.push(parseInt(categoryId));
+    }
+
+    if (expired) {
+      conditions.push('p.expiration_date IS NOT NULL');
+      conditions.push('p.expiration_date < CURDATE()');
+    }
+
+    if (conditions.length > 0) {
+      sql += ' WHERE ' + conditions.join(' AND ');
     }
 
     sql += ` ORDER BY p.created_at DESC LIMIT ${limitNum} OFFSET ${offsetNum}`;
 
     const places = await query(sql, params);
 
-    let countSql = 'SELECT COUNT(*) as total FROM places';
+    let countSql = 'SELECT COUNT(*) as total FROM places p';
     const countParams = [];
-    if (categoryId) {
-      countSql += ' WHERE category_id = ?';
-      countParams.push(parseInt(categoryId));
+
+    if (conditions.length > 0) {
+      countSql += ' WHERE ' + conditions.join(' AND ');
+      countParams.push(...params);
     }
 
     const countResult = await query(countSql, countParams);
