@@ -89,11 +89,12 @@ export const api = {
   },
 
   places: {
-    getAll: (params?: { categoryId?: string; page?: number; limit?: number }) => {
+    getAll: (params?: { categoryId?: string; page?: number; limit?: number; expired?: boolean }) => {
       const query = new URLSearchParams();
       if (params?.categoryId) query.append('categoryId', params.categoryId.toString());
       if (params?.page) query.append('page', params.page.toString());
       if (params?.limit) query.append('limit', params.limit.toString());
+      if (params?.expired !== undefined) query.append('expired', params.expired.toString());
       return fetchApi<PaginatedResponse<Place>>(`/admin/places?${query.toString()}`);
     },
     getById: (id: string) => fetchApi<Place>(`/admin/places/${id}`),
