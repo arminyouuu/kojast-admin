@@ -11,7 +11,7 @@ export const errorHandler = (err, req, res, next) => {
   if (err.code === 'ER_DUP_ENTRY') {
     return res.status(409).json({
       status: 409,
-      message: 'Duplicate entry. This record already exists.'
+      message: 'ورودی تکراری. این رکورد از قبل وجود دارد..'
     });
   }
 
