@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { api } from '../lib/api';
 import type { Place, Category } from '../types';
-import { Plus, Edit2, Trash2, MapPin, ChevronLeft, ChevronRight, Image, X, Calendar } from 'lucide-react';
+import { Plus, Edit2, Trash2, MapPin, ChevronLeft, ChevronRight, Image, X, Calendar, Globe, Instagram, Phone } from 'lucide-react';
 import PlaceModal from './PlaceModal';
 import ConfirmModal from './ConfirmModal';
 import ToastContainer, { type ToastMessage } from './ToastContainer';
@@ -299,6 +299,9 @@ export default function PlacesPage() {
                   تصاویر
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                  اطلاعات تماس
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                   تاریخ انقضا
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
@@ -309,7 +312,7 @@ export default function PlacesPage() {
             <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
               {places.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center">
+                  <td colSpan={8} className="px-6 py-12 text-center">
                     <MapPin className="w-12 h-12 text-slate-400 dark:text-slate-500 mx-auto mb-3" />
                     <p className="text-slate-500 dark:text-slate-400">هنوز هیچ مکانی وجود ندارد. اولین مورد را ایجاد کنید!</p>
                   </td>
@@ -361,6 +364,44 @@ export default function PlacesPage() {
                       <div className="flex items-center text-sm text-slate-500 dark:text-slate-400 flex-row-reverse">
                         <Image className="w-4 h-4 ml-1" />
                         {place.images?.length || 0}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex flex-col space-y-1.5">
+                        {place.website && (
+                          <a
+                            href={place.website}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
+                          >
+                            <Globe className="w-3.5 h-3.5 ml-1.5" />
+                            <span className="truncate max-w-[100px]">وب‌سایت</span>
+                          </a>
+                        )}
+                        {place.instagram && (
+                          <a
+                            href={place.instagram.startsWith('@') ? `https://instagram.com/${place.instagram.substring(1)}` : place.instagram}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
+                          >
+                            <Instagram className="w-3.5 h-3.5 ml-1.5" />
+                            <span className="truncate max-w-[100px]">{place.instagram}</span>
+                          </a>
+                        )}
+                        {(place.phone_number || place.phoneNumber) && (
+                          <a
+                            href={`tel:${place.phone_number || place.phoneNumber}`}
+                            className="flex items-center text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
+                          >
+                            <Phone className="w-3.5 h-3.5 ml-1.5" />
+                            <span className="truncate max-w-[100px]">{place.phone_number || place.phoneNumber}</span>
+                          </a>
+                        )}
+                        {!place.website && !place.instagram && !place.phone_number && !place.phoneNumber && (
+                          <span className="text-xs text-slate-400 dark:text-slate-500">—</span>
+                        )}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">

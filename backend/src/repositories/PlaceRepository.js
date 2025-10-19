@@ -59,22 +59,22 @@ class PlaceRepository {
   }
 
   async create(placeData) {
-    const { name, description, address, categoryId, latitude, longitude, expirationDate } = placeData;
+    const { name, description, address, categoryId, latitude, longitude, expirationDate, website, instagram, phoneNumber } = placeData;
     const result = await query(
-      `INSERT INTO places (name, description, address, category_id, latitude, longitude, expiration_date)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [name, description, address, categoryId, latitude, longitude, expirationDate]
+      `INSERT INTO places (name, description, address, category_id, latitude, longitude, expiration_date, website, instagram, phone_number)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [name, description, address, categoryId, latitude, longitude, expirationDate, website || null, instagram || null, phoneNumber || null]
     );
     return result.insertId;
   }
 
   async update(id, placeData) {
-    const { name, description, address, categoryId, latitude, longitude, expirationDate } = placeData;
+    const { name, description, address, categoryId, latitude, longitude, expirationDate, website, instagram, phoneNumber } = placeData;
     await query(
       `UPDATE places
-       SET name = ?, description = ?, address = ?, category_id = ?, latitude = ?, longitude = ?, expiration_date = ?
+       SET name = ?, description = ?, address = ?, category_id = ?, latitude = ?, longitude = ?, expiration_date = ?, website = ?, instagram = ?, phone_number = ?
        WHERE id = ?`,
-      [name, description, address, categoryId, latitude, longitude, expirationDate, id]
+      [name, description, address, categoryId, latitude, longitude, expirationDate, website || null, instagram || null, phoneNumber || null, id]
     );
     return await this.findById(id);
   }

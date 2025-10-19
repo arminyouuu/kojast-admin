@@ -69,7 +69,7 @@ class PlaceService {
 
   async createPlace(placeData) {
     const categoryId = placeData.categoryId || placeData.category_id;
-    const { name, description, address, latitude, longitude, images, expirationDate, expiration_date } = placeData;
+    const { name, description, address, latitude, longitude, images, expirationDate, expiration_date, website, instagram, phoneNumber, phone_number } = placeData;
 
     if (!name || name.trim().length === 0) {
       throw { status: 400, message: 'Place name is required' };
@@ -91,7 +91,10 @@ class PlaceService {
       categoryId,
       latitude: latitude || null,
       longitude: longitude || null,
-      expirationDate: expirationDate || expiration_date || null
+      expirationDate: expirationDate || expiration_date || null,
+      website: website || null,
+      instagram: instagram || null,
+      phoneNumber: phoneNumber || phone_number || null
     });
 
     if (images && Array.isArray(images) && images.length > 0) {
@@ -113,7 +116,7 @@ class PlaceService {
     }
 
     const categoryId = placeData.categoryId || placeData.category_id;
-    const { name, description, address, latitude, longitude, images, expirationDate, expiration_date } = placeData;
+    const { name, description, address, latitude, longitude, images, expirationDate, expiration_date, website, instagram, phoneNumber, phone_number } = placeData;
 
     if (!name || name.trim().length === 0) {
       throw { status: 400, message: 'Place name is required' };
@@ -133,7 +136,10 @@ class PlaceService {
       categoryId,
       latitude: latitude || null,
       longitude: longitude || null,
-      expirationDate: expirationDate || expiration_date || null
+      expirationDate: expirationDate || expiration_date || null,
+      website: website || null,
+      instagram: instagram || null,
+      phoneNumber: phoneNumber || phone_number || null
     });
 
     if (images && Array.isArray(images)) {

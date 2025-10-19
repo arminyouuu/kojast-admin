@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { api } from '../lib/api';
 import type { Place, Category } from '../types';
-import { X, Trash2, Upload, ImagePlus } from 'lucide-react';
+import { X, Trash2, Upload, ImagePlus, Globe, Instagram, Phone } from 'lucide-react';
 import DatePicker, { DateObject } from 'react-multi-date-picker';
 import persian from 'react-date-object/calendars/persian';
 import persian_fa from 'react-date-object/locales/persian_fa';
@@ -22,6 +22,9 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
   const [expirationDate, setExpirationDate] = useState<DateObject | null>(null);
+  const [website, setWebsite] = useState('');
+  const [instagram, setInstagram] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [images, setImages] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -37,6 +40,9 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
       setCategoryId(place.category_id || place.categoryId || '');
       setLatitude(place.latitude?.toString() || '');
       setLongitude(place.longitude?.toString() || '');
+      setWebsite(place.website || '');
+      setInstagram(place.instagram || '');
+      setPhoneNumber(place.phone_number || place.phoneNumber || '');
 
       const dateStr = place.expiration_date || place.expirationDate || '';
       if (dateStr) {
@@ -136,6 +142,9 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
         latitude: latitude ? parseFloat(latitude) : null,
         longitude: longitude ? parseFloat(longitude) : null,
         expirationDate: gregorianDateStr,
+        website: website.trim() || null,
+        instagram: instagram.trim() || null,
+        phoneNumber: phoneNumber.trim() || null,
         images: images,
       };
 
@@ -279,6 +288,44 @@ export default function PlaceModal({ place, categories, onClose, onSuccess }: Pl
               containerStyle={{ width: '100%' }}
               placeholder="انتخاب تاریخ"
             />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+              اطلاعات تماس
+            </label>
+            <div className="space-y-3">
+              <div className="relative">
+                <Globe className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
+                <input
+                  type="url"
+                  value={website}
+                  onChange={(e) => setWebsite(e.target.value)}
+                  className="w-full pr-11 pl-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-100 focus:border-transparent outline-none bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
+                  placeholder="https://example.com"
+                />
+              </div>
+              <div className="relative">
+                <Instagram className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
+                <input
+                  type="text"
+                  value={instagram}
+                  onChange={(e) => setInstagram(e.target.value)}
+                  className="w-full pr-11 pl-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-100 focus:border-transparent outline-none bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
+                  placeholder="@username"
+                />
+              </div>
+              <div className="relative">
+                <Phone className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
+                <input
+                  type="tel"
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  className="w-full pr-11 pl-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-100 focus:border-transparent outline-none bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
+                  placeholder="09123456789"
+                />
+              </div>
+            </div>
           </div>
 
           <div>

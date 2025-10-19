@@ -15,6 +15,10 @@ export interface Place {
   longitude: number | null;
   expiration_date: string | null;
   expirationDate?: string | null;
+  website?: string | null;
+  instagram?: string | null;
+  phone_number?: string | null;
+  phoneNumber?: string | null;
   created_at: string;
   updated_at: string;
   createdAt?: string;
