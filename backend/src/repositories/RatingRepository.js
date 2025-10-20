@@ -28,8 +28,9 @@ class RatingRepository {
       SELECT * FROM ratings
       WHERE place_id = ?
       ORDER BY created_at DESC
+      LIMIT ? OFFSET ?
     `;
-    const [rows] = await pool.execute(sql, [placeId]);
+    const [rows] = await pool.execute(sql, [placeId, limit, offset]);
     return rows;
   }
 
@@ -40,8 +41,9 @@ class RatingRepository {
       JOIN places p ON r.place_id = p.id
       WHERE r.user_id = ?
       ORDER BY r.created_at DESC
+      LIMIT ? OFFSET ?
     `;
-    const [rows] = await pool.execute(sql, [userId]);
+    const [rows] = await pool.execute(sql, [userId, limit, offset]);
     return rows;
   }
 
