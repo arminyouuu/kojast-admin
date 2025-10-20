@@ -28,9 +28,9 @@ class RatingRepository {
       SELECT * FROM ratings
       WHERE place_id = ?
       ORDER BY created_at DESC
-      LIMIT ? OFFSET ?
+      LIMIT ${parseInt(limit)} OFFSET ${parseInt(offset)}
     `;
-    const [rows] = await pool.execute(sql, [placeId, limit, offset]);
+    const [rows] = await pool.execute(sql, [placeId]);
     return rows;
   }
 
@@ -41,9 +41,9 @@ class RatingRepository {
       JOIN places p ON r.place_id = p.id
       WHERE r.user_id = ?
       ORDER BY r.created_at DESC
-      LIMIT ? OFFSET ?
+      LIMIT ${parseInt(limit)} OFFSET ${parseInt(offset)}
     `;
-    const [rows] = await pool.execute(sql, [userId, limit, offset]);
+    const [rows] = await pool.execute(sql, [userId]);
     return rows;
   }
 
