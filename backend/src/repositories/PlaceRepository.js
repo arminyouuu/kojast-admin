@@ -10,7 +10,8 @@ class PlaceRepository {
     const offsetNum = parseInt(offset);
 
     let sql = `
-      SELECT p.*, c.name as category_name
+      SELECT p.*, c.name as category_name,
+      (p.expiration_date IS NOT NULL AND p.expiration_date < CURDATE()) as isExpired
       FROM places p
       LEFT JOIN categories c ON p.category_id = c.id
     `;
@@ -49,7 +50,8 @@ class PlaceRepository {
 
   async findById(id) {
     const results = await query(
-      `SELECT p.*, c.name as category_name
+      `SELECT p.*, c.name as category_name,
+       (p.expiration_date IS NOT NULL AND p.expiration_date < CURDATE()) as isExpired
        FROM places p
        LEFT JOIN categories c ON p.category_id = c.id
        WHERE p.id = ?`,
@@ -91,7 +93,8 @@ class PlaceRepository {
 
   async findExpiringSoon(days = 7) {
     const results = await query(
-      `SELECT p.*, c.name as category_name
+      `SELECT p.*, c.name as category_name,
+       (p.expiration_date IS NOT NULL AND p.expiration_date < CURDATE()) as isExpired
        FROM places p
        LEFT JOIN categories c ON p.category_id = c.id
        WHERE p.expiration_date IS NOT NULL
@@ -105,7 +108,8 @@ class PlaceRepository {
 
   async findExpired() {
     const results = await query(
-      `SELECT p.*, c.name as category_name
+      `SELECT p.*, c.name as category_name,
+       (p.expiration_date IS NOT NULL AND p.expiration_date < CURDATE()) as isExpired
        FROM places p
        LEFT JOIN categories c ON p.category_id = c.id
        WHERE p.expiration_date IS NOT NULL
