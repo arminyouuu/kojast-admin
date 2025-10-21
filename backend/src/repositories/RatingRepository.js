@@ -24,26 +24,30 @@ class RatingRepository {
   }
 
   async getRatingsByPlace(placeId, limit = 50, offset = 0) {
+    const limitNum = parseInt(limit);
+    const offsetNum = parseInt(offset);
     const sql = `
       SELECT * FROM ratings
       WHERE place_id = ?
       ORDER BY created_at DESC
-      LIMIT ? OFFSET ?
+      LIMIT ${limitNum} OFFSET ${offsetNum}
     `;
-    const [rows] = await pool.execute(sql, [placeId, limit, offset]);
+    const [rows] = await pool.execute(sql, [placeId]);
     return rows;
   }
 
   async getRatingsByUser(userId, limit = 50, offset = 0) {
+    const limitNum = parseInt(limit);
+    const offsetNum = parseInt(offset);
     const sql = `
       SELECT r.*, p.name as place_name, p.address
       FROM ratings r
       JOIN places p ON r.place_id = p.id
       WHERE r.user_id = ?
       ORDER BY r.created_at DESC
-      LIMIT ? OFFSET ?
+      LIMIT ${limitNum} OFFSET ${offsetNum}
     `;
-    const [rows] = await pool.execute(sql, [userId, limit, offset]);
+    const [rows] = await pool.execute(sql, [userId]);
     return rows;
   }
 
