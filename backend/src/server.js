@@ -37,7 +37,7 @@ app.get('/', (req, res) => {
       auth: '/auth',
       favorites: '/favorites',
       ratings: '/ratings',
-      banners: '/banners'
+      banners: '/banner'
     }
   });
 });
