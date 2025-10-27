@@ -147,7 +147,7 @@ export default function BannersPage() {
         headers['Authorization'] = `Basic ${credentials}`;
       }
 
-      const response = await fetch(`${API_BASE_URL}/banners/${deleteConfirm.id}`, {
+      const response = await fetch(`${API_BASE_URL}/banner/${deleteConfirm.id}`, {
         method: 'DELETE',
         headers,
       });
