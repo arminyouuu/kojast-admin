@@ -33,7 +33,7 @@ function AppContent() {
           {currentPath === '/' && <DashboardPage />}
           {currentPath === '/categories' && <CategoriesPage />}
           {currentPath === '/places' && <PlacesPage />}
-          {currentPath === '/banner' && <BannersPage />}
+          {currentPath === '/banners' && <BannersPage />}
           {currentPath === '/users' && <UsersPage />}
           {currentPath === '/api-keys' && <ApiKeysPage />}
           {currentPath === '/settings' && <SettingsPage />}
