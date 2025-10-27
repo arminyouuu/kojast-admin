@@ -174,7 +174,7 @@ export default function BannersPage() {
         headers['Authorization'] = `Basic ${credentials}`;
       }
 
-      const response = await fetch(`${API_BASE_URL}/banners/${banner.id}`, {
+      const response = await fetch(`${API_BASE_URL}/banner/${banner.id}`, {
         method: 'PUT',
         headers,
         body: JSON.stringify({ is_active: !banner.is_active }),
