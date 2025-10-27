@@ -9,6 +9,7 @@ import adminRoutes from './routes/adminRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import favoritesRoutes from './routes/favoritesRoutes.js';
 import ratingRoutes from './routes/ratingRoutes.js';
+import bannerRoutes from './routes/bannerRoutes.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 import ExpirationCheckerService from './services/ExpirationCheckerService.js';
 
@@ -35,7 +36,8 @@ app.get('/', (req, res) => {
       admin: '/admin',
       auth: '/auth',
       favorites: '/favorites',
-      ratings: '/ratings'
+      ratings: '/ratings',
+      banners: '/banners'
     }
   });
 });
@@ -46,6 +48,7 @@ app.use('/admin', adminRoutes);
 app.use('/auth', authRoutes);
 app.use('/favorites', favoritesRoutes);
 app.use('/ratings', ratingRoutes);
+app.use('/banners', bannerRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
