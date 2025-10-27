@@ -48,7 +48,7 @@ app.use('/admin', adminRoutes);
 app.use('/auth', authRoutes);
 app.use('/favorites', favoritesRoutes);
 app.use('/ratings', ratingRoutes);
-app.use('/banners', bannerRoutes);
+app.use('/banner', bannerRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
