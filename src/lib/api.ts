@@ -217,7 +217,7 @@ export const api = {
       if (data.is_active !== undefined) formData.append('is_active', data.is_active.toString());
 
       const authHeaders = getAuthHeaders();
-      const response = await fetch(`${API_BASE_URL}/banners`, {
+      const response = await fetch(`${API_BASE_URL}/banner`, {
         method: 'POST',
         headers: authHeaders,
         body: formData,
