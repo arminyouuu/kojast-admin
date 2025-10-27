@@ -86,10 +86,10 @@ export const api = {
         method: 'POST',
         body: JSON.stringify({ ids }),
       }),
-    toggleEnabled: (id: string, isEnabled: boolean) =>
+    toggleEnabled: (id: string, isEnabled: boolean, categoryName: string) =>
       fetchApi<Category>(`/admin/categories/${id}`, {
         method: 'PUT',
-        body: JSON.stringify({ is_enabled: isEnabled }),
+        body: JSON.stringify({ is_enabled: isEnabled, name: categoryName }),
       }),
   },
 
