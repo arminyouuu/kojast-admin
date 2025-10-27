@@ -16,7 +16,7 @@ export default function Layout({ children, currentPath, onNavigate }: LayoutProp
     { path: '/', label: 'داشبورد', icon: LayoutDashboard },
     { path: '/categories', label: 'دسته‌بندی‌ها', icon: FolderTree },
     { path: '/places', label: 'مکان‌ها', icon: MapPin },
-    { path: '/banners', label: 'بنرها', icon: Image },
+    { path: '/banner', label: 'بنرها', icon: Image },
     { path: '/users', label: 'کاربران', icon: Users },
     { path: '/api-keys', label: 'کلیدهای API', icon: Key },
     { path: '/settings', label: 'تنظیمات', icon: Settings },
