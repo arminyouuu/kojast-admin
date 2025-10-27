@@ -207,7 +207,7 @@ export const api = {
       const query = activeOnly ? '?active=true' : '';
       return fetchApi<Banner[]>(`/banner${query}`);
     },
-    getById: (id: string) => fetchApi<Banner>(`/banners/${id}`),
+    getById: (id: string) => fetchApi<Banner>(`/banner/${id}`),
     create: async (file: File, data: { title?: string; link_url?: string; display_order?: number; is_active?: boolean }) => {
       const formData = new FormData();
       formData.append('image', file);
