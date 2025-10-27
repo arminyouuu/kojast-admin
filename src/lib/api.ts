@@ -72,10 +72,10 @@ export const api = {
         method: 'POST',
         body: JSON.stringify({ name }),
       }),
-    update: (id: string, name: string) =>
+    update: (id: string, data: { name?: string; is_enabled?: boolean }) =>
       fetchApi<Category>(`/admin/categories/${id}`, {
         method: 'PUT',
-        body: JSON.stringify({ name }),
+        body: JSON.stringify(data),
       }),
     delete: (id: string) =>
       fetchApi<void>(`/admin/categories/${id}`, {
@@ -85,6 +85,11 @@ export const api = {
       fetchApi<void>('/admin/categories/bulk-delete', {
         method: 'POST',
         body: JSON.stringify({ ids }),
+      }),
+    toggleEnabled: (id: string, isEnabled: boolean) =>
+      fetchApi<Category>(`/admin/categories/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify({ is_enabled: isEnabled }),
       }),
   },
 

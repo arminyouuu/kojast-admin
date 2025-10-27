@@ -1,6 +1,7 @@
 export interface Category {
   id: number;
   name: string;
+  is_enabled?: boolean;
 }
 
 export interface Place {

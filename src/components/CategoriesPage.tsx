@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { api } from '../lib/api';
 import type { Category } from '../types';
-import { Plus, Edit2, Trash2, FolderTree, X } from 'lucide-react';
+import { Plus, Edit2, Trash2, FolderTree, X, Power } from 'lucide-react';
 import ConfirmModal from './ConfirmModal';
 import ToastContainer, { type ToastMessage } from './ToastContainer';
 
@@ -54,7 +54,7 @@ export default function CategoriesPage() {
     try {
       setIsSubmitting(true);
       if (editingCategory) {
-        await api.categories.update(editingCategory.id, categoryName);
+        await api.categories.update(editingCategory.id, { name: categoryName });
         addToast('دسته‌بندی با موفقیت به‌روزرسانی شد', 'success');
       } else {
         await api.categories.create(categoryName);
@@ -67,6 +67,21 @@ export default function CategoriesPage() {
       addToast('خطا در ذخیره دسته‌بندی', 'error');
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleToggleEnabled = async (category: Category) => {
+    try {
+      const newStatus = !category.is_enabled;
+      await api.categories.toggleEnabled(category.id.toString(), newStatus);
+      await loadCategories();
+      addToast(
+        newStatus ? 'دسته‌بندی فعال شد' : 'دسته‌بندی غیرفعال شد',
+        'success'
+      );
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'خطا در تغییر وضعیت دسته‌بندی');
+      addToast('خطا در تغییر وضعیت دسته‌بندی', 'error');
     }
   };
 
@@ -218,6 +233,9 @@ export default function CategoriesPage() {
               <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                 نام
               </th>
+              <th className="px-6 py-3 text-center text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                وضعیت
+              </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                 عملیات
               </th>
@@ -226,7 +244,7 @@ export default function CategoriesPage() {
           <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
             {categories.length === 0 ? (
               <tr>
-                <td colSpan={4} className="px-6 py-12 text-center">
+                <td colSpan={5} className="px-6 py-12 text-center">
                   <FolderTree className="w-12 h-12 text-slate-400 dark:text-slate-500 mx-auto mb-3" />
                   <p className="text-slate-500 dark:text-slate-400">هیچ دسته‌بندی وجود ندارد. اولین دسته‌بندی را ایجاد کنید!</p>
                 </td>
@@ -247,6 +265,20 @@ export default function CategoriesPage() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900 dark:text-slate-100">
                     {category.name}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-center">
+                    <button
+                      onClick={() => handleToggleEnabled(category)}
+                      className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                        category.is_enabled !== false
+                          ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900/50'
+                          : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-600'
+                      }`}
+                      title={category.is_enabled !== false ? 'کلیک برای غیرفعال کردن' : 'کلیک برای فعال کردن'}
+                    >
+                      <Power className="w-3 h-3 ml-1" />
+                      {category.is_enabled !== false ? 'فعال' : 'غیرفعال'}
+                    </button>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-left text-sm">
                     <button
