@@ -90,3 +90,14 @@ export interface Setting {
   created_at: string;
   updated_at: string;
 }
+
+export interface Banner {
+  id: number;
+  title: string | null;
+  image_url: string;
+  link_url: string | null;
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}

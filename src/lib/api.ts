@@ -1,4 +1,4 @@
-import type { Category, Place, PaginatedResponse, DashboardStats, ApiKey, Setting } from '../types';
+import type { Category, Place, PaginatedResponse, DashboardStats, ApiKey, Setting, Banner } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
@@ -199,6 +199,63 @@ export const api = {
       fetchApi<void>(`/admin/users/${id}/reset-password`, {
         method: 'POST',
         body: JSON.stringify({ password }),
+      }),
+  },
+
+  banners: {
+    getAll: (activeOnly?: boolean) => {
+      const query = activeOnly ? '?active=true' : '';
+      return fetchApi<Banner[]>(`/banners${query}`);
+    },
+    getById: (id: string) => fetchApi<Banner>(`/banners/${id}`),
+    create: async (file: File, data: { title?: string; link_url?: string; display_order?: number; is_active?: boolean }) => {
+      const formData = new FormData();
+      formData.append('image', file);
+      if (data.title) formData.append('title', data.title);
+      if (data.link_url) formData.append('link_url', data.link_url);
+      if (data.display_order !== undefined) formData.append('display_order', data.display_order.toString());
+      if (data.is_active !== undefined) formData.append('is_active', data.is_active.toString());
+
+      const authHeaders = getAuthHeaders();
+      const response = await fetch(`${API_BASE_URL}/banners`, {
+        method: 'POST',
+        headers: authHeaders,
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({ message: 'Create failed' }));
+        throw new ApiError(response.status, error.message || 'Create failed');
+      }
+
+      return response.json();
+    },
+    update: async (id: string, file: File | null, data: { title?: string; link_url?: string; display_order?: number; is_active?: boolean }) => {
+      const formData = new FormData();
+      if (file) formData.append('image', file);
+      if (data.title !== undefined) formData.append('title', data.title);
+      if (data.link_url !== undefined) formData.append('link_url', data.link_url);
+      if (data.display_order !== undefined) formData.append('display_order', data.display_order.toString());
+      if (data.is_active !== undefined) formData.append('is_active', data.is_active.toString());
+
+      const authHeaders = getAuthHeaders();
+      const response = await fetch(`${API_BASE_URL}/banners/${id}`, {
+        method: 'PUT',
+        headers: authHeaders,
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({ message: 'Update failed' }));
+        throw new ApiError(response.status, error.message || 'Update failed');
+      }
+
+      return response.json();
+    },
+    delete: (id: string) =>
+      fetchApi<void>(`/banners/${id}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(),
       }),
   },
 };
