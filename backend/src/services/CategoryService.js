@@ -20,9 +20,18 @@ class CategoryService {
     return await CategoryRepository.create(name.trim());
   }
 
-  async updateCategory(id, name) {
-    if (!name || name.trim().length === 0) {
-      throw { status: 400, message: 'Category name is required' };
+  async updateCategory(id, data) {
+    const updateData = {};
+
+    if (data.name !== undefined) {
+      if (!data.name || data.name.trim().length === 0) {
+        throw { status: 400, message: 'Category name is required' };
+      }
+      updateData.name = data.name.trim();
+    }
+
+    if (data.is_enabled !== undefined) {
+      updateData.is_enabled = data.is_enabled;
     }
 
     const exists = await CategoryRepository.exists(id);
@@ -30,7 +39,7 @@ class CategoryService {
       throw { status: 404, message: 'Category not found' };
     }
 
-    return await CategoryRepository.update(id, name.trim());
+    return await CategoryRepository.update(id, updateData);
   }
 
   async deleteCategory(id) {

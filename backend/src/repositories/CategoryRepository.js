@@ -15,8 +15,26 @@ class CategoryRepository {
     return { id: result.insertId, name };
   }
 
-  async update(id, name) {
-    await query('UPDATE categories SET name = ? WHERE id = ?', [name, id]);
+  async update(id, data) {
+    const fields = [];
+    const values = [];
+
+    if (data.name !== undefined) {
+      fields.push('name = ?');
+      values.push(data.name);
+    }
+
+    if (data.is_enabled !== undefined) {
+      fields.push('is_enabled = ?');
+      values.push(data.is_enabled);
+    }
+
+    if (fields.length === 0) {
+      return await this.findById(id);
+    }
+
+    values.push(id);
+    await query(`UPDATE categories SET ${fields.join(', ')} WHERE id = ?`, values);
     return await this.findById(id);
   }
 

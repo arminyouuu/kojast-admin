@@ -73,7 +73,7 @@ export default function CategoriesPage() {
   const handleToggleEnabled = async (category: Category) => {
     try {
       const newStatus = !category.is_enabled;
-      await api.categories.toggleEnabled(category.id.toString(), newStatus, category.name);
+      await api.categories.toggleEnabled(category.id.toString(), newStatus);
       await loadCategories();
       addToast(
         newStatus ? 'دسته‌بندی فعال شد' : 'دسته‌بندی غیرفعال شد',
