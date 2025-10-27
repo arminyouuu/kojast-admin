@@ -205,7 +205,7 @@ export const api = {
   banners: {
     getAll: (activeOnly?: boolean) => {
       const query = activeOnly ? '?active=true' : '';
-      return fetchApi<Banner[]>(`/banners${query}`);
+      return fetchApi<Banner[]>(`/banner${query}`);
     },
     getById: (id: string) => fetchApi<Banner>(`/banners/${id}`),
     create: async (file: File, data: { title?: string; link_url?: string; display_order?: number; is_active?: boolean }) => {
