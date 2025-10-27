@@ -253,7 +253,7 @@ export const api = {
       return response.json();
     },
     delete: (id: string) =>
-      fetchApi<void>(`/banners/${id}`, {
+      fetchApi<void>(`/banner/${id}`, {
         method: 'DELETE',
         headers: getAuthHeaders(),
       }),
