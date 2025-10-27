@@ -93,7 +93,7 @@ export default function BannersPage() {
       }
 
       const url = editingBanner
-        ? `${API_BASE_URL}/banners/${editingBanner.id}`
+        ? `${API_BASE_URL}/banner/${editingBanner.id}`
         : `${API_BASE_URL}/banners`;
 
       const response = await fetch(url, {
