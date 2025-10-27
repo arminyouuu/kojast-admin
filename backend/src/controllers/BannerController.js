@@ -40,7 +40,7 @@ class BannerController {
         return res.status(400).json({ message: 'Banner image is required' });
       }
 
-      const image_url = `/api/uploads/${req.file.filename}`;
+      const image_url = `/uploads/${req.file.filename}`;
 
       const banner = await BannerRepository.create({
         title,
