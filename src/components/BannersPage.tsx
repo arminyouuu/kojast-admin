@@ -41,7 +41,7 @@ export default function BannersPage() {
   const loadBanners = async () => {
     try {
       setIsLoading(true);
-      const data = await api.get<Banner[]>('/banners');
+      const data = await api.get<Banner[]>('/banner');
       setBanners(data);
     } catch (error) {
       setToast({ message: 'خطا در بارگذاری بنرها', type: 'error' });
