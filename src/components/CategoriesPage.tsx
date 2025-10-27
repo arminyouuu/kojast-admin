@@ -270,14 +270,14 @@ export default function CategoriesPage() {
                     <button
                       onClick={() => handleToggleEnabled(category)}
                       className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                        category.is_enabled !== false
+                        category.is_enabled
                           ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900/50'
                           : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-600'
                       }`}
-                      title={category.is_enabled !== false ? 'کلیک برای غیرفعال کردن' : 'کلیک برای فعال کردن'}
+                      title={category.is_enabled ? 'کلیک برای غیرفعال کردن' : 'کلیک برای فعال کردن'}
                     >
                       <Power className="w-3 h-3 ml-1" />
-                      {category.is_enabled !== false ? 'فعال' : 'غیرفعال'}
+                      {category.is_enabled ? 'فعال' : 'غیرفعال'}
                     </button>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-left text-sm">
