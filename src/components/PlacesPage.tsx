@@ -6,6 +6,34 @@ import PlaceModal from './PlaceModal';
 import ConfirmModal from './ConfirmModal';
 import ToastContainer, { type ToastMessage } from './ToastContainer';
 import { format } from 'date-fns-jalali';
+
+// Add this helper function after your imports
+const convertToISODate = (dateString: string): string | null => {
+  if (!dateString) return null;
+  
+  dateString = dateString.trim();
+  
+  // Handle different date formats
+  // Format: DD/MM/YYYY or DD-MM-YYYY
+  const dmyPattern = /^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/;
+  // Format: YYYY/MM/DD or YYYY-MM-DD
+  const ymdPattern = /^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/;
+  
+  let match = dateString.match(dmyPattern);
+  if (match) {
+    const [, day, month, year] = match;
+    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+  }
+  
+  match = dateString.match(ymdPattern);
+  if (match) {
+    const [, year, month, day] = match;
+    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+  }
+  
+  // If no pattern matches, return null to avoid database errors
+  return null;
+};
  
 export default function PlacesPage() {
   const [places, setPlaces] = useState<Place[]>([]);
@@ -252,98 +280,104 @@ export default function PlacesPage() {
   };
 
   const handleImportCSV = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+  const file = event.target.files?.[0];
+  if (!file) return;
 
-    try {
-      setIsImporting(true);
-      const text = await file.text();
-      const lines = text.split('\n').filter(line => line.trim());
+  try {
+    setIsImporting(true);
+    const text = await file.text();
+    const lines = text.split('\n').filter(line => line.trim());
 
-      if (lines.length < 2) {
-        addToast('فایل CSV خالی است یا فرمت نامعتبر دارد', 'error');
-        return;
-      }
+    if (lines.length < 2) {
+      addToast('فایل CSV خالی است یا فرمت نامعتبر دارد', 'error');
+      return;
+    }
 
-      const rows = lines.slice(1).map(line => {
-        const cells: string[] = [];
-        let currentCell = '';
-        let inQuotes = false;
+    const rows = lines.slice(1).map(line => {
+      const cells: string[] = [];
+      let currentCell = '';
+      let inQuotes = false;
 
-        for (let i = 0; i < line.length; i++) {
-          const char = line[i];
-          const nextChar = line[i + 1];
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        const nextChar = line[i + 1];
 
-          if (char === '"') {
-            if (inQuotes && nextChar === '"') {
-              currentCell += '"';
-              i++;
-            } else {
-              inQuotes = !inQuotes;
-            }
-          } else if (char === ',' && !inQuotes) {
-            cells.push(currentCell);
-            currentCell = '';
+        if (char === '"') {
+          if (inQuotes && nextChar === '"') {
+            currentCell += '"';
+            i++;
           } else {
-            currentCell += char;
+            inQuotes = !inQuotes;
           }
-        }
-        cells.push(currentCell);
-
-        return cells;
-      });
-
-      let successCount = 0;
-      let errorCount = 0;
-
-      for (const row of rows) {
-        if (row.length < 4 || !row[0]?.trim()) {
-          errorCount++;
-          continue;
-        }
-
-        try {
-          const categoryName = row[3]?.trim();
-          const category = categories.find(c => c.name === categoryName);
-
-          const images = row[10] ? row[10].split('|').map(url => url.trim()).filter(url => url) : [];
-
-          await api.places.create({
-            name: row[0].trim(),
-            description: row[1]?.trim() || '',
-            address: row[2]?.trim() || '',
-            categoryId: category?.id || categories[0]?.id || 1,
-            latitude: row[4] ? parseFloat(row[4]) : null,
-            longitude: row[5] ? parseFloat(row[5]) : null,
-            expirationDate: row[6]?.trim() || null,
-            website: row[7]?.trim() || null,
-            instagram: row[8]?.trim() || null,
-            phoneNumber: row[9]?.trim() || null,
-            images
-          });
-          successCount++;
-        } catch (err) {
-          errorCount++;
+        } else if (char === ',' && !inQuotes) {
+          cells.push(currentCell);
+          currentCell = '';
+        } else {
+          currentCell += char;
         }
       }
+      cells.push(currentCell);
 
-      await loadPlaces();
-      setShowImportModal(false);
+      return cells;
+    });
 
-      if (successCount > 0) {
-        addToast(`${successCount} مکان با موفقیت وارد شد${errorCount > 0 ? ` (${errorCount} مورد با خطا مواجه شد)` : ''}`, 'success');
-      } else {
-        addToast('هیچ مکانی وارد نشد. لطفاً فرمت فایل را بررسی کنید', 'error');
+    let successCount = 0;
+    let errorCount = 0;
+
+    for (const row of rows) {
+      if (row.length < 4 || !row[0]?.trim()) {
+        errorCount++;
+        continue;
       }
-    } catch (err) {
-      addToast('خطا در پردازش فایل CSV', 'error');
-    } finally {
-      setIsImporting(false);
-      if (event.target) {
-        event.target.value = '';
+
+      try {
+        const categoryName = row[3]?.trim();
+        const category = categories.find(c => c.name === categoryName);
+
+        const images = row[10] ? row[10].split('|').map(url => url.trim()).filter(url => url) : [];
+
+        // Convert date format to ISO format (YYYY-MM-DD)
+        let expirationDate = row[6]?.trim() || null;
+        if (expirationDate) {
+          expirationDate = convertToISODate(expirationDate);
+        }
+
+        await api.places.create({
+          name: row[0].trim(),
+          description: row[1]?.trim() || '',
+          address: row[2]?.trim() || '',
+          categoryId: category?.id || categories[0]?.id || 1,
+          latitude: row[4] ? parseFloat(row[4]) : null,
+          longitude: row[5] ? parseFloat(row[5]) : null,
+          expirationDate: expirationDate,
+          website: row[7]?.trim() || null,
+          instagram: row[8]?.trim() || null,
+          phoneNumber: row[9]?.trim() || null,
+          images
+        });
+        successCount++;
+      } catch (err) {
+        errorCount++;
       }
     }
-  };
+
+    await loadPlaces();
+    setShowImportModal(false);
+
+    if (successCount > 0) {
+      addToast(`${successCount} مکان با موفقیت وارد شد${errorCount > 0 ? ` (${errorCount} مورد با خطا مواجه شد)` : ''}`, 'success');
+    } else {
+      addToast('هیچ مکانی وارد نشد. لطفاً فرمت فایل را بررسی کنید', 'error');
+    }
+  } catch (err) {
+    addToast('خطا در پردازش فایل CSV', 'error');
+  } finally {
+    setIsImporting(false);
+    if (event.target) {
+      event.target.value = '';
+    }
+  }
+};
 
   if (isLoading && places.length === 0) {
     return (
