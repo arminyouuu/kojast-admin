@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { api } from '../lib/api';
 import type { Place, Category } from '../types';
-import { Plus, Edit2, Trash2, MapPin, ChevronLeft, ChevronRight, Image, X, Calendar, Globe, Instagram, Phone } from 'lucide-react';
+import { Plus, Edit2, Trash2, MapPin, ChevronLeft, ChevronRight, Image, X, Calendar, Globe, Instagram, Phone, Download, Upload } from 'lucide-react';
 import PlaceModal from './PlaceModal';
 import ConfirmModal from './ConfirmModal';
 import ToastContainer, { type ToastMessage } from './ToastContainer';
@@ -27,6 +27,8 @@ export default function PlacesPage() {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
   const [selectedPlaces, setSelectedPlaces] = useState<Set<number>>(new Set());
   const [bulkDeleteConfirm, setBulkDeleteConfirm] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
 
   useEffect(() => {
     loadCategories();
@@ -185,6 +187,164 @@ export default function PlacesPage() {
     }
   };
 
+  const handleExportCSV = async () => {
+    try {
+      const allPlacesResponse = await api.places.getAll({
+        page: 1,
+        limit: 10000,
+      });
+      const allPlaces = allPlacesResponse.data;
+
+      const csvHeaders = [
+        'نام',
+        'توضیحات',
+        'آدرس',
+        'دسته‌بندی',
+        'عرض جغرافیایی',
+        'طول جغرافیایی',
+        'تاریخ انقضا',
+        'وب‌سایت',
+        'اینستاگرام',
+        'شماره تلفن',
+        'تصاویر (جدا شده با |)'
+      ];
+
+      const csvRows = allPlaces.map(place => [
+        place.name,
+        place.description || '',
+        place.address || '',
+        getCategoryName(place),
+        place.latitude || '',
+        place.longitude || '',
+        place.expiration_date || place.expirationDate || '',
+        place.website || '',
+        place.instagram || '',
+        place.phone_number || place.phoneNumber || '',
+        (place.images || []).join('|')
+      ]);
+
+      const csvContent = [
+        csvHeaders.join(','),
+        ...csvRows.map(row => row.map(cell => {
+          const cellStr = String(cell);
+          if (cellStr.includes(',') || cellStr.includes('"') || cellStr.includes('\n')) {
+            return `"${cellStr.replace(/"/g, '""')}"`;
+          }
+          return cellStr;
+        }).join(','))
+      ].join('\n');
+
+      const BOM = '\uFEFF';
+      const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `places_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      addToast('فایل CSV با موفقیت دانلود شد', 'success');
+    } catch (err) {
+      addToast('خطا در دانلود فایل CSV', 'error');
+    }
+  };
+
+  const handleImportCSV = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setIsImporting(true);
+      const text = await file.text();
+      const lines = text.split('\n').filter(line => line.trim());
+
+      if (lines.length < 2) {
+        addToast('فایل CSV خالی است یا فرمت نامعتبر دارد', 'error');
+        return;
+      }
+
+      const rows = lines.slice(1).map(line => {
+        const cells: string[] = [];
+        let currentCell = '';
+        let inQuotes = false;
+
+        for (let i = 0; i < line.length; i++) {
+          const char = line[i];
+          const nextChar = line[i + 1];
+
+          if (char === '"') {
+            if (inQuotes && nextChar === '"') {
+              currentCell += '"';
+              i++;
+            } else {
+              inQuotes = !inQuotes;
+            }
+          } else if (char === ',' && !inQuotes) {
+            cells.push(currentCell);
+            currentCell = '';
+          } else {
+            currentCell += char;
+          }
+        }
+        cells.push(currentCell);
+
+        return cells;
+      });
+
+      let successCount = 0;
+      let errorCount = 0;
+
+      for (const row of rows) {
+        if (row.length < 4 || !row[0]?.trim()) {
+          errorCount++;
+          continue;
+        }
+
+        try {
+          const categoryName = row[3]?.trim();
+          const category = categories.find(c => c.name === categoryName);
+
+          const images = row[10] ? row[10].split('|').map(url => url.trim()).filter(url => url) : [];
+
+          await api.places.create({
+            name: row[0].trim(),
+            description: row[1]?.trim() || '',
+            address: row[2]?.trim() || '',
+            categoryId: category?.id || categories[0]?.id || 1,
+            latitude: row[4] ? parseFloat(row[4]) : null,
+            longitude: row[5] ? parseFloat(row[5]) : null,
+            expirationDate: row[6]?.trim() || null,
+            website: row[7]?.trim() || null,
+            instagram: row[8]?.trim() || null,
+            phoneNumber: row[9]?.trim() || null,
+            images
+          });
+          successCount++;
+        } catch (err) {
+          errorCount++;
+        }
+      }
+
+      await loadPlaces();
+      setShowImportModal(false);
+
+      if (successCount > 0) {
+        addToast(`${successCount} مکان با موفقیت وارد شد${errorCount > 0 ? ` (${errorCount} مورد با خطا مواجه شد)` : ''}`, 'success');
+      } else {
+        addToast('هیچ مکانی وارد نشد. لطفاً فرمت فایل را بررسی کنید', 'error');
+      }
+    } catch (err) {
+      addToast('خطا در پردازش فایل CSV', 'error');
+    } finally {
+      setIsImporting(false);
+      if (event.target) {
+        event.target.value = '';
+      }
+    }
+  };
+
   if (isLoading && places.length === 0) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -256,6 +416,20 @@ export default function PlacesPage() {
             }`}
           >
             {showExpiredOnly ? 'نمایش همه' : 'فقط منقضی شده‌ها'}
+          </button>
+          <button
+            onClick={handleExportCSV}
+            className="flex items-center space-x-reverse space-x-2 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+          >
+            <Download className="w-4 h-4" />
+            <span>دانلود CSV</span>
+          </button>
+          <button
+            onClick={() => setShowImportModal(true)}
+            className="flex items-center space-x-reverse space-x-2 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+          >
+            <Upload className="w-4 h-4" />
+            <span>وارد کردن CSV</span>
           </button>
           <button
             onClick={() => setShowModal(true)}
@@ -487,6 +661,73 @@ export default function PlacesPage() {
         onCancel={() => setBulkDeleteConfirm(false)}
         variant="danger"
       />
+
+      {showImportModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-xl max-w-2xl w-full p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">وارد کردن مکان‌ها از فایل CSV</h3>
+              <button
+                onClick={() => setShowImportModal(false)}
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+                <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-2">فرمت فایل CSV:</h4>
+                <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                  فایل CSV شما باید شامل ستون‌های زیر باشد (به ترتیب):
+                </p>
+                <ul className="text-sm text-slate-600 dark:text-slate-400 space-y-1 list-disc list-inside">
+                  <li>نام (الزامی)</li>
+                  <li>توضیحات</li>
+                  <li>آدرس</li>
+                  <li>دسته‌بندی (نام دسته‌بندی)</li>
+                  <li>عرض جغرافیایی</li>
+                  <li>طول جغرافیایی</li>
+                  <li>تاریخ انقضا (فرمت: YYYY-MM-DD)</li>
+                  <li>وب‌سایت</li>
+                  <li>اینستاگرام</li>
+                  <li>شماره تلفن</li>
+                  <li>تصاویر (آدرس‌های تصاویر جدا شده با |)</li>
+                </ul>
+              </div>
+
+              <div className="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg p-8 text-center">
+                <Upload className="w-12 h-12 mx-auto mb-4 text-slate-400" />
+                <label className="cursor-pointer">
+                  <span className="text-slate-700 dark:text-slate-300 font-medium">
+                    {isImporting ? 'در حال پردازش...' : 'انتخاب فایل CSV'}
+                  </span>
+                  <input
+                    type="file"
+                    accept=".csv"
+                    onChange={handleImportCSV}
+                    disabled={isImporting}
+                    className="hidden"
+                  />
+                </label>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
+                  فایل CSV خود را انتخاب کنید
+                </p>
+              </div>
+
+              <div className="flex justify-end space-x-reverse space-x-3">
+                <button
+                  onClick={() => setShowImportModal(false)}
+                  disabled={isImporting}
+                  className="px-4 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors disabled:opacity-50"
+                >
+                  بستن
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
