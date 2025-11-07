@@ -112,6 +112,31 @@ class AuthController {
       next(error);
     }
   }
+
+  async checkCredentials(req, res, next) {
+    try {
+      const { phone_number, email } = req.body;
+
+      if (!phone_number && !email) {
+        return res.status(400).json({
+          success: false,
+          message: 'Either phone number or email is required'
+        });
+      }
+
+      const exists = await AuthService.checkCredentials({ phone_number, email });
+
+      res.json({
+        success: true,
+        data: {
+          exists,
+          credential: phone_number || email
+        }
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default new AuthController();

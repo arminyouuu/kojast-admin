@@ -125,6 +125,22 @@ class AuthService {
     return crypto.randomBytes(64).toString('hex');
   }
 
+  async checkCredentials(credentials) {
+    const { phone_number, email } = credentials;
+
+    if (phone_number) {
+      const user = await UserRepository.findByPhoneNumber(phone_number);
+      return !!user;
+    }
+
+    if (email) {
+      const user = await UserRepository.findByEmail(email);
+      return !!user;
+    }
+
+    return false;
+  }
+
   createUserResponse(user) {
     return {
       id: user.id,

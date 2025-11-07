@@ -10,5 +10,6 @@ router.post('/logout', authenticateUser, AuthController.logout);
 router.get('/profile', authenticateUser, AuthController.getProfile);
 router.put('/profile', authenticateUser, AuthController.updateProfile);
 router.post('/change-password', authenticateUser, AuthController.changePassword);
+router.post('/check-credentials', AuthController.checkCredentials);
 
 export default router;
