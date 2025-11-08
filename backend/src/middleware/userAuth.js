@@ -25,7 +25,7 @@ export const authenticateUser = async (req, res, next) => {
     if (!session.is_active) {
       return res.status(403).json({
         success: false,
-        message: 'Account is inactive'
+        message: 'اکانت غیرفعال است'
       });
     }
 
