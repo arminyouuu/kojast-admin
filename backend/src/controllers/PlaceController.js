@@ -26,7 +26,8 @@ class PlaceController {
         return res.status(400).json({ error: 'No files uploaded' });
       }
 
-      const baseUrl = `${req.protocol}://${req.get('host')}`;
+      const protocol = req.get('X-Forwarded-Proto') || req.protocol || 'https';
+      const baseUrl = `${protocol}://${req.get('host')}`;
       const imageUrls = req.files.map(file => `${baseUrl}/api/uploads/${file.filename}`);
 
       res.json({ urls: imageUrls });
