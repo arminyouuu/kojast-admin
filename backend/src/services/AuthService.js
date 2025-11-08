@@ -60,7 +60,7 @@ class AuthService {
     }
 
     if (!user.is_active) {
-      throw new Error('Account is inactive');
+      throw new Error('اکانت غیرفعال است');
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password_hash);
