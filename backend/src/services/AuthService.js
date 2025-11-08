@@ -93,7 +93,7 @@ class AuthService {
     }
 
     if (!session.is_active) {
-      throw new Error('Account is inactive');
+      throw new Error('اکانت غیرفعال است');
     }
 
     return this.createUserResponse(session);
