@@ -7,7 +7,12 @@ class UserRepository {
       INSERT INTO users (phone_number, email, password_hash, full_name)
       VALUES (?, ?, ?, ?)
     `;
-    const [result] = await pool.execute(sql, [phone_number, email, password_hash, full_name]);
+    const [result] = await pool.execute(sql, [
+      phone_number || null,
+      email || null,
+      password_hash,
+      full_name || null
+    ]);
     return result.insertId;
   }
 
