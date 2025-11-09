@@ -40,15 +40,32 @@ class UserRepository {
   }
 
   async update(id, userData) {
-    const { full_name, email, phone_number } = userData;
-    const sql = `
-      UPDATE users
-      SET full_name = COALESCE(?, full_name),
-          email = COALESCE(?, email),
-          phone_number = COALESCE(?, phone_number)
-      WHERE id = ?
-    `;
-    await pool.execute(sql, [full_name, email, phone_number, id]);
+    const updates = [];
+    const values = [];
+
+    if (userData.full_name !== undefined) {
+      updates.push('full_name = ?');
+      values.push(userData.full_name);
+    }
+
+    if (userData.email !== undefined) {
+      updates.push('email = ?');
+      values.push(userData.email || null);
+    }
+
+    if (userData.phone_number !== undefined) {
+      updates.push('phone_number = ?');
+      values.push(userData.phone_number || null);
+    }
+
+    if (updates.length === 0) {
+      return this.findById(id);
+    }
+
+    values.push(id);
+
+    const sql = `UPDATE users SET ${updates.join(', ')} WHERE id = ?`;
+    await pool.execute(sql, values);
     return this.findById(id);
   }
 
