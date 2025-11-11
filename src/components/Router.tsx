@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-type Route = '/' | '/categories' | '/places' | '/users' | '/api-keys' | '/settings' | '/banner' | '/banners' | '/ratings';
+type Route = '/' | '/categories' | '/places' | '/users' | '/api-keys' | '/settings' | '/banner' | '/banners' | '/comments';
 
 interface RouterProps {
   children: (currentPath: Route, navigate: (path: Route) => void) => React.ReactNode;
@@ -9,13 +9,13 @@ interface RouterProps {
 export function Router({ children }: RouterProps) {
   const [currentPath, setCurrentPath] = useState<Route>(() => {
     const path = window.location.pathname as Route;
-    return ['/', '/categories', '/places', '/users', '/api-keys', '/settings', '/banner', '/banners', '/ratings'].includes(path) ? path : '/';
+    return ['/', '/categories', '/places', '/users', '/api-keys', '/settings', '/banner', '/banners', '/comments'].includes(path) ? path : '/';
   });
 
   useEffect(() => {
     const handlePopState = () => {
       const path = window.location.pathname as Route;
-      if (['/', '/categories', '/places', '/users', '/api-keys', '/settings', '/banner', '/banners', '/ratings'].includes(path)) {
+      if (['/', '/categories', '/places', '/users', '/api-keys', '/settings', '/banner', '/banners', '/comments'].includes(path)) {
         setCurrentPath(path);
       }
     };
