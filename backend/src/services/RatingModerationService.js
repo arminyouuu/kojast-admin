@@ -20,6 +20,14 @@ class RatingModerationService {
     };
   }
 
+  // backend/src/services/RatingModerationService.js — add this method:
+  async getRatingById(ratingId) {
+    if (!ratingId) {
+      throw new Error('Rating ID is required');
+    }
+    return await RatingModerationRepository.getRatingById(ratingId);
+  }
+
   async getAllRatings(filters = {}, page = 1, limit = 50) {
     const offset = (page - 1) * limit;
     const ratings = await RatingModerationRepository.getAllRatings(filters, limit, offset);
