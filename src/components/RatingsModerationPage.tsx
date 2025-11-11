@@ -390,9 +390,18 @@ export default function RatingsModerationPage() {
                   )}
 
                   {rating.status === 'approved' && (
-                    <span className="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300">
-                      تایید شده
-                    </span>
+                    <div className="flex items-center space-x-reverse space-x-2">
+                      <span className="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300">
+                        تایید شده
+                      </span>
+                      <button
+                        onClick={() => handleDelete(rating)}
+                        className="p-2 text-slate-500 hover:text-red-600 dark:hover:text-red-400 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                        title="حذف نظر"
+                      >
+                        <XIcon className="w-4 h-4" />
+                      </button>
+                    </div>
                   )}
 
                   {rating.status === 'rejected' && (
