@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { api } from '../lib/api';
 import type { DashboardStats } from '../types';
-import { FolderTree, MapPin, Clock, LayoutDashboard, AlertCircle, TrendingUp, Calendar, Star } from 'lucide-react';
+import { FolderTree, MapPin, Clock, LayoutDashboard, AlertCircle, TrendingUp, Calendar, MessageSquare } from 'lucide-react';
 import { Router } from './Router';
 
 export default function DashboardPage() {
@@ -94,7 +94,7 @@ export default function DashboardPage() {
         </div>
 
         <button
-          onClick={() => handleNavigate('/ratings')}
+          onClick={() => handleNavigate('/comments')}
           className="bg-gradient-to-br from-rose-600 to-rose-500 rounded-xl shadow-lg p-6 text-white hover:from-rose-700 hover:to-rose-600 transition-all cursor-pointer"
         >
           <div className="flex items-center justify-between">
@@ -103,11 +103,11 @@ export default function DashboardPage() {
               <p className="text-4xl font-bold">{stats?.pendingRatingsCount || 0}</p>
             </div>
             <div className="bg-white bg-opacity-20 p-4 rounded-xl">
-              <Star className="w-8 h-8" />
+              <MessageSquare className="w-8 h-8" />
             </div>
           </div>
           <div className="mt-4 text-sm text-rose-100 flex items-center space-x-reverse space-x-1">
-            <span>مشاهده امتیازات منتظر</span>
+            <span>مشاهده نظرات منتظر</span>
             <span>←</span>
           </div>
         </button>
@@ -119,7 +119,6 @@ export default function DashboardPage() {
             <FolderTree className="w-5 h-5 text-slate-600 dark:text-slate-400" />
             <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">توزیع دسته‌بندی‌ها</h3>
           </div>
-
           {stats?.categoriesWithPlaceCounts && stats.categoriesWithPlaceCounts.length > 0 ? (
             <div className="space-y-3">
               {stats.categoriesWithPlaceCounts.map((category) => (
@@ -151,7 +150,6 @@ export default function DashboardPage() {
             <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400" />
             <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">مکان‌های در حال انقضا</h3>
           </div>
-
           {stats?.placesExpiringSoon && stats.placesExpiringSoon.length > 0 ? (
             <div className="space-y-3">
               {stats.placesExpiringSoon.map((place) => (
@@ -186,7 +184,6 @@ export default function DashboardPage() {
           <Clock className="w-5 h-5 text-slate-600 dark:text-slate-400" />
           <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">مکان‌های اخیر</h3>
         </div>
-
         {stats?.recentPlaces && stats.recentPlaces.length > 0 ? (
           <div className="space-y-3">
             {stats.recentPlaces.map((place) => (
