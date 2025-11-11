@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { api } from '../lib/api';
 import type { DashboardStats } from '../types';
-import { FolderTree, MapPin, Clock, LayoutDashboard, AlertCircle, TrendingUp, Calendar } from 'lucide-react';
+import { FolderTree, MapPin, Clock, LayoutDashboard, AlertCircle, TrendingUp, Calendar, Star } from 'lucide-react';
+import { Router } from './Router';
 
 export default function DashboardPage() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -40,6 +41,11 @@ export default function DashboardPage() {
       </div>
     );
   }
+
+  const handleNavigate = (path: string) => {
+    window.history.pushState({}, '', path);
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  };
 
   return (
     <div dir="rtl">
@@ -87,17 +93,24 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-blue-600 to-blue-500 rounded-xl shadow-lg p-6 text-white">
+        <button
+          onClick={() => handleNavigate('/ratings')}
+          className="bg-gradient-to-br from-rose-600 to-rose-500 rounded-xl shadow-lg p-6 text-white hover:from-rose-700 hover:to-rose-600 transition-all cursor-pointer"
+        >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-blue-100 text-sm font-medium mb-1">مکان‌های این ماه</p>
-              <p className="text-4xl font-bold">{stats?.placesCreatedThisMonth || 0}</p>
+              <p className="text-rose-100 text-sm font-medium mb-1">نیاز به بررسی</p>
+              <p className="text-4xl font-bold">{stats?.pendingRatingsCount || 0}</p>
             </div>
             <div className="bg-white bg-opacity-20 p-4 rounded-xl">
-              <TrendingUp className="w-8 h-8" />
+              <Star className="w-8 h-8" />
             </div>
           </div>
-        </div>
+          <div className="mt-4 text-sm text-rose-100 flex items-center space-x-reverse space-x-1">
+            <span>مشاهده امتیازات منتظر</span>
+            <span>←</span>
+          </div>
+        </button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
