@@ -351,6 +351,25 @@ router.post('/ratings/:id/reject', async (req, res, next) => {
   }
 });
 
+// backend/src/routes/adminRoutes.js
+router.delete('/ratings/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    // Fetch rating by ID to get user_id & place_id
+    const RatingModerationService = (await import('../services/RatingModerationService.js')).default;
+    const rating = await RatingModerationRepository.getRatingById(id); // or use service
+    if (!rating) {
+      return res.status(404).json({ success: false, message: 'Rating not found' });
+    }
+    // Now call delete logic (reuse or adapt RatingService.deleteRating)
+    const RatingService = (await import('../services/RatingService.js')).default;
+    const result = await RatingService.deleteRating(rating.user_id, rating.place_id);
+    res.json({ success: true, message: 'Rating deleted' });
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.post('/ratings/bulk-approve', async (req, res, next) => {
   try {
     const RatingModerationService = (await import('../services/RatingModerationService.js')).default;
