@@ -5,8 +5,9 @@ class RatingModerationService {
     const offset = (page - 1) * limit;
     const ratings = await RatingModerationRepository.getPendingRatings(limit, offset);
 
-    const [countResult] = await RatingModerationRepository.countPendingRatings();
-    const total = countResult || 0;
+    // Fixed: countPendingRatings likely returns a single result, not an array
+    const countResult = await RatingModerationRepository.countPendingRatings();
+    const total = countResult?.count || countResult || 0;
 
     return {
       data: ratings,
