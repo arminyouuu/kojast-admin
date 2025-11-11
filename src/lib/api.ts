@@ -281,6 +281,11 @@ export const api = {
         method: 'POST',
         body: JSON.stringify({ adminUsername: 'admin', reason }),
       }),
+    delete: (userId: string, placeId: number) =>
+      fetchApi<void>('/ratings', {
+        method: 'DELETE',
+        body: JSON.stringify({ user_id: userId, place_id: placeId }),
+      }),
     bulkApprove: (ratingIds: number[]) =>
       fetchApi<{ success: boolean; count: number; message: string }>('/admin/ratings/bulk-approve', {
         method: 'POST',
