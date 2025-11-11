@@ -65,6 +65,7 @@ export interface DashboardStats {
     count: number;
   }>;
   placesCreatedThisMonth: number;
+  pendingRatingsCount: number;
 }
 
 export interface ApiKey {
