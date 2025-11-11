@@ -291,7 +291,7 @@ router.use('/settings', settingsRoutes);
 
 router.get('/ratings/pending', async (req, res, next) => {
   try {
-    const RatingModerationService = (await import('./RatingModerationService.js')).default;
+    const RatingModerationService = (await import('../services/RatingModerationService.js')).default;
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 50;
     const result = await RatingModerationService.getPendingRatings(page, limit);
