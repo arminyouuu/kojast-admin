@@ -1,4 +1,4 @@
-import RatingModerationRepository from 'backend/src/repositories/RatingModerationRepository.js';
+import RatingModerationRepository from './repositories/RatingModerationRepository.js';
 
 class RatingModerationService {
   async getPendingRatings(page = 1, limit = 50) {
