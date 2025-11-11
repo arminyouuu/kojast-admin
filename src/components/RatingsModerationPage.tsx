@@ -27,7 +27,7 @@ type TabType = 'pending' | 'all' | 'approved' | 'rejected';
 
 export default function RatingsModerationPage() {
   const [ratings, setRatings] = useState<Rating[]>([]);
-  const [activeTab, setActiveTab] = useState<TabType>('pending');
+  const [activeTab, setActiveTab] = useState<TabType>('all');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedRatings, setSelectedRatings] = useState<Set<number>>(new Set());
