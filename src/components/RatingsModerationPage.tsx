@@ -211,16 +211,6 @@ export default function RatingsModerationPage() {
 
       <div className="mb-6 flex space-x-reverse space-x-2 border-b border-slate-200 dark:border-slate-700">
         <button
-          onClick={() => setActiveTab('pending')}
-          className={`px-4 py-2 font-medium transition-colors ${
-            activeTab === 'pending'
-              ? 'text-slate-900 dark:text-slate-100 border-b-2 border-slate-900 dark:border-slate-100'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
-          }`}
-        >
-          در انتظار ({stats.pending})
-        </button>
-        <button
           onClick={() => setActiveTab('all')}
           className={`px-4 py-2 font-medium transition-colors ${
             activeTab === 'all'
@@ -230,6 +220,17 @@ export default function RatingsModerationPage() {
         >
           همه
         </button>
+        <button
+          onClick={() => setActiveTab('pending')}
+          className={`px-4 py-2 font-medium transition-colors ${
+            activeTab === 'pending'
+              ? 'text-slate-900 dark:text-slate-100 border-b-2 border-slate-900 dark:border-slate-100'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+          }`}
+        >
+          در انتظار ({stats.pending})
+        </button>
+        
         <button
           onClick={() => setActiveTab('approved')}
           className={`px-4 py-2 font-medium transition-colors ${
