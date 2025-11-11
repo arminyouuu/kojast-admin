@@ -114,6 +114,18 @@ export default function RatingsModerationPage() {
     }
   };
 
+  const handleDelete = async (rating: Rating) => {
+    if (!confirm('آیا مطمئن هستید که می‌خواهید این نظر را حذف کنید؟')) return;
+    try {
+      await api.ratings.delete(rating.user_id, rating.place_id);
+      await loadRatings();
+      await loadStats();
+      addToast('نظر با موفقیت حذف شد', 'success');
+    } catch (err) {
+      addToast('خطا در حذف نظر', 'error');
+    }
+  };
+
   const toggleRatingSelection = (ratingId: number) => {
     setSelectedRatings((prev) => {
       const newSet = new Set(prev);
