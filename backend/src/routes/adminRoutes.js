@@ -351,7 +351,6 @@ router.post('/ratings/:id/reject', async (req, res, next) => {
   }
 });
 
-// ✅ CORRECTED — replace your current DELETE handler with this:
 router.delete('/ratings/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
