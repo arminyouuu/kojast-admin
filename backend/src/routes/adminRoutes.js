@@ -83,6 +83,10 @@ router.get('/dashboard/stats', async (req, res, next) => {
        AND YEAR(created_at) = YEAR(CURRENT_DATE())`
     );
 
+    const [pendingRatingsCount] = await query(
+      `SELECT COUNT(*) as count FROM ratings WHERE status = 'pending'`
+    );
+
     const mapPlace = (place) => ({
       id: place.id,
       name: place.name,
@@ -103,7 +107,8 @@ router.get('/dashboard/stats', async (req, res, next) => {
       recentPlaces: recentPlaces.map(mapPlace),
       placesExpiringSoon: placesExpiringSoon.map(mapPlace),
       categoriesWithPlaceCounts: categoriesWithPlaceCounts,
-      placesCreatedThisMonth: placesThisMonth.count
+      placesCreatedThisMonth: placesThisMonth.count,
+      pendingRatingsCount: pendingRatingsCount.count
     });
   } catch (error) {
     next(error);
@@ -283,5 +288,101 @@ router.post('/users/:id/reset-password', async (req, res, next) => {
 });
 
 router.use('/settings', settingsRoutes);
+
+router.get('/ratings/pending', async (req, res, next) => {
+  try {
+    const RatingModerationService = (await import('./RatingModerationService.js')).default;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 50;
+    const result = await RatingModerationService.getPendingRatings(page, limit);
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/ratings', async (req, res, next) => {
+  try {
+    const RatingModerationService = (await import('./RatingModerationService.js')).default;
+    const filters = {
+      status: req.query.status,
+      placeId: req.query.placeId,
+      userId: req.query.userId
+    };
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 50;
+    const result = await RatingModerationService.getAllRatings(filters, page, limit);
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post('/ratings/:id/approve', async (req, res, next) => {
+  try {
+    const RatingModerationService = (await import('./RatingModerationService.js')).default;
+    const ratingId = req.params.id;
+    const adminUsername = req.body.adminUsername || 'admin';
+    const result = await RatingModerationService.approveRating(ratingId, adminUsername);
+    res.json({
+      success: true,
+      message: 'Rating approved successfully',
+      data: result
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post('/ratings/:id/reject', async (req, res, next) => {
+  try {
+    const RatingModerationService = (await import('./RatingModerationService.js')).default;
+    const ratingId = req.params.id;
+    const adminUsername = req.body.adminUsername || 'admin';
+    const reason = req.body.reason || null;
+    const result = await RatingModerationService.rejectRating(ratingId, adminUsername, reason);
+    res.json({
+      success: true,
+      message: 'Rating rejected successfully',
+      data: result
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post('/ratings/bulk-approve', async (req, res, next) => {
+  try {
+    const RatingModerationService = (await import('./RatingModerationService.js')).default;
+    const { ratingIds, adminUsername } = req.body;
+    const admin = adminUsername || 'admin';
+    const result = await RatingModerationService.bulkApprove(ratingIds, admin);
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post('/ratings/bulk-reject', async (req, res, next) => {
+  try {
+    const RatingModerationService = (await import('./RatingModerationService.js')).default;
+    const { ratingIds, adminUsername, reason } = req.body;
+    const admin = adminUsername || 'admin';
+    const result = await RatingModerationService.bulkReject(ratingIds, admin, reason);
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/ratings/stats', async (req, res, next) => {
+  try {
+    const RatingModerationService = (await import('./RatingModerationService.js')).default;
+    const stats = await RatingModerationService.getRatingStats();
+    res.json(stats);
+  } catch (error) {
+    next(error);
+  }
+});
 
 export default router;
