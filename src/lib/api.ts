@@ -258,4 +258,39 @@ export const api = {
         headers: getAuthHeaders(),
       }),
   },
+
+  ratings: {
+    getPending: (page = 1, limit = 50) => {
+      const query = new URLSearchParams({ page: page.toString(), limit: limit.toString() });
+      return fetchApi<{ data: any[]; meta: any }>(`/admin/ratings/pending?${query.toString()}`);
+    },
+    getAll: (filters: { status?: string; placeId?: number; userId?: string } = {}, page = 1, limit = 50) => {
+      const query = new URLSearchParams({ page: page.toString(), limit: limit.toString() });
+      if (filters.status) query.append('status', filters.status);
+      if (filters.placeId) query.append('placeId', filters.placeId.toString());
+      if (filters.userId) query.append('userId', filters.userId);
+      return fetchApi<{ data: any[]; meta: any }>(`/admin/ratings?${query.toString()}`);
+    },
+    approve: (ratingId: number) =>
+      fetchApi<{ success: boolean; message: string; data: any }>(`/admin/ratings/${ratingId}/approve`, {
+        method: 'POST',
+        body: JSON.stringify({ adminUsername: 'admin' }),
+      }),
+    reject: (ratingId: number, reason?: string) =>
+      fetchApi<{ success: boolean; message: string; data: any }>(`/admin/ratings/${ratingId}/reject`, {
+        method: 'POST',
+        body: JSON.stringify({ adminUsername: 'admin', reason }),
+      }),
+    bulkApprove: (ratingIds: number[]) =>
+      fetchApi<{ success: boolean; count: number; message: string }>('/admin/ratings/bulk-approve', {
+        method: 'POST',
+        body: JSON.stringify({ ratingIds, adminUsername: 'admin' }),
+      }),
+    bulkReject: (ratingIds: number[], reason?: string) =>
+      fetchApi<{ success: boolean; count: number; message: string }>('/admin/ratings/bulk-reject', {
+        method: 'POST',
+        body: JSON.stringify({ ratingIds, adminUsername: 'admin', reason }),
+      }),
+    getStats: () => fetchApi<{ pending: number; approved: number; rejected: number }>('/admin/ratings/stats'),
+  },
 };
