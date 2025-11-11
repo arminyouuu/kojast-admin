@@ -860,6 +860,37 @@ if __name__ == '__main__':
 
 ---
 
+## Moderation System
+
+All new ratings and comments are subject to admin approval before appearing publicly.
+
+### Rating Status Flow:
+1. User submits rating → Status: `pending`
+2. Admin reviews → Status: `approved` or `rejected`
+3. Only `approved` ratings appear in public API responses
+4. Only `approved` ratings count toward place average_rating
+
+### For End Users:
+- After submitting a rating, users see: "Your rating is pending approval"
+- Users can check their rating status via GET /ratings/user/:userId
+- Response includes `status` field: 'pending', 'approved', or 'rejected'
+
+### Example Response with Status:
+```json
+{
+  "id": 1,
+  "place_id": 5,
+  "user_id": "user123",
+  "rating": 5,
+  "comment": "Great place!",
+  "status": "pending",
+  "created_at": "2025-11-10T12:00:00.000Z",
+  "updated_at": "2025-11-10T12:00:00.000Z"
+}
+```
+
+---
+
 ## Important Notes
 
 1. **One Rating Per User Per Place**: Each user can only rate a place once. Submitting a new rating will update the existing one.
@@ -877,6 +908,8 @@ if __name__ == '__main__':
 7. **Date Fields**: All timestamps are in ISO 8601 format (UTC timezone).
 
 8. **No Pagination**: All listing endpoints return complete results without pagination.
+
+9. **Moderation**: New ratings default to 'pending' status and require admin approval before appearing publicly. Only approved ratings affect place statistics.
 
 ---
 
