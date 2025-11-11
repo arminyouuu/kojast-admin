@@ -7,6 +7,7 @@ import DashboardPage from './components/DashboardPage';
 import CategoriesPage from './components/CategoriesPage';
 import PlacesPage from './components/PlacesPage';
 import BannersPage from './components/BannersPage';
+import RatingsModerationPage from './components/RatingsModerationPage';
 import UsersPage from './components/UsersPage';
 import ApiKeysPage from './components/ApiKeysPage';
 import SettingsPage from './components/SettingsPage';
@@ -34,6 +35,7 @@ function AppContent() {
           {currentPath === '/categories' && <CategoriesPage />}
           {currentPath === '/places' && <PlacesPage />}
           {currentPath === '/banners' && <BannersPage />}
+          {currentPath === '/ratings' && <RatingsModerationPage />}
           {currentPath === '/users' && <UsersPage />}
           {currentPath === '/api-keys' && <ApiKeysPage />}
           {currentPath === '/settings' && <SettingsPage />}
