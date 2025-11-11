@@ -117,7 +117,7 @@ export default function RatingsModerationPage() {
   const handleDelete = async (rating: Rating) => {
     if (!confirm('آیا مطمئن هستید که می‌خواهید این نظر را حذف کنید؟')) return;
     try {
-      await api.ratings.delete(rating.user_id, rating.place_id);
+      await api.ratings.delete(rating.id);
       await loadRatings();
       await loadStats();
       addToast('نظر با موفقیت حذف شد', 'success');
