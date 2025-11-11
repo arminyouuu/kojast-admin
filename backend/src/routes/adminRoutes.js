@@ -303,7 +303,7 @@ router.get('/ratings/pending', async (req, res, next) => {
 
 router.get('/ratings', async (req, res, next) => {
   try {
-    const RatingModerationService = (await import('./RatingModerationService.js')).default;
+    const RatingModerationService = (await import('../services/RatingModerationService.js')).default;
     const filters = {
       status: req.query.status,
       placeId: req.query.placeId,
@@ -320,7 +320,7 @@ router.get('/ratings', async (req, res, next) => {
 
 router.post('/ratings/:id/approve', async (req, res, next) => {
   try {
-    const RatingModerationService = (await import('./RatingModerationService.js')).default;
+    const RatingModerationService = (await import('../services/RatingModerationService.js')).default;
     const ratingId = req.params.id;
     const adminUsername = req.body.adminUsername || 'admin';
     const result = await RatingModerationService.approveRating(ratingId, adminUsername);
@@ -336,7 +336,7 @@ router.post('/ratings/:id/approve', async (req, res, next) => {
 
 router.post('/ratings/:id/reject', async (req, res, next) => {
   try {
-    const RatingModerationService = (await import('./RatingModerationService.js')).default;
+    const RatingModerationService = (await import('../services/RatingModerationService.js')).default;
     const ratingId = req.params.id;
     const adminUsername = req.body.adminUsername || 'admin';
     const reason = req.body.reason || null;
@@ -353,7 +353,7 @@ router.post('/ratings/:id/reject', async (req, res, next) => {
 
 router.post('/ratings/bulk-approve', async (req, res, next) => {
   try {
-    const RatingModerationService = (await import('./RatingModerationService.js')).default;
+    const RatingModerationService = (await import('../services/RatingModerationService.js')).default;
     const { ratingIds, adminUsername } = req.body;
     const admin = adminUsername || 'admin';
     const result = await RatingModerationService.bulkApprove(ratingIds, admin);
@@ -365,7 +365,7 @@ router.post('/ratings/bulk-approve', async (req, res, next) => {
 
 router.post('/ratings/bulk-reject', async (req, res, next) => {
   try {
-    const RatingModerationService = (await import('./RatingModerationService.js')).default;
+    const RatingModerationService = (await import('../services/RatingModerationService.js')).default;
     const { ratingIds, adminUsername, reason } = req.body;
     const admin = adminUsername || 'admin';
     const result = await RatingModerationService.bulkReject(ratingIds, admin, reason);
@@ -377,7 +377,7 @@ router.post('/ratings/bulk-reject', async (req, res, next) => {
 
 router.get('/ratings/stats', async (req, res, next) => {
   try {
-    const RatingModerationService = (await import('./RatingModerationService.js')).default;
+    const RatingModerationService = (await import('../services/RatingModerationService.js')).default;
     const stats = await RatingModerationService.getRatingStats();
     res.json(stats);
   } catch (error) {
