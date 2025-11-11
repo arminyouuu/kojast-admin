@@ -351,21 +351,31 @@ router.post('/ratings/:id/reject', async (req, res, next) => {
   }
 });
 
-// backend/src/routes/adminRoutes.js
+// ✅ CORRECTED — replace your current DELETE handler with this:
 router.delete('/ratings/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
-    // Fetch rating by ID to get user_id & place_id
+    const ratingId = parseInt(id, 10);
+
+    if (isNaN(ratingId) || ratingId <= 0) {
+      return res.status(400).json({ success: false, message: 'Invalid rating ID' });
+    }
+
+    // Use SERVICE only — no direct repo access!
     const RatingModerationService = (await import('../services/RatingModerationService.js')).default;
-    const rating = await RatingModerationRepository.getRatingById(id); // or use service
+    const rating = await RatingModerationService.getRatingById(ratingId);
+
     if (!rating) {
       return res.status(404).json({ success: false, message: 'Rating not found' });
     }
-    // Now call delete logic (reuse or adapt RatingService.deleteRating)
+
+    // Now delete via RatingService (which handles recalc too)
     const RatingService = (await import('../services/RatingService.js')).default;
-    const result = await RatingService.deleteRating(rating.user_id, rating.place_id);
-    res.json({ success: true, message: 'Rating deleted' });
+    await RatingService.deleteRating(rating.user_id, rating.place_id);
+
+    res.json({ success: true, message: 'Rating deleted successfully' });
   } catch (error) {
+    console.error('Delete rating error:', error);
     next(error);
   }
 });
