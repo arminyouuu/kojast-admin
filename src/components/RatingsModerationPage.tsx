@@ -5,6 +5,7 @@ import StarRating from './StarRating';
 import RejectRatingModal from './RejectRatingModal';
 import ToastContainer, { type ToastMessage } from './ToastContainer';
 import { format } from 'date-fns-jalali';
+import ConfirmModal from './ConfirmModal';
 
 interface Rating {
   id: number;
@@ -37,6 +38,10 @@ export default function RatingsModerationPage() {
   });
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
   const [stats, setStats] = useState({ pending: 0, approved: 0, rejected: 0 });
+  const [deleteConfirm, setDeleteConfirm] = useState<{ show: boolean; rating: Rating | null }>({
+    show: false,
+    rating: null,
+  });
 
   useEffect(() => {
     loadRatings();
@@ -114,15 +119,22 @@ export default function RatingsModerationPage() {
     }
   };
 
-  const handleDelete = async (rating: Rating) => {
-    if (!confirm('آیا مطمئن هستید که می‌خواهید این نظر را حذف کنید؟')) return;
+  const handleDelete = (rating: Rating) => {
+    setDeleteConfirm({ show: true, rating });
+  };
+  
+  const handleDeleteConfirm = async () => {
+    if (!deleteConfirm.rating) return;
+  
     try {
-      await api.ratings.delete(rating.id);
+      await api.ratings.delete(deleteConfirm.rating.id);
       await loadRatings();
       await loadStats();
       addToast('نظر با موفقیت حذف شد', 'success');
     } catch (err) {
       addToast('خطا در حذف نظر', 'error');
+    } finally {
+      setDeleteConfirm({ show: false, rating: null });
     }
   };
 
@@ -421,6 +433,15 @@ export default function RatingsModerationPage() {
         isOpen={rejectModal.show}
         onReject={handleRejectConfirm}
         onCancel={() => setRejectModal({ show: false, ratingId: null })}
+      />
+      <ConfirmModal
+        isOpen={deleteConfirm.show}
+        title="تأیید حذف نظر"
+        message={`آیا از حذف نظر کاربر «${deleteConfirm.rating?.user_name || 'ناشناس'}» برای مکان «${deleteConfirm.rating?.place_name}» اطمینان دارید؟ این عمل غیرقابل بازگشت است.`}
+        confirmText="بله، حذف شود"
+        cancelText="خیر"
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => setDeleteConfirm({ show: false, rating: null })}
       />
     </div>
   );
