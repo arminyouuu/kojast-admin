@@ -1,5 +1,6 @@
 import express from 'express';
 import RatingController from '../controllers/RatingController.js';
+import { authenticateUser } from '../middleware/userAuth.js';
 import { validateApiKey, checkPermission } from '../middleware/apiKeyAuth.js';
 
 const router = express.Router();
