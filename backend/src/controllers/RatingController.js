@@ -32,6 +32,17 @@ class RatingController {
     }
   }
 
+  // ✅ Safe: only gets current user’s rating for a place
+  async getUserRatingForPlaceSelf(req, res, next) {
+    try {
+      const { placeId } = req.params;
+      const rating = await RatingService.getUserRatingForPlace(req.user.id, placeId);
+      res.json(rating || { exists: false });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async getPlaceRatings(req, res, next) {
     try {
       const { placeId } = req.params;
