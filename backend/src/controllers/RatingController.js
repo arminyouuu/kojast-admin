@@ -22,6 +22,16 @@ class RatingController {
     }
   }
 
+  async getUserRatingsForSelf(req, res, next) {
+    try {
+      const { page = 1, limit = 50 } = req.query;
+      const ratings = await RatingService.getUserRatings(req.user.id, parseInt(page), parseInt(limit));
+      res.json(ratings);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async getPlaceRatings(req, res, next) {
     try {
       const { placeId } = req.params;
