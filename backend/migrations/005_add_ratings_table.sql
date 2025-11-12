@@ -1,7 +1,8 @@
 /*
-  # Add Ratings System
+  # Add Ratings System with Moderation
 
   This migration creates a ratings table for places where users can rate places from 1-5 stars.
+  Ratings require admin approval before being displayed or affecting place average ratings.
 
   ## New Tables
     - `ratings`
@@ -10,23 +11,30 @@
       - `user_id` (VARCHAR, stores user identifier from mobile app)
       - `rating` (TINYINT, 1-5 stars)
       - `comment` (TEXT, optional user comment)
+      - `status` (ENUM, 'pending'/'approved'/'rejected' - default 'pending')
+      - `reviewed_by` (VARCHAR, admin username who reviewed it)
+      - `reviewed_at` (TIMESTAMP, when admin reviewed it)
+      - `rejection_reason` (TEXT, reason for rejection if rejected)
       - `created_at` (TIMESTAMP, when rating was created)
       - `updated_at` (TIMESTAMP, when rating was last updated)
 
   ## Indexes
     - Index on place_id for fast lookups by place
     - Index on user_id for fast lookups by user
+    - Index on status for filtering by moderation status
     - Unique constraint on (place_id, user_id) to ensure one rating per user per place
 
   ## Changes to Existing Tables
     - Adds `average_rating` (DECIMAL 2,1) to places table
     - Adds `rating_count` (INT) to places table
     - These fields are denormalized for performance (cached from ratings table)
+    - Only approved ratings count toward averages and statistics
 
   ## Notes
     - Users can only rate a place once (enforced by unique constraint)
     - Rating value must be between 1 and 5 (enforced by CHECK constraint)
-    - Average rating and count are automatically updated via triggers
+    - All new ratings start with status='pending' and require admin approval
+    - Average rating and count are automatically updated via triggers (approved only)
     - All ratings are preserved even if user deletes their account (no cascade delete)
 */
 
@@ -37,12 +45,17 @@ CREATE TABLE IF NOT EXISTS ratings (
   user_id VARCHAR(255) NOT NULL,
   rating TINYINT NOT NULL,
   comment TEXT,
+  status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending' NOT NULL,
+  reviewed_by VARCHAR(255),
+  reviewed_at TIMESTAMP NULL,
+  rejection_reason TEXT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (place_id) REFERENCES places(id) ON DELETE CASCADE,
   UNIQUE KEY unique_user_place_rating (place_id, user_id),
   INDEX idx_place (place_id),
   INDEX idx_user (user_id),
+  INDEX idx_status (status),
   CONSTRAINT chk_rating_value CHECK (rating >= 1 AND rating <= 5)
 );
 
@@ -60,8 +73,8 @@ FOR EACH ROW
 BEGIN
   UPDATE places
   SET
-    rating_count = (SELECT COUNT(*) FROM ratings WHERE place_id = NEW.place_id),
-    average_rating = (SELECT AVG(rating) FROM ratings WHERE place_id = NEW.place_id)
+    rating_count = (SELECT COUNT(*) FROM ratings WHERE place_id = NEW.place_id AND status = 'approved'),
+    average_rating = COALESCE((SELECT AVG(rating) FROM ratings WHERE place_id = NEW.place_id AND status = 'approved'), 0)
   WHERE id = NEW.place_id;
 END//
 DELIMITER ;
@@ -74,8 +87,8 @@ FOR EACH ROW
 BEGIN
   UPDATE places
   SET
-    rating_count = (SELECT COUNT(*) FROM ratings WHERE place_id = NEW.place_id),
-    average_rating = (SELECT AVG(rating) FROM ratings WHERE place_id = NEW.place_id)
+    rating_count = (SELECT COUNT(*) FROM ratings WHERE place_id = NEW.place_id AND status = 'approved'),
+    average_rating = COALESCE((SELECT AVG(rating) FROM ratings WHERE place_id = NEW.place_id AND status = 'approved'), 0)
   WHERE id = NEW.place_id;
 END//
 DELIMITER ;
@@ -88,8 +101,8 @@ FOR EACH ROW
 BEGIN
   UPDATE places
   SET
-    rating_count = (SELECT COUNT(*) FROM ratings WHERE place_id = OLD.place_id),
-    average_rating = COALESCE((SELECT AVG(rating) FROM ratings WHERE place_id = OLD.place_id), 0)
+    rating_count = (SELECT COUNT(*) FROM ratings WHERE place_id = OLD.place_id AND status = 'approved'),
+    average_rating = COALESCE((SELECT AVG(rating) FROM ratings WHERE place_id = OLD.place_id AND status = 'approved'), 0)
   WHERE id = OLD.place_id;
 END//
 DELIMITER ;

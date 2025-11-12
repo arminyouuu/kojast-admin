@@ -3,11 +3,12 @@ import pool from '../database/connection.js';
 class RatingRepository {
   async createRating(placeId, userId, rating, comment = null) {
     const sql = `
-      INSERT INTO ratings (place_id, user_id, rating, comment)
-      VALUES (?, ?, ?, ?)
+      INSERT INTO ratings (place_id, user_id, rating, comment, status)
+      VALUES (?, ?, ?, ?, 'pending')
       ON DUPLICATE KEY UPDATE
         rating = VALUES(rating),
         comment = VALUES(comment),
+        status = 'pending',
         updated_at = CURRENT_TIMESTAMP
     `;
     const [result] = await pool.execute(sql, [placeId, userId, rating, comment]);
@@ -28,7 +29,7 @@ class RatingRepository {
     const offsetNum = parseInt(offset);
     const sql = `
       SELECT * FROM ratings
-      WHERE place_id = ?
+      WHERE place_id = ? AND status = 'approved'
       ORDER BY created_at DESC
       LIMIT ${limitNum} OFFSET ${offsetNum}
     `;
@@ -68,7 +69,7 @@ class RatingRepository {
         SUM(CASE WHEN rating = 2 THEN 1 ELSE 0 END) as two_star,
         SUM(CASE WHEN rating = 1 THEN 1 ELSE 0 END) as one_star
       FROM ratings
-      WHERE place_id = ?
+      WHERE place_id = ? AND status = 'approved'
     `;
     const [rows] = await pool.execute(sql, [placeId]);
     return rows[0];
