@@ -28,9 +28,21 @@ class RatingRepository {
     const limitNum = parseInt(limit);
     const offsetNum = parseInt(offset);
     const sql = `
-      SELECT * FROM ratings
-      WHERE place_id = ? AND status = 'approved'
-      ORDER BY created_at DESC
+      SELECT 
+        r.id,
+        r.place_id,
+        r.user_id,
+        r.rating,
+        r.comment,
+        r.status,
+        r.created_at,
+        r.updated_at,
+        -- ✅ Add user display name (safe, no PII)
+        COALESCE(u.full_name, 'کاربر ناشناس') as user_name
+      FROM ratings r
+      LEFT JOIN users u ON r.user_id = u.id   -- ✅ now safe: both are INT
+      WHERE r.place_id = ? AND r.status = 'approved'
+      ORDER BY r.created_at DESC
       LIMIT ${limitNum} OFFSET ${offsetNum}
     `;
     const [rows] = await pool.execute(sql, [placeId]);
