@@ -3,7 +3,8 @@ import RatingService from '../services/RatingService.js';
 class RatingController {
   async addOrUpdateRating(req, res, next) {
     try {
-      const { place_id, user_id, rating, comment } = req.body;
+      const { place_id, rating, comment } = req.body;
+      const user_id = req.user.id; // ← trusted from session
       const result = await RatingService.addOrUpdateRating(place_id, user_id, rating, comment);
       res.status(200).json(result);
     } catch (error) {
@@ -45,7 +46,8 @@ class RatingController {
 
   async deleteRating(req, res, next) {
     try {
-      const { place_id, user_id } = req.body;
+      const { place_id } = req.body;
+      const user_id = req.user.id; // ← trusted
       const result = await RatingService.deleteRating(user_id, place_id);
       res.json(result);
     } catch (error) {
