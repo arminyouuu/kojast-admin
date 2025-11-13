@@ -289,6 +289,8 @@ router.post('/users/:id/reset-password', async (req, res, next) => {
 });
 
 router.use('/settings', settingsRoutes);
+router.use('/sms', smsRoutes);  // ← Add this line
+
 
 router.get('/ratings/pending', async (req, res, next) => {
   try {
@@ -414,6 +416,5 @@ router.get('/ratings/stats', async (req, res, next) => {
   }
 });
 
-router.use('/sms', smsRoutes);  // ← Add this line
 
 export default router;
