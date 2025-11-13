@@ -5,6 +5,7 @@ import ApiKeyController from '../controllers/ApiKeyController.js';
 import settingsRoutes from './settingsRoutes.js';
 import { authenticate } from '../middleware/auth.js';
 import upload from '../middleware/upload.js';
+import smsRoutes from './smsRoutes.js';
 
 const router = express.Router();
 
@@ -412,5 +413,7 @@ router.get('/ratings/stats', async (req, res, next) => {
     next(error);
   }
 });
+
+router.use('/sms', smsRoutes);  // ← Add this line
 
 export default router;
