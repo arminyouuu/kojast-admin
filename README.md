@@ -1,300 +1,226 @@
-# API Endpoints Documentation
+# Kojast — Deployment Guide (PM2)
 
-Base URL: `http://localhost:3000` (or your configured PORT)
+This project consists of two parts:
 
----
-
-## Public Categories API
-**Base Path:** `/categories`
-**Authentication:** API Key required via `x-api-key` header
-
-| Method | Endpoint | Permission | Description |
-|--------|----------|-----------|-------------|
-| GET | `/` | read | Get all categories |
-| GET | `/:id` | read | Get category by ID |
-| POST | `/` | write | Create new category |
-| PUT | `/:id` | write | Update category |
-| DELETE | `/:id` | delete | Delete category |
-| POST | `/bulk-delete` | delete | Delete multiple categories |
+- **Frontend** — Vite + React (TypeScript), built to static files
+- **Backend** — Node.js + Express API (MySQL), located in `./backend`
 
 ---
 
-## Public Places API
-**Base Path:** `/places`
-**Authentication:** API Key required via `x-api-key` header
+## Prerequisites
 
-| Method | Endpoint | Permission | Description |
-|--------|----------|-----------|-------------|
-| GET | `/` | read | Get all places (with pagination & filters) |
-| GET | `/:id` | read | Get place by ID |
-| POST | `/` | write | Create new place |
-| PUT | `/:id` | write | Update place |
-| DELETE | `/:id` | delete | Delete place |
-| POST | `/bulk-delete` | delete | Delete multiple places |
-| POST | `/upload` | write | Upload place images (multipart/form-data) |
+Make sure the following are installed on your server:
 
-**Query Parameters for GET /:**
-- `categoryId` - Filter by category
-- `page` - Page number (default: 1)
-- `limit` - Items per page (default: 10, max: 100)
+- Node.js >= 18
+- npm
+- PM2 (`npm install -g pm2`)
+- MySQL (running and accessible)
+- (Optional) Nginx — recommended to serve the frontend and reverse-proxy the API
 
 ---
 
-## User Authentication API
-**Base Path:** `/auth`
-**Authentication:** JWT Token (where indicated)
+## 1. Clone & Install Dependencies
 
-| Method | Endpoint | Auth Required | Description |
-|--------|----------|---------------|-------------|
-| POST | `/register` | No | Register new user |
-| POST | `/login` | No | User login |
-| POST | `/logout` | Yes | User logout |
-| GET | `/profile` | Yes | Get user profile |
-| PUT | `/profile` | Yes | Update user profile |
-| POST | `/change-password` | Yes | Change user password |
+```bash
+# Root (frontend)
+npm install
 
-**Request Body Examples:**
-
-**Register:**
-```json
-{
-  "phone_number": "09123456789",
-  "email": "user@example.com",
-  "full_name": "John Doe",
-  "password": "password123"
-}
-```
-
-**Login:**
-```json
-{
-  "phone_number": "09123456789",
-  "password": "password123"
-}
+# Backend
+cd backend && npm install && cd ..
 ```
 
 ---
 
-## User Favorites API
-**Base Path:** `/favorites`
-**Authentication:** JWT Token required
+## 2. Configure Environment Variables
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/` | Get user's favorite places |
-| POST | `/` | Add place to favorites |
-| DELETE | `/:placeId` | Remove place from favorites |
-| GET | `/check/:placeId` | Check if place is favorited |
+### Backend
 
-**Request Body for POST /:**
-```json
-{
-  "place_id": 1
-}
+```bash
+cp backend/.env.example backend/.env
+nano backend/.env
 ```
 
----
-
-## Admin Panel API
-**Base Path:** `/admin`
-**Authentication:** Basic Auth (username/password)
-
-### Admin Authentication
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/login` | Admin login |
-
-**Request Body:**
-```json
-{
-  "username": "admin",
-  "password": "admin123"
-}
-```
-
-### Admin Categories
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/categories` | Get all categories |
-| GET | `/categories/:id` | Get category by ID |
-| POST | `/categories` | Create new category |
-| PUT | `/categories/:id` | Update category |
-| DELETE | `/categories/:id` | Delete category |
-| POST | `/categories/bulk-delete` | Delete multiple categories |
-
-### Admin Places
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/places` | Get all places |
-| GET | `/places/:id` | Get place by ID |
-| POST | `/places` | Create new place |
-| PUT | `/places/:id` | Update place |
-| DELETE | `/places/:id` | Delete place |
-| POST | `/places/bulk-delete` | Delete multiple places |
-| POST | `/places/upload` | Upload images (multipart/form-data) |
-
-### Admin Dashboard
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/dashboard/stats` | Get dashboard statistics |
-
-**Response:**
-```json
-{
-  "totalPlaces": 100,
-  "totalCategories": 10,
-  "placesCreatedThisMonth": 15,
-  "recentPlaces": [...],
-  "placesExpiringSoon": [...],
-  "categoriesWithPlaceCounts": [...]
-}
-```
-
-### Admin API Keys Management
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api-keys` | Get all API keys |
-| POST | `/api-keys` | Create new API key |
-| PUT | `/api-keys/:id` | Update API key |
-| DELETE | `/api-keys/:id` | Delete API key |
-
-**Request Body for POST /api-keys:**
-```json
-{
-  "name": "My App",
-  "permissions": {
-    "read": true,
-    "write": true
-  }
-}
-```
-
-### Admin Users Management
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/users` | Get all users (paginated) |
-| POST | `/users` | Create new user |
-| PUT | `/users/:id` | Update user |
-| DELETE | `/users/:id` | Delete user |
-| PUT | `/users/:id/toggle-status` | Toggle user active status |
-| POST | `/users/:id/reset-password` | Reset user password |
-
-**Query Parameters for GET /users:**
-- `page` - Page number (default: 1)
-- `limit` - Items per page (default: 10, max: 100)
-
-**Request Body for POST /users:**
-```json
-{
-  "full_name": "John Doe",
-  "email": "user@example.com",
-  "phone_number": "09123456789",
-  "password": "password123",
-  "is_active": true
-}
-```
-
-### Admin Settings
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/settings` | Get all settings |
-| GET | `/settings/:key` | Get setting by key |
-| POST | `/settings` | Create/update setting |
-| DELETE | `/settings/:key` | Delete setting |
-
-**Request Body for POST /settings:**
-```json
-{
-  "key": "app_name",
-  "value": "Kojast"
-}
-```
-
----
-
-## Authentication Methods
-
-### API Key Authentication
-Used for public API endpoints (`/categories`, `/places`)
-
-**Header:**
-```
-x-api-key: your-api-key-here
-```
-
-### JWT Token Authentication
-Used for user endpoints (`/auth`, `/favorites`)
-
-**Header:**
-```
-Authorization: Bearer your-jwt-token-here
-```
-
-### Basic Authentication
-Used for admin panel endpoints (`/admin`)
-
-**Header:**
-```
-Authorization: Basic base64(username:password)
-```
-
----
-
-## Common Response Formats
-
-### Success Response
-```json
-{
-  "success": true,
-  "message": "Operation successful",
-  "data": { ... }
-}
-```
-
-### Error Response
-```json
-{
-  "success": false,
-  "message": "Error description",
-  "error": "Detailed error message"
-}
-```
-
-### Paginated Response
-```json
-{
-  "success": true,
-  "data": [...],
-  "meta": {
-    "total": 100,
-    "page": 1,
-    "limit": 10,
-    "pages": 10
-  }
-}
-```
-
----
-
-## Environment Variables
-
-Required environment variables for the backend:
+Fill in your values:
 
 ```env
 PORT=3000
-NODE_ENV=development
+NODE_ENV=production
 
-# Admin Credentials
-ADMIN_USERNAME=admin
-ADMIN_PASSWORD=admin123
-
-# JWT Secret
-JWT_SECRET=your-jwt-secret-here
-
-# Database Configuration
 DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=your-password
-DB_NAME=kojast
 DB_PORT=3306
+DB_USER=your_db_user
+DB_PASSWORD=your_db_password
+DB_NAME=kojast
+
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=your_secure_password
+
+JWT_SECRET=your_long_random_secret
 ```
+
+### Frontend
+
+Create a `.env` file in the project root if your frontend needs to point to the backend API:
+
+```env
+VITE_API_URL=http://your-server-ip:3000
+```
+
+---
+
+## 3. Initialize the Database
+
+```bash
+cd backend
+npm run init-db
+cd ..
+```
+
+---
+
+## 4. Build the Frontend
+
+```bash
+npm run build
+```
+
+This produces a `dist/` folder with the compiled static files.
+
+---
+
+## 5. Run with PM2
+
+### Option A — Start each process individually
+
+```bash
+# Start the backend API
+pm2 start backend/src/server.js --name kojast-api
+
+# Serve the frontend static files (built dist/)
+pm2 start npm --name kojast-frontend -- run preview
+```
+
+> `vite preview` serves the `dist/` folder on port 4173 by default.
+> For production, using Nginx to serve `dist/` directly (see below) is recommended instead.
+
+### Option B — Use an ecosystem file (recommended)
+
+Create `ecosystem.config.cjs` in the project root:
+
+```js
+module.exports = {
+  apps: [
+    {
+      name: 'kojast-api',
+      script: './backend/src/server.js',
+      cwd: './backend',
+      instances: 1,
+      exec_mode: 'fork',
+      node_args: '--experimental-vm-modules',
+      env: {
+        NODE_ENV: 'production',
+      },
+    },
+    {
+      name: 'kojast-frontend',
+      script: 'npm',
+      args: 'run preview',
+      cwd: './',
+      instances: 1,
+      exec_mode: 'fork',
+      env: {
+        NODE_ENV: 'production',
+      },
+    },
+  ],
+};
+```
+
+Then start both with a single command:
+
+```bash
+pm2 start ecosystem.config.cjs
+```
+
+---
+
+## 6. Persist PM2 on Server Reboot
+
+```bash
+pm2 save
+pm2 startup
+```
+
+Follow the printed instruction (it will give you a `sudo` command to run) to register PM2 as a system service.
+
+---
+
+## 7. Useful PM2 Commands
+
+| Command | Description |
+|---|---|
+| `pm2 list` | Show all running processes |
+| `pm2 logs kojast-api` | Stream backend logs |
+| `pm2 logs kojast-frontend` | Stream frontend logs |
+| `pm2 restart kojast-api` | Restart the backend |
+| `pm2 stop all` | Stop all processes |
+| `pm2 delete all` | Remove all processes from PM2 |
+| `pm2 monit` | Interactive monitoring dashboard |
+
+---
+
+## 8. (Optional) Nginx Configuration
+
+Using Nginx is the recommended way to serve the frontend in production and reverse-proxy API requests.
+
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;
+
+    # Serve frontend static files
+    root /path/to/project/dist;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # Reverse proxy the backend API
+    location /api/ {
+        proxy_pass http://127.0.0.1:3000/;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    # Serve uploaded images
+    location /uploads/ {
+        alias /path/to/project/backend/uploads/;
+    }
+}
+```
+
+After adding your config:
+
+```bash
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+If you use Nginx to serve `dist/`, you can stop the `kojast-frontend` PM2 process — it is no longer needed:
+
+```bash
+pm2 delete kojast-frontend
+pm2 save
+```
+
+---
+
+## API Reference
+
+See [`README.md`](./backend/README.md) and [`backend/API_DOCUMENTATION.md`](./backend/API_DOCUMENTATION.md) for full API documentation.
+
+Default backend port: **3000**
+Default frontend preview port: **4173**
