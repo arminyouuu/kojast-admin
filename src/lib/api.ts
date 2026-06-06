@@ -1,6 +1,6 @@
 import type { Category, Place, PaginatedResponse, DashboardStats, ApiKey, Setting, Banner } from '../types';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+const API_BASE_URL = (import.meta.env.VITE_API_URL || '/api').replace(/\/$/, '');
 
 class ApiError extends Error {
   constructor(public status: number, message: string) {

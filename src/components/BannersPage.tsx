@@ -32,7 +32,7 @@ export default function BannersPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-  const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+  const API_BASE_URL = (import.meta.env.VITE_API_URL || '/api').replace(/\/$/, '');
 
   useEffect(() => {
     loadBanners();
@@ -132,7 +132,7 @@ export default function BannersPage() {
       display_order: banner.display_order,
       is_active: banner.is_active,
     });
-    setPreviewUrl(banner.image_url.startsWith('http') ? banner.image_url : `${API_BASE_URL}${banner.image_url}`);
+    setPreviewUrl(banner.image_url.startsWith('http') ? banner.image_url : banner.image_url.startsWith('/api/') ? `${window.location.origin}${banner.image_url}` : `${API_BASE_URL}${banner.image_url}`);
   };
 
   const handleDelete = async () => {
@@ -345,7 +345,7 @@ export default function BannersPage() {
                 >
                   <div className="aspect-video bg-slate-100 dark:bg-slate-900 relative">
                     <img
-                      src={banner.image_url.startsWith('http') ? banner.image_url : `${API_BASE_URL}${banner.image_url}`}
+                      src={banner.image_url.startsWith('http') ? banner.image_url : banner.image_url.startsWith('/api/') ? `${window.location.origin}${banner.image_url}` : `${API_BASE_URL}${banner.image_url}`}
                       alt={banner.title || 'بنر'}
                       className="w-full h-full object-cover"
                     />

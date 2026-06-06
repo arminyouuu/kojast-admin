@@ -24,31 +24,31 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-app.get('/', (req, res) => {
+app.get('/api', (req, res) => {
   res.json({
     message: 'Kojast API',
     version: '1.0.0',
     endpoints: {
-      categories: '/categories',
-      places: '/places',
-      admin: '/admin',
-      auth: '/auth',
-      favorites: '/favorites',
-      ratings: '/ratings',
-      banners: '/banner'
+      categories: '/api/categories',
+      places: '/api/places',
+      admin: '/api/admin',
+      auth: '/api/auth',
+      favorites: '/api/favorites',
+      ratings: '/api/ratings',
+      banners: '/api/banner'
     }
   });
 });
 
-app.use('/categories', categoryRoutes);
-app.use('/places', placeRoutes);
-app.use('/admin', adminRoutes);
-app.use('/auth', authRoutes);
-app.use('/favorites', favoritesRoutes);
-app.use('/ratings', ratingRoutes);
-app.use('/banner', bannerRoutes);
+app.use('/api/uploads', express.static(path.join(__dirname, '../uploads')));
+app.use('/api/categories', categoryRoutes);
+app.use('/api/places', placeRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/favorites', favoritesRoutes);
+app.use('/api/ratings', ratingRoutes);
+app.use('/api/banner', bannerRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
