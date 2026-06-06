@@ -1,6 +1,6 @@
 -- ============================================================
 -- COMPLETE DATABASE SCHEMA FOR KOJAST
--- Run this to create all tables from scratch
+-- Run this to create all tables from scratch or refresh
 -- ============================================================
 
 -- Create the database (run separately if needed)
@@ -14,7 +14,8 @@ CREATE TABLE IF NOT EXISTS categories (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(255) NOT NULL UNIQUE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX idx_name (name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================
@@ -94,12 +95,10 @@ CREATE TABLE IF NOT EXISTS users (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   last_login TIMESTAMP NULL,
   is_active BOOLEAN DEFAULT TRUE,
-  CONSTRAINT check_contact CHECK (phone_number IS NOT NULL OR email IS NOT NULL)
+  CONSTRAINT check_contact CHECK (phone_number IS NOT NULL OR email IS NOT NULL),
+  INDEX idx_users_phone (phone_number),
+  INDEX idx_users_email (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- User indexes
-CREATE INDEX IF NOT EXISTS idx_users_phone ON users(phone_number);
-CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 
 -- ============================================================
 -- 7. USER_FAVORITES TABLE
@@ -111,12 +110,10 @@ CREATE TABLE IF NOT EXISTS user_favorites (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   FOREIGN KEY (place_id) REFERENCES places(id) ON DELETE CASCADE,
-  UNIQUE KEY unique_user_place (user_id, place_id)
+  UNIQUE KEY unique_user_place (user_id, place_id),
+  INDEX idx_favorites_user (user_id),
+  INDEX idx_favorites_place (place_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Favorites indexes
-CREATE INDEX IF NOT EXISTS idx_favorites_user ON user_favorites(user_id);
-CREATE INDEX IF NOT EXISTS idx_favorites_place ON user_favorites(place_id);
 
 -- ============================================================
 -- 8. USER_SESSIONS TABLE
@@ -128,12 +125,10 @@ CREATE TABLE IF NOT EXISTS user_sessions (
   device_info TEXT,
   expires_at TIMESTAMP NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  INDEX idx_sessions_token (token),
+  INDEX idx_sessions_expires (expires_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Session indexes
-CREATE INDEX IF NOT EXISTS idx_sessions_token ON user_sessions(token);
-CREATE INDEX IF NOT EXISTS idx_sessions_expires ON user_sessions(expires_at);
 
 -- ============================================================
 -- 9. RATINGS TABLE (with moderation)
@@ -179,12 +174,10 @@ CREATE TABLE IF NOT EXISTS app_banners (
 -- ============================================================
 DELIMITER //
 
--- Drop existing triggers if they exist
-DROP TRIGGER IF EXISTS after_rating_insert;
-DROP TRIGGER IF EXISTS after_rating_update;
-DROP TRIGGER IF EXISTS after_rating_delete;
+DROP TRIGGER IF EXISTS after_rating_insert//
+DROP TRIGGER IF EXISTS after_rating_update//
+DROP TRIGGER IF EXISTS after_rating_delete//
 
--- Trigger after insert
 CREATE TRIGGER after_rating_insert
 AFTER INSERT ON ratings
 FOR EACH ROW
@@ -196,7 +189,6 @@ BEGIN
   WHERE id = NEW.place_id;
 END//
 
--- Trigger after update
 CREATE TRIGGER after_rating_update
 AFTER UPDATE ON ratings
 FOR EACH ROW
@@ -208,7 +200,6 @@ BEGIN
   WHERE id = NEW.place_id;
 END//
 
--- Trigger after delete
 CREATE TRIGGER after_rating_delete
 AFTER DELETE ON ratings
 FOR EACH ROW
