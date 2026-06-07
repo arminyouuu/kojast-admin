@@ -1,6 +1,9 @@
-# Add this location block to your nginx configuration
-# to serve uploaded images from the backend
+# Nginx configuration for Kojast API
 
+# 1. Increase max upload size (add to server block or http block)
+client_max_body_size 20M;
+
+# 2. Serve uploaded images from the backend
 location /api/uploads/ {
     alias /path/to/kojast/backend/uploads/;
     expires 1y;
@@ -10,5 +13,22 @@ location /api/uploads/ {
     add_header Access-Control-Allow-Origin "*";
 }
 
+# 3. Proxy API requests (if using reverse proxy)
+location /api/ {
+    client_max_body_size 20M;
+    proxy_pass http://localhost:3000;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection 'upgrade';
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_cache_bypass $http_upgrade;
+}
+
 # Replace /path/to/kojast/backend/uploads/ with the actual path to your uploads directory
 # For example: /var/www/kojast/backend/uploads/
+
+# After making changes:
+# sudo nginx -t && sudo nginx -s reload
