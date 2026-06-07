@@ -85,14 +85,14 @@ class UserRepository {
     const sql = `
       SELECT p.*, c.name as category_name,
              GROUP_CONCAT(pi.image_url) as images,
-             uf.created_at as favorited_at
+             MAX(uf.created_at) as favorited_at
       FROM user_favorites uf
       JOIN places p ON uf.place_id = p.id
       LEFT JOIN categories c ON p.category_id = c.id
       LEFT JOIN place_images pi ON p.id = pi.place_id
       WHERE uf.user_id = ?
       GROUP BY p.id
-      ORDER BY uf.created_at DESC
+      ORDER BY favorited_at DESC
       LIMIT ${limitNum} OFFSET ${offsetNum}
     `;
     const [rows] = await pool.execute(sql, [userId]);
