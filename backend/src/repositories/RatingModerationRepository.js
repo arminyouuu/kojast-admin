@@ -2,6 +2,8 @@ import { query } from '../database/connection.js';
 
 class RatingModerationRepository {
   async getPendingRatings(limit = 50, offset = 0) {
+    const limitNum = parseInt(limit);
+    const offsetNum = parseInt(offset);
     const sql = `
       SELECT
         r.*,
@@ -14,12 +16,14 @@ class RatingModerationRepository {
       LEFT JOIN users u ON r.user_id = u.id
       WHERE r.status = 'pending'
       ORDER BY r.created_at ASC
-      LIMIT ? OFFSET ?
+      LIMIT ${limitNum} OFFSET ${offsetNum}
     `;
-    return await query(sql, [limit, offset]);
+    return await query(sql);
   }
 
   async getAllRatings(filters = {}, limit = 50, offset = 0) {
+    const limitNum = parseInt(limit);
+    const offsetNum = parseInt(offset);
     let sql = `
       SELECT
         r.*,
@@ -49,8 +53,7 @@ class RatingModerationRepository {
       params.push(filters.userId);
     }
 
-    sql += ' ORDER BY r.created_at DESC LIMIT ? OFFSET ?';
-    params.push(limit, offset);
+    sql += ` ORDER BY r.created_at DESC LIMIT ${limitNum} OFFSET ${offsetNum}`;
 
     return await query(sql, params);
   }

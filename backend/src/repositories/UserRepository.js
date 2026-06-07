@@ -80,7 +80,8 @@ class UserRepository {
   }
 
   async getFavorites(userId, page = 1, limit = 10) {
-    const offset = (page - 1) * limit;
+    const limitNum = parseInt(limit);
+    const offsetNum = (parseInt(page) - 1) * limitNum;
     const sql = `
       SELECT p.*, c.name as category_name,
              GROUP_CONCAT(pi.image_url) as images,
@@ -92,9 +93,9 @@ class UserRepository {
       WHERE uf.user_id = ?
       GROUP BY p.id
       ORDER BY uf.created_at DESC
-      LIMIT ? OFFSET ?
+      LIMIT ${limitNum} OFFSET ${offsetNum}
     `;
-    const [rows] = await pool.execute(sql, [userId, limit, offset]);
+    const [rows] = await pool.execute(sql, [userId]);
 
     const countSql = 'SELECT COUNT(*) as total FROM user_favorites WHERE user_id = ?';
     const [countResult] = await pool.execute(countSql, [userId]);
