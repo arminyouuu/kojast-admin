@@ -47,7 +47,7 @@ class BannerController {
         image_url,
         link_url,
         display_order: display_order ? parseInt(display_order) : 0,
-        is_active: is_active !== undefined ? (is_active === true || is_active === 'true' || is_active === 1) : true
+        is_active: is_active !== undefined ? [true, 'true', 1, '1'].includes(is_active) : true
       });
 
       res.status(201).json(banner);
@@ -82,7 +82,7 @@ class BannerController {
         title,
         link_url,
         display_order: display_order ? parseInt(display_order) : undefined,
-        is_active: is_active !== undefined ? (is_active === true || is_active === 'true' || is_active === 1) : undefined
+        is_active: is_active !== undefined ? [true, 'true', 1, '1'].includes(is_active) : undefined
       };
 
       if (req.file) {
