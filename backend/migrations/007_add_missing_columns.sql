@@ -72,6 +72,9 @@ CALL add_column_if_not_exists('places', 'rating_count', 'INT DEFAULT 0');
 CALL add_index_if_not_exists('places', 'idx_rating', 'average_rating');
 CALL add_index_if_not_exists('places', 'idx_expiration', 'expiration_date');
 
+-- Add is_enabled column to categories table
+CALL add_column_if_not_exists('categories', 'is_enabled', 'BOOLEAN DEFAULT TRUE');
+
 -- Clean up procedures
 DROP PROCEDURE IF EXISTS add_column_if_not_exists;
 DROP PROCEDURE IF EXISTS add_index_if_not_exists;
