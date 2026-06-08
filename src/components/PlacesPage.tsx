@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { api } from '../lib/api';
 import type { Place, Category } from '../types';
-import { Plus, Edit2, Trash2, MapPin, ChevronLeft, ChevronRight, Image, X, Calendar, Globe, Instagram, Phone, Download, Upload } from 'lucide-react';
+import { Plus, CreditCard as Edit2, Trash2, MapPin, ChevronLeft, ChevronRight, Image, X, Calendar, Globe, Instagram, Phone, Download, Upload } from 'lucide-react';
 import PlaceModal from './PlaceModal';
 import ConfirmModal from './ConfirmModal';
 import ToastContainer, { type ToastMessage } from './ToastContainer';
@@ -323,6 +323,31 @@ export default function PlacesPage() {
 
     let successCount = 0;
     let errorCount = 0;
+    let createdCategoriesCount = 0;
+
+    // Pre-collect unique category names from the CSV
+    const csvCategoryNames = new Set<string>();
+    for (const row of rows) {
+      const name = row[3]?.trim();
+      if (name && !categories.find(c => c.name === name)) {
+        csvCategoryNames.add(name);
+      }
+    }
+
+    // Auto-create missing categories
+    for (const catName of csvCategoryNames) {
+      try {
+        await api.categories.create(catName);
+        createdCategoriesCount++;
+      } catch (err) {
+        // Category may have been created by a previous row or already exists
+      }
+    }
+
+    // Reload categories after creating new ones
+    if (createdCategoriesCount > 0) {
+      await loadCategories();
+    }
 
     for (const row of rows) {
       if (row.length < 4 || !row[0]?.trim()) {
@@ -332,7 +357,21 @@ export default function PlacesPage() {
 
       try {
         const categoryName = row[3]?.trim();
-        const category = categories.find(c => c.name === categoryName);
+        let category = categories.find(c => c.name === categoryName);
+
+        // If category still not found, try the freshly loaded list
+        if (!category && categoryName) {
+          const freshCategories = await api.categories.getAll();
+          category = freshCategories.find(c => c.name === categoryName);
+          if (category && !categories.find(c => c.id === category.id)) {
+            setCategories(freshCategories);
+          }
+        }
+
+        if (!category) {
+          errorCount++;
+          continue;
+        }
 
         const images = row[10] ? row[10].split('|').map(url => url.trim()).filter(url => url) : [];
 
@@ -346,7 +385,7 @@ export default function PlacesPage() {
           name: row[0].trim(),
           description: row[1]?.trim() || '',
           address: row[2]?.trim() || '',
-          categoryId: category?.id || categories[0]?.id || 1,
+          categoryId: category.id,
           latitude: row[4] ? parseFloat(row[4]) : null,
           longitude: row[5] ? parseFloat(row[5]) : null,
           expirationDate: expirationDate,
@@ -365,7 +404,8 @@ export default function PlacesPage() {
     setShowImportModal(false);
 
     if (successCount > 0) {
-      addToast(`${successCount} مکان با موفقیت وارد شد${errorCount > 0 ? ` (${errorCount} مورد با خطا مواجه شد)` : ''}`, 'success');
+      const categoryMsg = createdCategoriesCount > 0 ? ` و ${createdCategoriesCount} دسته‌بندی جدید ایجاد شد` : '';
+      addToast(`${successCount} مکان با موفقیت وارد شد${categoryMsg}${errorCount > 0 ? ` (${errorCount} مورد با خطا مواجه شد)` : ''}`, 'success');
     } else {
       addToast('هیچ مکانی وارد نشد. لطفاً فرمت فایل را بررسی کنید', 'error');
     }
