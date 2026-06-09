@@ -654,7 +654,7 @@ export default function PlacesPage() {
                           onClick={() => handleEdit(place)}
                           className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 ml-4"
                         >
-                          <Edit2 className="w-4 h-4 inline" />
+                          <Edit className="w-4 h-4 inline" />
                         </button>
                         <button
                           onClick={() => handleDeleteClick(place)}
