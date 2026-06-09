@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { api } from '../lib/api';
 import type { Place, Category } from '../types';
-import { Plus, CreditCard, Edit, Edit2, Trash2, MapPin, ChevronLeft, ChevronRight, Image, X, Calendar, Globe, Instagram, Phone, Download, Upload } from 'lucide-react';
+import { Plus, Edit, Edit2, Trash2, MapPin, ChevronLeft, ChevronRight, Image, X, Calendar, Globe, Instagram, Phone, Download, Upload } from 'lucide-react';
 import PlaceModal from './PlaceModal';
 import ConfirmModal from './ConfirmModal';
 import ToastContainer, { type ToastMessage } from './ToastContainer';
