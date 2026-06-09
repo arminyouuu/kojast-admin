@@ -326,10 +326,11 @@ export default function PlacesPage() {
     let createdCategoriesCount = 0;
 
     // Pre-collect unique category names from the CSV
+    let currentCategories = await api.categories.getAll();
     const csvCategoryNames = new Set<string>();
     for (const row of rows) {
       const name = row[3]?.trim();
-      if (name && !categories.find(c => c.name === name)) {
+      if (name && !currentCategories.find(c => c.name === name)) {
         csvCategoryNames.add(name);
       }
     }
@@ -344,10 +345,9 @@ export default function PlacesPage() {
       }
     }
 
-    // Reload categories after creating new ones
-    if (createdCategoriesCount > 0) {
-      await loadCategories();
-    }
+    // Refresh categories from API after creating new ones (avoids stale closure)
+    currentCategories = await api.categories.getAll();
+    setCategories(currentCategories);
 
     for (const row of rows) {
       if (row.length < 4 || !row[0]?.trim()) {
@@ -357,16 +357,7 @@ export default function PlacesPage() {
 
       try {
         const categoryName = row[3]?.trim();
-        let category = categories.find(c => c.name === categoryName);
-
-        // If category still not found, try the freshly loaded list
-        if (!category && categoryName) {
-          const freshCategories = await api.categories.getAll();
-          category = freshCategories.find(c => c.name === categoryName);
-          if (category && !categories.find(c => c.id === category.id)) {
-            setCategories(freshCategories);
-          }
-        }
+        const category = currentCategories.find(c => c.name === categoryName);
 
         if (!category) {
           errorCount++;
